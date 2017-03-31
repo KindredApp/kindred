@@ -100,7 +100,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 		}
 
 		defer req.Body.Close()
-		log.Println(u)
+		log.Println("Successful login")
 	}
 
 }
