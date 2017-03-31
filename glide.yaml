@@ -1,0 +1,5 @@
+package: github.com/j-s-o/kindred
+import:
+- package: golang.org/x/crypto
+  subpackages:
+  - bcrypt
