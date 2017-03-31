@@ -34,6 +34,7 @@
     "babel-preset-react": "^6.23.0",
     "nodemon": "^1.11.0",
     "path": "^0.12.7",
+    "react-polyfill": "0.0.2",
     "webpack": "^2.3.2"
   }
 }
