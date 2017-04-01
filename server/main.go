@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"log"
 	"encoding/json"
+	"time"
 	"golang.org/x/crypto/bcrypt"
-	// "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	// "github.com/jinzhu/gorm"
 // _ "github.com/jinzhu/gorm/dialects/sqlite"
 )
@@ -35,8 +36,8 @@ func init() {
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/signup", signup)
+	http.HandleFunc("/api/login", login)
+	http.HandleFunc("/api/signup", signup)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
 }
@@ -66,7 +67,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	//store userbcrypt details in database
 
 	//redirect 
-	log.Println(ub)
+	log.Println("User Bcrypt to store is", ub)
 	// http.Redirect(w, req, "/", http.StatusSeeOther)
 }
 
@@ -74,17 +75,14 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodPost {
 		// implement JSON web token to see if user is already logged in 
-
+		
 		decoder := json.NewDecoder(req.Body)
 		var u user
-
 		defer req.Body.Close()
-
 		err := decoder.Decode(&u)
 		if err != nil {
 			panic(err)
 		}
-		log.Println(u)
 
 		// see if username exists in table
 		_, ok := dbUsers[u.Username]
@@ -94,15 +92,18 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 		// see if password matches
 		err = bcrypt.CompareHashAndPassword(dbUsers[u.Username].Password, []byte(u.Password))
-
 		if err != nil {
 			panic(err)
 		}
-
-		defer req.Body.Close()
-		log.Println("Successful login")
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"Username": u.Username,
+			"Time": time.Now().Add(time.Hour * 72).Unix(),
+		})
+		tokenString, err := token.SignedString(mySigningKey)
+		w.Header().Set("Content-Type", "application/json")
+		j, _ := json.Marshal(tokenString)
+		w.Write(j)
 	}
-
 }
 
 //redirects
