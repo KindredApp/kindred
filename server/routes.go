@@ -5,8 +5,9 @@ import (
 	"log"
 	// "fmt"
 	"net/http"
-
+	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 //-----
@@ -55,7 +56,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	return
 }
 
-// func login(w http.ResponseWriter, req *http.Request) {
+func login(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodPost {
 		// still need to implement JSON web token to see if user is already logged in
@@ -88,8 +89,9 @@ func signup(w http.ResponseWriter, req *http.Request) {
 
 		//issue token upon successful login
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"Username": u.Username,
-			"Time":     time.Now().Add(time.Hour * 72).Unix(),
+			"username": u.Username,
+			"iss": "https://kindredchat.io",
+			"exp": time.Now().Add(time.Hour * 72).Unix(),
 		})
 
 		tokenString, err := token.SignedString(mySigningKey)
@@ -99,6 +101,6 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func protected(w http.ResponseWriter, req *http.Request) {
+func survey(w http.ResponseWriter, req *http.Request) {
 	log.Println("Protected resource served")
 }
