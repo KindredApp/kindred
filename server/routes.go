@@ -76,11 +76,13 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 		//check if username is valid
 		db.Where(&UserAuth{Username: u.Username}).First(&un)
+		log.Println(un.Username)
 
 		if un.Username == "" {
 			w.Header().Set("Content-Type", "application/json")
 			j, _ := json.Marshal("Username or password does not match")
 			w.Write(j)
+			return
 		}
 
 		//compare passwords
@@ -90,12 +92,15 @@ func login(w http.ResponseWriter, req *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			j, _ := json.Marshal("Username or password does not match")
 			w.Write(j)
+			return
 		}
 
+		//issue token upon successful login
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"Username": u.Username,
 			"Time":     time.Now().Add(time.Hour * 72).Unix(),
 		})
+
 		tokenString, err := token.SignedString(mySigningKey)
 		w.Header().Set("Content-Type", "application/json")
 		j, _ := json.Marshal(tokenString)
