@@ -25,18 +25,14 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	//check if username exists
 	db.Where(&UserAuth{Username: u.Username}).First(&un)
 	if un.Username != "" {
-		w.Header().Set("Content-Type", "application/json")
-		j, _ := json.Marshal("User already exists")
-		w.Write(j)
+		http.Error(w, "Username already taken", http.StatusForbidden)
 		return
 	}
 
 	//check if email exists
 	db.Where(&UserAuth{Email: u.Email}).First(&un)
 	if un.Email != "" {
-		w.Header().Set("Content-Type", "application/json")
-		j, _ := json.Marshal("Email already exists")
-		w.Write(j)
+		http.Error(w, "Email already taken", http.StatusForbidden)
 		return
 	}
 	
@@ -78,9 +74,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		log.Println(un.Username)
 
 		if un.Username == "" {
-			w.Header().Set("Content-Type", "application/json")
-			j, _ := json.Marshal("Username or password does not match")
-			w.Write(j)
+			http.Error(w, "Username or password does not match", http.StatusForbidden)
 			return
 		}
 
@@ -88,9 +82,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		err = bcrypt.CompareHashAndPassword([]byte(un.Password), []byte(u.Password))
 
 		if err != nil {
-			w.Header().Set("Content-Type", "application/json")
-			j, _ := json.Marshal("Username or password does not match")
-			w.Write(j)
+			http.Error(w, "Username or password does not match", http.StatusForbidden)
 			return
 		}
 
