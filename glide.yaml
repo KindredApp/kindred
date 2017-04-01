@@ -3,3 +3,6 @@ import:
 - package: golang.org/x/crypto
   subpackages:
   - bcrypt
+- package: github.com/auth0/go-jwt-middleware
+- package: github.com/codegangsta/negroni
+  version: ~0.2.0
