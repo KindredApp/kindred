@@ -6,6 +6,8 @@ bundles/
 logs
 *.log
 
+server/config.go
+
 # Runtime data
 pids
 *.pid
