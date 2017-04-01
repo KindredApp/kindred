@@ -2,28 +2,46 @@ package main
 
 import (
 	"net/http"
+	"log"
+	"fmt"
+	"github.com/jinzhu/gorm"
+_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/codegangsta/negroni"
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
-	// "github.com/jinzhu/gorm"
-// _ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-type user struct {
+type User struct {
 	Username string
 	Name string
 	Email string
 	Password string
 }
 
-type userBcrypt struct {
+type UserBcrypt struct {
 	Username string
 	Name string
 	Email string
 	Password []byte
 }
 
+var db *gorm.DB
+var err error
+
 func main() {
+	//db
+	dbinfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
+	DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
+	db, err = gorm.Open("postgres", dbinfo)
+	if err != nil {
+			panic(err)
+	}
+	db.AutoMigrate(&UserAuth{}, &UserProfile{})
+	defer db.Close()
+
+	log.Printf("Connected")
+
+	//server
 	r := http.NewServeMux()
 
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
@@ -44,6 +62,7 @@ func main() {
 	http.Handle("/api/protected", r)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
+
 }
 
 
