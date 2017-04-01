@@ -2,12 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	// "fmt"
 	"net/http"
-	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 //-----
@@ -60,7 +59,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func login(w http.ResponseWriter, req *http.Request) {
+// func login(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodPost {
 		// still need to implement JSON web token to see if user is already logged in
