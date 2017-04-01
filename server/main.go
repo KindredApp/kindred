@@ -57,7 +57,7 @@ func main() {
 
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
-	http.HandleFunc("/api/login", login)
+	// http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/protected", r)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
