@@ -9,20 +9,12 @@ import (
 	"time"
 )
 
-//remove once db is created
-var dbUsers = map[string]UserBcrypt{}
-
-func init() {
-	bs, _ := bcrypt.GenerateFromPassword([]byte("password1234"), bcrypt.MinCost)
-	dbUsers["j-s-o"] = UserBcrypt{"j-s-o", "jonathan so", "jso.jonathan@gmail.com", bs}
-}
-
 //-----
 
 func signup(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var u User
-	var ub UserBcrypt
+	// var ub UserBcrypt
 	defer req.Body.Close()
 
 	err := decoder.Decode(&u)
@@ -35,11 +27,15 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	ub = UserBcrypt{u.Username, u.Name, u.Email, bs}
-	// db.NewRecord(ub)
+	// u = User{u.Username, u.Name, u.Email, string(bs)}
+	// ub = UserBcrypt{u.Username, u.Name, u.Email, bs}
+	user := UserAuth{Username: u.Username, Name: u.Name, Email: u.Email, Password: string(bs)}
+
+	db.NewRecord(user)
+	db.Create(&user)
 
 	//store userbcrypt details in database
-	log.Println("User Bcrypt to store is", ub)
+	// log.Println("User Bcrypt to store is", ub)
 }
 
 func login(w http.ResponseWriter, req *http.Request) {

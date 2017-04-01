@@ -25,11 +25,14 @@ type UserBcrypt struct {
 	Password []byte
 }
 
+var db *gorm.DB
+var err error
+
 func main() {
 	//db
 	dbinfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
 	DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
-	db, err := gorm.Open("postgres", dbinfo)
+	db, err = gorm.Open("postgres", dbinfo)
 	if err != nil {
 			panic(err)
 	}
