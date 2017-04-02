@@ -26,6 +26,13 @@ type UserBcrypt struct {
 	Password []byte
 }
 
+type UserSurvey struct {
+	Zip string
+	Age int
+	Gender string
+	Ethnicity string 
+}
+
 var db *gorm.DB
 var err error
 

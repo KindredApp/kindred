@@ -102,5 +102,23 @@ func login(w http.ResponseWriter, req *http.Request) {
 }
 
 func survey(w http.ResponseWriter, req *http.Request) {
-	log.Println("Protected resource served")
+	var us UserSurvey
+
+	decoder := json.NewDecoder(req.Body)
+	defer req.Body.Close()
+	err := decoder.Decode(&us)
+	if err != nil {
+		panic(err)
+	}
+
+	//handle post
+	if req.Method == http.MethodPost {
+		r := defaultSurvey(us)
+		log.Println("Age is", r.Age)
+		log.Println("Ethnicity is", r.Ethnicity)
+		log.Println("Gender is", r.Gender)
+		log.Println("Zip is", r.Zip)
+	}
 }
+
+
