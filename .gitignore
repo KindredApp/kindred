@@ -8,4 +8,3 @@ dist/
 .vscode/
 glide.lock
 vendor/
-server/config.go
