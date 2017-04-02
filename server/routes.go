@@ -5,8 +5,9 @@ import (
 	"log"
 	// "fmt"
 	"net/http"
-
+	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 //-----
@@ -55,7 +56,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	return
 }
 
-// func login(w http.ResponseWriter, req *http.Request) {
+func login(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodPost {
 		// still need to implement JSON web token to see if user is already logged in
@@ -88,8 +89,9 @@ func signup(w http.ResponseWriter, req *http.Request) {
 
 		//issue token upon successful login
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"Username": u.Username,
-			"Time":     time.Now().Add(time.Hour * 72).Unix(),
+			"username": u.Username,
+			"iss": "https://kindredchat.io",
+			"exp": time.Now().Add(time.Hour * 72).Unix(),
 		})
 
 		tokenString, err := token.SignedString(mySigningKey)
@@ -99,6 +101,32 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func protected(w http.ResponseWriter, req *http.Request) {
-	log.Println("Protected resource served")
+func survey(w http.ResponseWriter, req *http.Request) {
+	var us UserSurvey
+	var un UserAuth
+	var usp UserProfile
+
+	decoder := json.NewDecoder(req.Body)
+	defer req.Body.Close()
+	err := decoder.Decode(&us)
+	if err != nil {
+		panic(err)
+	}
+
+	//handle post
+	if req.Method == http.MethodPost {
+		//if user doesn't exist in user_profiles, create new record
+		db.Where(&UserAuth{Username: us.Username}).First(&un)
+		if un.Username != "" {
+			db.Where(&UserProfile{UserAuthID: un.ID}).First(&usp)
+			if usp.UserAuthID == 0 {
+				f := defaultSurvey(us)
+
+				db.NewRecord(f)
+				db.Create(&f)
+			}
+		}
+
+		// if already exists
+	}
 }

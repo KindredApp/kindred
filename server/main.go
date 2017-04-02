@@ -26,6 +26,14 @@ type UserBcrypt struct {
 	Password []byte
 }
 
+type UserSurvey struct {
+	Username string
+	Zip string
+	Age int
+	Gender string
+	Ethnicity string 
+}
+
 var db *gorm.DB
 var err error
 
@@ -52,15 +60,15 @@ func main() {
 		SigningMethod: jwt.SigningMethodHS256,
 	})
 
-	r.Handle("/api/protected", negroni.New(
+	r.Handle("/api/survey", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(http.HandlerFunc(protected))))
+		negroni.Wrap(http.HandlerFunc(survey))))
 
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
-	// http.HandleFunc("/api/login", login)
+	http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
-	http.Handle("/api/protected", r)
+	http.Handle("/api/survey", r)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
 

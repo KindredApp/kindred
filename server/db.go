@@ -15,14 +15,30 @@ type UserAuth struct {
 
 // db.Where("name = ?", "jinzhu").Find(&UserAuth)
 
-type UserProfile struct {
-	gorm.Model
-	UserAuth   UserAuth
-	UserAuthID int
-	Zip        string
-	Age        int
-	Education  string
-	Kin        []UserAuth `gorm:"many2many:user_kin;"`
-}
+// type UserProfile struct {
+// 	gorm.Model
+// 	UserAuth   UserAuth
+// 	UserAuthID int
+// 	Zip        string
+// 	Age        int
+// 	Education  string
+// 	Kin        []UserAuth `gorm:"many2many:user_kin;"`
+// }
 
 // db.Create(&Product{Code: "L1212", Price: 1000})
+
+type UserProfile struct {
+    gorm.Model
+    UserAuth       UserAuth
+    UserAuthID     uint
+    Zip            string
+    Age            int
+    Gender         int
+    Income         int
+    Education      int
+    Spirituality   int
+    ReligiousAffil int
+    Ethnicity      int
+    State          string
+    PoliticalAffil int
+}
