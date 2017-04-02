@@ -50,7 +50,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&UserAuth{}, &UserProfile{})
+	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotds{}, &QotdsAnswerOptions{}, &QotdsAnswers{}, &SurveyQuestions{}, &SurveyAnswers{}, &Kin{})
+
 	defer db.Close()
 
 	log.Printf("Connected")
@@ -71,7 +72,7 @@ func main() {
 
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
-	// http.HandleFunc("/api/login", login)
+	http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/survey", r)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
