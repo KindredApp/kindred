@@ -27,6 +27,7 @@ type UserBcrypt struct {
 }
 
 type UserSurvey struct {
+	Username string
 	Zip string
 	Age int
 	Gender string

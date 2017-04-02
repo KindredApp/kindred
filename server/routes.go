@@ -103,6 +103,8 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 func survey(w http.ResponseWriter, req *http.Request) {
 	var us UserSurvey
+	var un UserAuth
+	var usp UserProfile
 
 	decoder := json.NewDecoder(req.Body)
 	defer req.Body.Close()
@@ -113,12 +115,18 @@ func survey(w http.ResponseWriter, req *http.Request) {
 
 	//handle post
 	if req.Method == http.MethodPost {
-		r := defaultSurvey(us)
-		log.Println("Age is", r.Age)
-		log.Println("Ethnicity is", r.Ethnicity)
-		log.Println("Gender is", r.Gender)
-		log.Println("Zip is", r.Zip)
+		//if user doesn't exist in user_profiles, create new record
+		db.Where(&UserAuth{Username: us.Username}).First(&un)
+		if un.Username != "" {
+			db.Where(&UserProfile{UserAuthID: un.ID}).First(&usp)
+			if usp.UserAuthID == 0 {
+				f := defaultSurvey(us)
+
+				db.NewRecord(f)
+				db.Create(&f)
+			}
+		}
+
+		// if already exists
 	}
 }
-
-
