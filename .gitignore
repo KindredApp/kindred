@@ -8,3 +8,4 @@ dist/
 .vscode/
 glide.lock
 vendor/
+server/queries.sql
