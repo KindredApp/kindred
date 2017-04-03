@@ -3,11 +3,10 @@ package main
 import (
 	"encoding/json"
 	"log"
-	// "fmt"
 	"net/http"
-	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 //-----
@@ -22,7 +21,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	//check if username exists
 	db.Where(&UserAuth{Username: u.Username}).First(&un)
 	if un.Username != "" {
@@ -36,7 +35,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Email already taken", http.StatusForbidden)
 		return
 	}
-	
+
 	//generate encrypted password
 	bs, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.MinCost)
 	if err != nil {
@@ -90,8 +89,8 @@ func login(w http.ResponseWriter, req *http.Request) {
 		//issue token upon successful login
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"username": u.Username,
-			"iss": "https://kindredchat.io",
-			"exp": time.Now().Add(time.Hour * 72).Unix(),
+			"iss":      "https://kindredchat.io",
+			"exp":      time.Now().Add(time.Hour * 72).Unix(),
 		})
 
 		tokenString, err := token.SignedString(mySigningKey)

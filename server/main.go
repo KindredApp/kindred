@@ -27,17 +27,22 @@ type UserBcrypt struct {
 }
 
 type UserSurvey struct {
-	Username string
-	Zip string
-	Age int
-	Gender string
-	Ethnicity string 
+	Username  string
+	Zip       string
+	Age       int
+	Gender    string
+	Ethnicity string
 }
 
 var db *gorm.DB
 var err error
 
 func main() {
+	// Set environment variable(s)- remove key BEFORE committing!!
+
+	// os.Setenv("JWT_AUTH_KEY", "!! REPLACE WITH SECRET KEY !!")
+	// fmt.Println(os.Getenv("JWT_AUTH_KEY"))
+
 	//db
 	dbinfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
 		DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
@@ -45,7 +50,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&UserAuth{}, &UserProfile{})
+	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotds{}, &QotdsAnswerOptions{}, &QotdsAnswers{}, &SurveyQuestions{}, &SurveyAnswers{}, &Kinship{}, &Chat{})
+
 	defer db.Close()
 
 	log.Printf("Connected")
@@ -69,6 +75,7 @@ func main() {
 	http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/survey", r)
+	http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
 
