@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"log"
-	// "fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -131,3 +131,117 @@ func survey(w http.ResponseWriter, req *http.Request) {
 		// if already exists
 	}
 }
+
+// // mockversion
+// func addKin() {
+// 	var kin1 UserAuth
+// 	var kin2 UserAuth
+// 	var kinship Kinship
+// 	var kinshipInverse Kinship
+
+// 	mockKin1Username := "nzey"
+// 	mockKin2UserName := "jso"
+
+// 	db.Where("Username = ?", mockKin1Username).First(&kin1)
+// 	db.Where("Username = ?", mockKin2UserName).First(&kin2)
+
+// 	kinship.UserAuthID = kin1.ID
+// 	kinship.Friend = kin2.ID
+// 	db.NewRecord(kinship)
+// 	// TODO: Add condition - only create if kinship doesn't already exists
+// 	kinshipInverse.UserAuthID = kin2.ID
+// 	kinshipInverse.Friend = kin1.ID
+// 	db.NewRecord(kinshipInverse)
+// 	db.Create(&kinship)
+// 	db.Create(&kinshipInverse)
+// }
+
+// Real version
+func kinships(w http.ResponseWriter, req *http.Request) {
+
+	type KinshipToAdd struct {
+		user1 string //int in string format
+		user2 string
+	}
+
+	var kinshipRequest KinshipToAdd
+	var kin1 UserAuth
+	var kin2 UserAuth
+	var kinship Kinship
+	var kinshipInverse Kinship
+
+	decoder := json.NewDecoder(req.Body)
+	defer req.Body.Close()
+	err := decoder.Decode(&kinshipRequest)
+	if err != nil {
+		panic(err)
+	}
+
+	//handle post
+	if req.Method == http.MethodPost {
+		// TODO: handle errors/not-founds
+		user1_id := db.First(&user_auth, strconv.Atoi(kinshipRequest.user1)).ID
+		user2_id := db.First(&user_auth, strconv.Atoi(kinshipRequest.user2)).ID
+		kinship.UserAuthID = user1_id
+		kinship.Friend = user2_id
+
+		db.NewRecord(kinship)
+
+		if db.Find(&UserAuth{UserAuthID: user1_id, Friend: user2_id}) == nil {
+			kinshipInverse.UserAuthID = user2_id
+			kinshipInverse.Friend = user1_id
+			db.NewRecord(kinshipInverse)
+			db.Create(&kinship)
+			db.Create(&kinshipInverse)
+		}
+	} else {
+		// handle get
+		// NOTE: sending back chat date and topic - will require additional schema of who are person has chatted with
+		type Kin struct {
+			Id       int
+			Username string
+			Name     string
+		}
+
+		var kinList []Kin
+
+		if req.Method == http.MethodGet {
+			db.Find(&Kinship{UserAuthID: user1_id})
+			// for each row found, save as a Kin type and add to kinList
+			db.NewRecord(kinList)
+			db.Create(&kinList)
+		}
+	}
+}
+
+// func addZip() {
+// 	var unprocessedZipData RawZipData
+// 	var zipRow ZipData
+// 	mockZip := "94702"
+// 	safeZip := url.QueryEscape(mockZip)
+
+// 	url := fmt.Sprintf("https://azure.geodataservice.net/GeoDataService.svc/GetUSDemographics?$format=json&zipcode=%s", safeZip)
+
+// 	req, err := http.NewRequest("GET", url, nil)
+// 	if err != nil {
+// 		log.Fatal("NewRequest: ", err)
+// 		return
+// 	}
+
+// 	client := &http.Client{}
+
+// 	resp, err := client.Do(req)
+// 	if err != nil {
+// 		log.Fatal("Do: ", err)
+// 		return
+// 	}
+
+// 	defer resp.Body.Close()
+
+// 	if err := json.NewDecoder(resp.Body).Decode(&unprocessedZipData); err != nil {
+// 		log.Println(err)
+// 	}
+
+// 	db.NewRecord(zipRow)
+// 	db.Create(&zipRow)
+// }
