@@ -1,9 +1,15 @@
+import 'babel-polyfill';
 import React from 'react';
+import ReactDOM from 'react-dom';
+import {createStore} from 'redux';
+import Root from './components/root.jsx';
 
-class App extends React.Component {
-  render () {
-    return (<h1>hello world</h1>);
-  }
-}
 
-export default App;
+
+import App from './components/app.jsx';
+import allReducers from './reducers/reducersIndex.js';
+
+const store = createStore(allReducers);
+
+ReactDOM.render(<Root store={store}/>, document.getElementById('root'));
+

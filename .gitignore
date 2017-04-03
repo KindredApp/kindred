@@ -4,3 +4,8 @@ bower_components/
 
 build/
 dist/
+
+.vscode/
+glide.lock
+vendor/
+devNotes/

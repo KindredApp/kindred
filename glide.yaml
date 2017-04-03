@@ -1,0 +1,12 @@
+package: github.com/j-s-o/kindred
+import:
+- package: golang.org/x/crypto
+  subpackages:
+  - bcrypt
+- package: github.com/auth0/go-jwt-middleware
+- package: github.com/codegangsta/negroni
+  version: ~0.2.0
+- package: github.com/jinzhu/gorm
+  version: ~1.0.0
+  subpackages:
+  - dialects/postgres
