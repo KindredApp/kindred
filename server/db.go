@@ -32,41 +32,41 @@ type UserProfile struct {
 	PoliticalAffil int
 }
 
-type Qotds struct {
+type Qotd struct {
 	gorm.Model
 	QuestionType string `gorm:"not null"`
 	Category     string
 	Text         string `gorm:"not null"`
 }
 
-type QotdsAnswerOptions struct {
+type QotdAnswerOption struct {
 	gorm.Model
-	Text    string `gorm:"not null"`
-	Qotds   Qotds
-	QotdsID uint `gorm:"not null"`
+	Text   string `gorm:"not null"`
+	Qotd   Qotd
+	QotdID uint `gorm:"not null"`
 }
 
-type QotdsAnswers struct {
+type QotdAnswer struct {
 	gorm.Model
 	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
-	Qotds      Qotds
-	QotdsID    uint   `gorm:"not null"`
+	Qotd       Qotd
+	QotdID     uint   `gorm:"not null"`
 	Text       string `gorm:"not null"`
 }
 
-type FeedbackQuestions struct {
+type FeedbackQuestion struct {
 	gorm.Model
 	Text         string `gorm:"not null"`
 	QuestionType string `gorm:"not null"`
 }
 
-type FeedbackAnswers struct {
+type FeedbackAnswer struct {
 	gorm.Model
-	UserAuth            UserAuth
-	UserAuthID          uint `gorm:"not null"`
-	FeedbackQuestions   FeedbackQuestions
-	FeedbackQuestionsID uint `gorm:"not null"`
+	UserAuth           UserAuth
+	UserAuthID         uint `gorm:"not null"`
+	FeedbackQuestion   FeedbackQuestion
+	FeedbackQuestionID uint `gorm:"not null"`
 }
 
 type ZipData struct {

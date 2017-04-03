@@ -55,7 +55,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotds{}, &QotdsAnswerOptions{}, &QotdsAnswers{}, &FeedbackQuestions{}, &FeedbackAnswers{}, &Kinship{}, &Chat{})
+	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotd{}, &QotdAnswerOption{}, &QotdAnswer{}, &FeedbackQuestion{}, &FeedbackAnswer{}, &Kinship{}, &Chat{})
 
 	defer db.Close()
 
