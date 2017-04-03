@@ -31,21 +31,6 @@ type UserProfile struct {
 	PoliticalAffil int
 }
 
-type Kinship struct {
-	gorm.Model
-	UserAuth   UserAuth
-	UserAuthID uint `gorm:"not null"`
-	Friend     uint `gorm:"not null"`
-}
-
-type Chat struct {
-	gorm.Model
-	ChatDate   string `gorm:"not null"`
-	UserAuth   UserAuth
-	UserAuthID uint `gorm:"not null"`
-	PairId     uint `gorm:"not null"`
-}
-
 type Qotds struct {
 	gorm.Model
 	QuestionType string `gorm:"not null"`
@@ -69,13 +54,13 @@ type QotdsAnswers struct {
 	Text       string `gorm:"not null"`
 }
 
-type SurveyQuestions struct {
+type FeedbackQuestions struct {
 	gorm.Model
 	Text         string `gorm:"not null"`
 	QuestionType string `gorm:"not null"`
 }
 
-type SurveyAnswers struct {
+type FeedbackAnswers struct {
 	gorm.Model
 	UserAuth          UserAuth
 	UserAuthID        uint `gorm:"not null"`
@@ -93,4 +78,19 @@ type ZipData struct {
 	Ethnicity      int // if Ethnicity
 	State          string
 	PoliticalAffil int
+}
+
+type Kinship struct {
+	gorm.Model
+	UserAuth   UserAuth
+	UserAuthID uint `gorm:"not null"`
+	Friend     uint `gorm:"not null"`
+}
+
+type Chat struct {
+	gorm.Model
+	ChatDate   string `gorm:"not null"`
+	UserAuth   UserAuth
+	UserAuthID uint `gorm:"not null"`
+	PairId     uint `gorm:"not null"`
 }
