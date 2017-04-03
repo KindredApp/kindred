@@ -24,18 +24,26 @@ type UserProfile struct {
 	Gender         int    `gorm:"not null"`
 	Income         int
 	Education      int
-	Spirituality   int
-	ReligiousAffil int
+	Religiousity   int
+	Religion       int
 	Ethnicity      int
 	State          string
 	PoliticalAffil int
 }
 
-type Kin struct {
+type Kinship struct {
 	gorm.Model
 	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
 	Friend     uint `gorm:"not null"`
+}
+
+type Chat struct {
+	gorm.Model
+	ChatDate   string `gorm:"not null"`
+	UserAuth   UserAuth
+	UserAuthID uint `gorm:"not null"`
+	PairId     uint `gorm:"not null"`
 }
 
 type Qotds struct {
@@ -73,4 +81,16 @@ type SurveyAnswers struct {
 	UserAuthID        uint `gorm:"not null"`
 	SurveyQuestions   SurveyQuestions
 	SurveyQuestionsID uint `gorm:"not null"`
+}
+
+type ZipData struct {
+	gorm.Model
+	MedianAge      int // if age not given, use median age
+	AverageIncome  int // if income not given use average income
+	Education      int // if education not given, use most common education
+	Religiousity   int // if religion not given, pair randomly
+	Religion       int // don't assign (if pick most common and the person is not most, common)
+	Ethnicity      int // if Ethnicity
+	State          string
+	PoliticalAffil int
 }
