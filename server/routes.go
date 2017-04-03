@@ -100,7 +100,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func survey(w http.ResponseWriter, req *http.Request) {
+func profile(w http.ResponseWriter, req *http.Request) {
 	var us UserSurvey
 	var un UserAuth
 	var usp UserProfile
@@ -118,14 +118,14 @@ func survey(w http.ResponseWriter, req *http.Request) {
 		db.Where(&UserAuth{Username: us.Username}).First(&un)
 		if un.Username != "" {
 			db.Where(&UserProfile{UserAuthID: un.ID}).First(&usp)
+			//new user profile
 			if usp.UserAuthID == 0 {
 				f := defaultSurvey(us)
 
 				db.NewRecord(f)
 				db.Create(&f)
-			}
+			} 
 		}
 
-		// if already exists
 	}
 }

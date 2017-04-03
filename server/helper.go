@@ -28,6 +28,19 @@ func defaultSurvey(a UserSurvey) UserProfile {
   }
 
   up.Zip = a.Zip
+  up.Income = a.Income
+  up.Education = a.Education
+  up.Spirituality = a.Spirituality
+  up.ReligiousAffil = a.ReligiousAffil
+  up.State = a.State
+  up.PoliticalAffil = a.PoliticalAffil
 
   return up
 }
+
+// func optionalSurvey(a UserOptSurvey) UserProfile{
+//   var up UserProfile
+
+
+//   return up
+// }
