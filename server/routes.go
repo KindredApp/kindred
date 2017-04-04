@@ -253,7 +253,6 @@ func qotd(w http.ResponseWriter, req *http.Request) {
 
 		questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
 
-		// q, err := json.Marshal(questionWOptions)
 		q, err := json.Marshal(questionWOptions)
 		if err != nil {
 			fmt.Println(err)
@@ -261,5 +260,30 @@ func qotd(w http.ResponseWriter, req *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(q)
+	} else {
+		var newAnswer QotdAnswer
+		var user UserAuth
+		var questionAnswered Qotd
+		var responseString string
+		decoder := json.NewDecoder(req.Body)
+		defer req.Body.Close()
+		err := decoder.Decode(&newAnswer)
+		if err != nil {
+			panic(err)
+		}
+		db.Model(&newAnswer).Related(&questionAnswered)
+		db.Model(&newAnswer).Related(&user)
+		if questionAnswered.ID != 0 && user.ID != 0 {
+			db.NewRecord(newAnswer)
+			db.Create(&newAnswer)
+			responseString = "Answer successfully posted to db"
+		} else {
+			responseString = "Failed to post answer. Incorrect user or question id."
+		}
+		w.Header().Set("Content-Type", "application/json")
+		response, _ := json.Marshal(responseString)
+		w.Write(response)
 	}
 }
+
+// func seedQotdTable()
