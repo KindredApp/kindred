@@ -13,34 +13,6 @@ import (
 
 )
 
-type User struct {
-	Username string
-	Name     string
-	Email    string
-	Password string
-}
-
-type UserBcrypt struct {
-	Username string
-	Name     string
-	Email    string
-	Password []byte
-}
-
-type UserSurvey struct {
-	Username       string
-	Zip            string
-	Age            int
-	Gender         int
-	Ethnicity      int
-	Income         int
-	Education      int
-	Religiousity   int
-	Religion       int
-	State          string
-	PoliticalAffil int
-}
-
 //global connection variables
 var db *gorm.DB
 var err error
