@@ -12,3 +12,5 @@ glide.lock
 vendor/
 devNotes/
 bundles/
+
+pubnubConfig.js
