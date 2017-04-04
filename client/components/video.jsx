@@ -83,19 +83,20 @@ export default class Main extends React.Component {
 
   login(e) {
     e.preventDefault();
-    let phone = window.phone = PHONE({
+    var phone = window.phone = PHONE({
         number: this.state.caller || "Anonymous",
         publish_key: pubnubConfig.publishKey,
         subscribe_key: pubnubConfig.subscribeKey,
         ssl: true
     });	
    
-    let ctrl = window.ctrl = CONTROLLER(phone);
+    var videoBox = document.getElementById("videoBox");
+    var videoThumbnail = document.getElementById("videoThumbnail");
+    var ctrl = window.ctrl = CONTROLLER(phone);
 	  ctrl.ready(() => {
       console.log('Phone ready');
+      ctrl.addLocalStream(videoThumbnail);
     });
-    let videoBox = document.getElementById("videoBox");
-    let videoThumbnail = document.getElementById("videoThumbnail");
 	  ctrl.receive((session) => {
 		  session.connected((session) => {
         console.log('Connected. Caller: ', this.state.caller);
@@ -103,6 +104,8 @@ export default class Main extends React.Component {
       });
 	    session.ended((session) => {
         this.refs.video.innerHTML='';
+        this.refs.userVideo.innerHTML='';
+        ctrl.getVideoElement(session.number).remove();
       });
 	  });
   }
@@ -112,7 +115,9 @@ export default class Main extends React.Component {
   }
 
   endCall() {
-
+    ctrl.hangup();
+    this.refs.video.innerHTML='';
+    this.refs.userVideo.innerHTML='';
   }
 
   render() {
@@ -139,7 +144,7 @@ export default class Main extends React.Component {
           <input type="submit" value="Call" onClick={this.makeCall}/>
         <div id="videoBox" ref="video">
         </div>
-        <div id="videoThumbnail">
+        <div id="videoThumbnail" ref="userVideo">
         </div>
         <button onClick={this.endCall}>End Call</button>
       </div>
