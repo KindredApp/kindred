@@ -6,15 +6,17 @@ import (
 )
 
 type UserAuth struct {
-	gorm.Model        // auto creates ID, CreatedAt, UpdatedAt, DeletedAt
-	Username   string `gorm:"not null;unique"`
-	Name       string `gorm:"not null"`
-	Email      string `gorm:"not null"`
-	Password   string `gorm:"not null"`
-	Token      string `gorm:"not null"`
+	gorm.Model             // auto creates ID, CreatedAt, UpdatedAt, DeletedAt
+	Username        string `gorm:"not null;unique"`
+	Name            string `gorm:"not null"`
+	Email           string `gorm:"not null"`
+	Password        string `gorm:"not null"`
+	Token           string `gorm:"not null"`
+	QotdAnswers     []QotdAnswer
+	FeedbackAnswers []FeedbackAnswer
+	Kinships        []Kinship
+	Chats           []Chat
 }
-
-// db.Where("name = ?", "jinzhu").Find(&UserAuth)
 
 type UserProfile struct {
 	gorm.Model
@@ -34,9 +36,11 @@ type UserProfile struct {
 
 type Qotd struct {
 	gorm.Model
-	QuestionType string `gorm:"not null"`
-	Category     string
-	Text         string `gorm:"not null"`
+	QuestionType      string `gorm:"not null"`
+	Category          string
+	Text              string `gorm:"not null"`
+	QotdAnswerOptions []QotdAnswerOption
+	QotdAnswers       []QotdAnswer
 }
 
 type QotdAnswerOption struct {
@@ -57,8 +61,9 @@ type QotdAnswer struct {
 
 type FeedbackQuestion struct {
 	gorm.Model
-	Text         string `gorm:"not null"`
-	QuestionType string `gorm:"not null"`
+	Text            string `gorm:"not null"`
+	QuestionType    string `gorm:"not null"`
+	FeedbackAnswers []FeedbackAnswer
 }
 
 type FeedbackAnswer struct {
@@ -72,12 +77,12 @@ type FeedbackAnswer struct {
 
 type ZipData struct {
 	gorm.Model
-	MedianAge      int // if age not given, use median age
-	AverageIncome  int // if income not given use average income
-	Education      int // if education not given, use most common education
-	Religiousity   int // if religion not given, pair randomly
-	Religion       int // don't assign (if pick most common and the person is not most, common)
-	Ethnicity      int // if Ethnicity
+	MedianAge      int
+	AverageIncome  int
+	Education      int
+	Religiousity   int
+	Religion       int
+	Ethnicity      int
 	State          string
 	PoliticalAffil int
 }
