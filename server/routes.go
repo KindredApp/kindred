@@ -152,11 +152,18 @@ func feedback(w http.ResponseWriter, req *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(q)
+	} else {
+		// post feedback answer
+		var newAnswer FeedbackAnswer
+		decoder := json.NewDecoder(req.Body)
+		defer req.Body.Close()
+		err := decoder.Decode(&newAnswer)
+		if err != nil {
+			panic(err)
+		}
+		db.NewRecord(newAnswer)
+		db.Create(&newAnswer)
 	}
-	// else {
-	// post feedback answer
-
-	// }
 }
 
 // Other potential 'feedback' routes:

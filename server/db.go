@@ -66,7 +66,8 @@ type FeedbackAnswer struct {
 	UserAuth           UserAuth
 	UserAuthID         uint `gorm:"not null"`
 	FeedbackQuestion   FeedbackQuestion
-	FeedbackQuestionID uint `gorm:"not null"`
+	FeedbackQuestionID uint   `gorm:"not null"`
+	Answer             string `gorm:"not null"`
 }
 
 type ZipData struct {
