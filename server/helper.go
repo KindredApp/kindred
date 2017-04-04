@@ -15,6 +15,7 @@ type UserBcrypt struct {
 }
 
 type UserSurvey struct {
+  ID uint
 	Username string
 	Zip string
 	Age int
@@ -68,6 +69,7 @@ func defaultSurvey(a UserSurvey) UserProfile {
   //   }
   // }
 
+  up.UserAuthID = a.ID
   up.Age = a.Age
   up.Gender = a.Gender
   up.Ethnicity = a.Ethnicity
