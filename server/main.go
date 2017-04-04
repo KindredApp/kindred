@@ -96,9 +96,3 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 
 }
-
-//redirects
-//http.Redirect(w, req, "/", http.MovedPermanently, http.StatusSeeOther, or http.StatusTemporaryRedirect)
-//lower level
-//w.Header().Set("Location", "/")
-//w.WriteHeader(http.StatusSeeOther)
