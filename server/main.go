@@ -78,6 +78,7 @@ func main() {
 	http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/profile", r)
+	http.HandleFunc("/api/feedback", feedback)
 	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)

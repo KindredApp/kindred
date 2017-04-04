@@ -2,12 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"log"
-	"time"
-	// "fmt"
+	"math/rand"
 	"net/http"
+	"time"
 )
 
 //-----
@@ -136,3 +137,30 @@ func profile(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 }
+
+func feedback(w http.ResponseWriter, req *http.Request) {
+
+	if req.Method == http.MethodGet {
+		var randQuestion FeedbackQuestion
+		var questionCount int
+		db.Table("feedback_questions").Count(&questionCount)
+		db.Find(&randQuestion, rand.Intn(questionCount)+1)
+		q, err := json.Marshal(randQuestion)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(q)
+	}
+	// else {
+	// post feedback answer
+
+	// }
+}
+
+// Other potential 'feedback' routes:
+// get all feedback questions
+// get all feedback answers to a particular question
+// get all feedback answers to a particular question on particular day
+// post feedback questions
