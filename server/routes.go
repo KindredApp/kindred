@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
-
+	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -96,14 +96,16 @@ func login(w http.ResponseWriter, req *http.Request) {
 		tokenString, err := token.SignedString(mySigningKey)
 		w.Header().Set("Content-Type", "application/json")
 		j, _ := json.Marshal(tokenString)
+		db.Model(&un).Update("Token", j)
 		w.Write(j)
 	}
 }
 
-func survey(w http.ResponseWriter, req *http.Request) {
+func profile(w http.ResponseWriter, req *http.Request) {
 	var us UserSurvey
 	var un UserAuth
 	var usp UserProfile
+	rh := req.Header.Get("Authorization")[7:]
 
 	decoder := json.NewDecoder(req.Body)
 	defer req.Body.Close()
@@ -111,21 +113,25 @@ func survey(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-
 	//handle post
 	if req.Method == http.MethodPost {
 		//if user doesn't exist in user_profiles, create new record
-		db.Where(&UserAuth{Username: us.Username}).First(&un)
-		if un.Username != "" {
-			db.Where(&UserProfile{UserAuthID: un.ID}).First(&usp)
-			if usp.UserAuthID == 0 {
-				f := defaultSurvey(us)
+		db.Where(&UserAuth{Token: "\"" + rh + "\""}).First(&un)
+		db.Where("id = ?", un.ID).First(&usp)
+		log.Println("id is", usp.ID)
+		//new user profile
+		if usp.ID == 0 {
+			f := defaultSurvey(us)
 
-				db.NewRecord(f)
-				db.Create(&f)
-			}
+			db.NewRecord(f)
+			db.Create(&f)
+
+			w.Header().Set("Content-Type", "application/json")
+			j, _ := json.Marshal("Profile posted")
+			w.Write(j)
+		} else {
+			f := defaultSurvey(us)
+			db.Model(&usp).Updates(f)
 		}
-
-		// if already exists
 	}
 }

@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
@@ -27,11 +25,17 @@ type UserBcrypt struct {
 }
 
 type UserSurvey struct {
-	Username  string
-	Zip       string
-	Age       int
-	Gender    string
-	Ethnicity string
+	Username string
+	Zip string
+	Age int
+	Gender int
+	Ethnicity int 
+	Income int
+	Education int
+	Religiousity int
+	Religion int
+	State string
+	PoliticalAffil int
 }
 
 var db *gorm.DB
@@ -50,11 +54,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotds{}, &QotdsAnswerOptions{}, &QotdsAnswers{}, &SurveyQuestions{}, &SurveyAnswers{}, &Kinship{}, &Chat{})
+	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotds{}, &QotdsAnswerOptions{}, &QotdsAnswers{}, &FeedbackQuestions{}, &FeedbackAnswers{}, &Kinship{}, &Chat{})
 
 	defer db.Close()
-
-	log.Printf("Connected")
 
 	//server
 	r := http.NewServeMux()
@@ -66,16 +68,16 @@ func main() {
 		SigningMethod: jwt.SigningMethodHS256,
 	})
 
-	r.Handle("/api/survey", negroni.New(
+	r.Handle("/api/profile", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(http.HandlerFunc(survey))))
+		negroni.Wrap(http.HandlerFunc(profile))))
 
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
 	http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
-	http.Handle("/api/survey", r)
-	http.Handle("/api/kinships", kinships)
+	http.Handle("/api/profile", r)
+	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
 
