@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"log"
+	"net/http"
 )
 
 type User struct {
@@ -25,16 +26,16 @@ type UserBcrypt struct {
 }
 
 type UserSurvey struct {
-	Username string
-	Zip string
-	Age int
-	Gender int
-	Ethnicity int 
-	Income int
-	Education int
-	Religiousity int
-	Religion int
-	State string
+	Username       string
+	Zip            string
+	Age            int
+	Gender         int
+	Ethnicity      int
+	Income         int
+	Education      int
+	Religiousity   int
+	Religion       int
+	State          string
 	PoliticalAffil int
 }
 

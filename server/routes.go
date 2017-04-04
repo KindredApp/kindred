@@ -2,14 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"time"
-
-	"github.com/dgrijalva/jwt-go"
 	// "fmt"
 	"net/http"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 //-----
