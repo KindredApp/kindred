@@ -139,7 +139,6 @@ func profile(w http.ResponseWriter, req *http.Request) {
 }
 
 func feedback(w http.ResponseWriter, req *http.Request) {
-
 	if req.Method == http.MethodGet {
 		var randQuestion FeedbackQuestion
 		var questionCount int
@@ -155,14 +154,20 @@ func feedback(w http.ResponseWriter, req *http.Request) {
 	} else {
 		// post feedback answer
 		var newAnswer FeedbackAnswer
+		var user UserAuth
+		var question FeedbackQuestion
 		decoder := json.NewDecoder(req.Body)
 		defer req.Body.Close()
 		err := decoder.Decode(&newAnswer)
 		if err != nil {
 			panic(err)
 		}
-		db.NewRecord(newAnswer)
-		db.Create(&newAnswer)
+		db.Model(&newAnswer).Related(&user)
+		db.Model(&newAnswer).Related(&question)
+		if user.ID != 0 && question.ID != 0 {
+			db.NewRecord(newAnswer)
+			db.Create(&newAnswer)
+		}
 	}
 }
 
