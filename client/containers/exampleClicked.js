@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 
 class ExampleClicked extends React.Component {
   render () {
+    console.log(this.props, 'merged with redux');
     if (!this.props.mockClicked) {
       return <h4>click on one of the list items to see the magic of Redux!!!!!</h4>;
     }

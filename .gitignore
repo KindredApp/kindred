@@ -5,6 +5,8 @@ bower_components/
 build/
 dist/
 
+bundles
+
 .vscode/
 glide.lock
 vendor/
