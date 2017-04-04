@@ -7,10 +7,9 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	// "fmt"
-	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 //-----
