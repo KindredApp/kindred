@@ -30,6 +30,7 @@ export default class Main extends React.Component {
     this.setCallee = this.setCallee.bind(this);
     this.setCaller = this.setCaller.bind(this);
     this.login = this.login.bind(this);
+    this.endCall = this.endCall.bind(this);
   }
 
   changedMessage() {
@@ -88,23 +89,30 @@ export default class Main extends React.Component {
         subscribe_key: pubnubConfig.subscribeKey,
         ssl: true
     });	
-    phone.ready(() => {
+   
+    let ctrl = window.ctrl = CONTROLLER(phone);
+	  ctrl.ready(() => {
       console.log('Phone ready');
     });
-    let video_out = document.getElementById("videoBox");
-    phone.receive((session) => {
-        session.connected((session) => {
-          console.log('Connected. Caller: ', this.state.caller);
-          video_out.appendChild(session.video);
-        });
-        session.ended((session) => {
-          this.refs.video.innerHTML='';
-        });
-    });
+    let videoBox = document.getElementById("videoBox");
+    let videoThumbnail = document.getElementById("videoThumbnail");
+	  ctrl.receive((session) => {
+		  session.connected((session) => {
+        console.log('Connected. Caller: ', this.state.caller);
+        videoBox.appendChild(session.video);
+      });
+	    session.ended((session) => {
+        this.refs.video.innerHTML='';
+      });
+	  });
   }
 
   makeCall() {
     phone.dial(this.state.callee);
+  }
+
+  endCall() {
+
   }
 
   render() {
@@ -131,6 +139,9 @@ export default class Main extends React.Component {
           <input type="submit" value="Call" onClick={this.makeCall}/>
         <div id="videoBox" ref="video">
         </div>
+        <div id="videoThumbnail">
+        </div>
+        <button onClick={this.endCall}>End Call</button>
       </div>
       );
   }
