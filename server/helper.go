@@ -1,5 +1,46 @@
 package main
 
+type User struct {
+	Username string
+	Name     string
+	Email    string
+	Password string
+}
+
+type UserBcrypt struct {
+	Username string
+	Name     string
+	Email    string
+	Password []byte
+}
+
+type UserSurvey struct {
+	Username string
+	Zip string
+	Age int
+	Gender int
+	Ethnicity int 
+	Income int
+	Education int
+	Religiousity int
+	Religion int
+	State string
+	PoliticalAffil int
+}
+
+// type UserCache struct {
+//   Name string
+//   Token string
+// }
+
+// func populateCache(user map[string]string) *UserCache {
+//   var err error
+//   uc := new(UserCache)
+//   uc.Name = user["Name"]
+//   uc.Token = user["Token"]
+//   return uc
+// }
+
 func defaultSurvey(a UserSurvey) UserProfile {
   var up UserProfile
 

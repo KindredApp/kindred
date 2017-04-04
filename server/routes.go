@@ -95,10 +95,19 @@ func login(w http.ResponseWriter, req *http.Request) {
 			"exp":      time.Now().Add(time.Hour * 72).Unix(),
 		})
 
+		//sign token
 		tokenString, err := token.SignedString(mySigningKey)
+
+		//store in db and set header
 		w.Header().Set("Content-Type", "application/json")
 		j, _ := json.Marshal(tokenString)
 		db.Model(&un).Update("Token", j)
+
+		//store token in cache
+		rj := j[1:len(j)-1]
+		conn.Cmd("HMSET", u.Username, "Token", rj, "Name", u.Name)
+
+		//send token back as response
 		w.Write(j)
 	}
 }

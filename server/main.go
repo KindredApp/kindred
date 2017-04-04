@@ -6,46 +6,31 @@ import (
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
+	"log"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"net/http"
+	"github.com/mediocregopher/radix.v2/redis"
+
 )
 
-type User struct {
-	Username string
-	Name     string
-	Email    string
-	Password string
-}
-
-type UserBcrypt struct {
-	Username string
-	Name     string
-	Email    string
-	Password []byte
-}
-
-type UserSurvey struct {
-	Username       string
-	Zip            string
-	Age            int
-	Gender         int
-	Ethnicity      int
-	Income         int
-	Education      int
-	Religiousity   int
-	Religion       int
-	State          string
-	PoliticalAffil int
-}
-
+//global connection variables
 var db *gorm.DB
 var err error
+var conn *redis.Client
+
 
 func main() {
 	// Set environment variable(s)- remove key BEFORE committing!!
 
 	// os.Setenv("JWT_AUTH_KEY", "!! REPLACE WITH SECRET KEY !!")
 	// fmt.Println(os.Getenv("JWT_AUTH_KEY"))
+
+	//redis
+	conn, err = redis.Dial("tcp", "localhost:6379")
+	if err != nil {
+		log.Panic(err)
+	}
+	defer conn.Close()
 
 	//db
 	dbinfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
@@ -83,21 +68,3 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 
 }
-
-//redirects
-//http.Redirect(w, req, "/", http.MovedPermanently, http.StatusSeeOther, or http.StatusTemporaryRedirect)
-//lower level
-//w.Header().Set("Location", "/")
-//w.WriteHeader(http.StatusSeeOther)
-
-// 1) On client, ask for userName and password
-// 2) Exchange the userName and password for a time-limited access token via HTTPS. Use jwt-go on the server
-//     to create the token. Use bcrypt to encrypt and compare passwords.
-// 3) Add the recieved access token to the request header for any RESTful API requiring authorization
-// {
-// 	"iss": "http://kindrechat.io",
-// 	"user": "xxxxxx"
-// }
-// 4) On the server, add an access token checker middleware for those routes. JWT tokens have an expire (exp)
-//     and not before (nbf) timestamp. JWT validates those when it parses the token from the header.
-// 5) On client, periodically refresh the token. Our tokens expire in 5 minutes. I refresh them every 4 minutes.
