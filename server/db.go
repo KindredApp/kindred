@@ -15,6 +15,7 @@ type UserAuth struct {
 	QotdAnswers     []QotdAnswer
 	FeedbackAnswers []FeedbackAnswer
 	Kinships        []Kinship
+	Messages        []Message
 	Chats           []Chat
 }
 
@@ -92,6 +93,14 @@ type Kinship struct {
 	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
 	Friend     uint `gorm:"not null"`
+	Messages   []Message
+}
+
+type Message struct {
+	gorm.Model
+	UserAuth   UserAuth
+	UserAuthID uint `gorm:"not null"`
+	Text       string
 }
 
 type Chat struct {
