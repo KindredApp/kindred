@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PubNub from 'pubnub';
-import pubnubConfig from '../../pubnubConfig.js';
+import pubnubConfig from '../../../pubnubConfig.js';
 
 export default class Main extends React.Component {
   constructor(props) {

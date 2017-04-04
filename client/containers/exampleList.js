@@ -13,6 +13,7 @@ class ExampleList extends Component {
   }
 
   render () {
+    console.log('CHECKING STATE', this.props);
     return (
       <ul>
         {this.createExampleListItems()}

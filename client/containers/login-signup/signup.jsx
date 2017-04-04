@@ -18,7 +18,7 @@ class SignUp extends React.Component {
         console.log(values);
         axios.post('/api/signup', values).then((response) => {
           console.log(response);
-          window.location = 'http://localhost:8080/'; //HARD CODED FOR LOCAL HOST, CORRECT LATER
+          // window.location = 'http://localhost:8080/'; //HARD CODED FOR LOCAL HOST, CORRECT LATER
         });
       }
     });
