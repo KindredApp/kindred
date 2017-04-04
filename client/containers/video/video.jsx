@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PubNub from 'pubnub';
 import pubnubConfig from '../../../pubnubConfig.js';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
-export default class Main extends React.Component {
+class Video extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,7 +23,9 @@ export default class Main extends React.Component {
     this.pubnub = new PubNub({
         publishKey: pubnubConfig.publishKey,
         subscribeKey: pubnubConfig.subscribeKey,
-        ssl: true
+        ssl: true,
+        uuid: this.props.user.token.slice(-20),
+        presenceTimeout: 1
     });
 
     this.changedMessage = this.changedMessage.bind(this);
@@ -53,17 +57,17 @@ export default class Main extends React.Component {
 
   sendMessage() {
     this.pubnub.publish({
-      channel: 'chat',
+      channel: 'queue',
       message: {
-        text: this.state.currentMessage,
-        sender: this.pubnub.getUUID()
+        text: 'Joined queue',
+        user: this.props.user.userObj
       }
     });
-    this.setState({
-      currentMessage: ''
-    });
+    // this.setState({
+    //   currentMessage: ''
+    // });
     this.pubnub.subscribe({
-      channels: ['chat'],
+      channels: ['queue'],
       withPresence: true
     });
     this.pubnub.addListener({
@@ -83,13 +87,58 @@ export default class Main extends React.Component {
 
   login(e) {
     e.preventDefault();
+
+    this.pubnub.publish({
+      channel: 'queue',
+      message: {
+        text: 'Joined queue',
+        user: this.props.user.userObj
+      }
+    });
+    this.pubnub.subscribe({
+      channels: ['queue'],
+      withPresence: true
+    });
+     this.pubnub.addListener({
+      message: (e) => {
+        console.log('Message: ', e.message);
+      }
+    });
+
+    this.pubnub.setState(
+      {
+        state: this.props.user.userObj,
+        channels: ['queue']
+      },
+      function (status) {
+        console.log('Status changed or something');
+      }
+    );
+
+    this.pubnub.hereNow(
+    {
+        channels: ["queue"], 
+        includeUUIDs: true,
+        includeState: true
+    },
+    function (status, response) {
+        console.log('Here now status: ', status);
+        console.log('Here now response: ', response);
+    }
+);
+
+
+
+
+
+
+
     var phone = window.phone = PHONE({
-        number: this.state.caller || "Anonymous",
+        number: this.props.user.userObj.Username || "Anonymous",
         publish_key: pubnubConfig.publishKey,
         subscribe_key: pubnubConfig.subscribeKey,
-        ssl: true
+        ssl: true,
     });	
-   
     var videoBox = document.getElementById("videoBox");
     var videoThumbnail = document.getElementById("videoThumbnail");
     var ctrl = window.ctrl = CONTROLLER(phone);
@@ -99,7 +148,7 @@ export default class Main extends React.Component {
     });
 	  ctrl.receive((session) => {
 		  session.connected((session) => {
-        console.log('Connected. Caller: ', this.state.caller);
+        console.log('Connected. Caller: ', this.props.user.userObj.Username);
         videoBox.appendChild(session.video);
       });
 	    session.ended((session) => {
@@ -111,6 +160,9 @@ export default class Main extends React.Component {
   }
 
   makeCall() {
+    this.pubnub.unsubscribe({
+      channel: 'queue'
+    });
     phone.dial(this.state.callee);
   }
 
@@ -138,7 +190,6 @@ export default class Main extends React.Component {
           <button onClick={this.sendMessage}>send</button>
         </div>
         <h1>Video Call</h1>
-          <input type="text" name="number" placeholder="Enter your name" onChange={this.setCaller}/>
           <input type="submit" value="Log in" onClick={this.login} />
           <input type="text" name="number" placeholder="Enter user to call" onChange={this.setCallee}/>
           <input type="submit" value="Call" onClick={this.makeCall}/>
@@ -151,3 +202,15 @@ export default class Main extends React.Component {
       );
   }
 }
+
+function mapStateToProps (state) {
+  return {
+    user: state.userReducer
+  };
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({}, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Video);
