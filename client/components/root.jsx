@@ -5,6 +5,7 @@ import { Form } from 'antd';
 import App from './app.jsx';
 import SignUp from '../containers/login-signup/signup.jsx';
 import Login from '../containers/login-signup/login.jsx';
+import Video from '../containers/video/video.jsx';
 
 const Root = ({store}) => {
   const SignUpForm = Form.create()(SignUp);
@@ -21,6 +22,7 @@ const Root = ({store}) => {
           <Route exact path="/" component={App} />
           <Route path="/signup" component={SignUpForm} />
           <Route path="/login" component={LoginForm} />
+          <Route path="/video" component={Video} />
         </div>
       </Router>
     </Provider>

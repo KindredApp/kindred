@@ -2,6 +2,9 @@ import React from 'react';
 import {Form, Input, Button} from 'antd';
 import axios from 'axios';
 import { Link, hashHistory } from 'react-router-dom';
+import {actionUser} from '../../actions/actionUser.js';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 const FormItem = Form.Item;
 
@@ -19,7 +22,13 @@ class Login extends React.Component {
         console.log('validated: ', values);
         axios.post('/api/login', values).then((response) => {
           console.log('GO RESPONSE: ', response);
-          window.location = 'http://localhost:8080/'; //HARD CODED FOR LOCAL HOST, CORRECT LATER
+          console.log('PROPS: ', this.props);
+          // window.location = 'http://localhost:8080/'; //HARD CODED FOR LOCAL HOST, CORRECT LATER
+          this.props.actionUser({
+            token: response.data,
+            userObj: JSON.parse(response.config.data),
+            timestamp: response.headers.date
+          });
         });
       }
     });
@@ -47,4 +56,13 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+function mapStateToProps (state) {
+  return {
+  };
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({actionUser: actionUser}, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
