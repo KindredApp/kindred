@@ -1,11 +1,11 @@
 package main
 
-import "os"
+// import "os"
 
 // Fill in the key string in place of 'os.Getenv("JWT_AUTH_KEY")
 // and CHANGE BACK BEFORE COMMITTING!!!
 // or set environment variable
-var mySigningKey = []byte(os.Getenv("JWT_AUTH_KEY"))
+var mySigningKey = []byte("")
 
 const (
 	DB_HOST     = "localhost"

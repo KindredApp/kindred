@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
@@ -30,19 +28,15 @@ type UserSurvey struct {
 	Username string
 	Zip string
 	Age int
-	Gender string
-	Ethnicity string 
+	Gender int
+	Ethnicity int 
 	Income int
 	Education int
-	Spirituality int
-	ReligiousAffil int
+	Religiousity int
+	Religion int
 	State string
 	PoliticalAffil int
 }
-
-// type UserOptSurvey struct {
-
-// }
 
 var db *gorm.DB
 var err error
@@ -60,11 +54,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotds{}, &QotdsAnswerOptions{}, &QotdsAnswers{}, &SurveyQuestions{}, &SurveyAnswers{}, &Kinship{}, &Chat{})
+	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotds{}, &QotdsAnswerOptions{}, &QotdsAnswers{}, &FeedbackQuestions{}, &FeedbackAnswers{}, &Kinship{}, &Chat{})
 
 	defer db.Close()
-
-	log.Printf("Connected")
 
 	//server
 	r := http.NewServeMux()
@@ -85,7 +77,7 @@ func main() {
 	http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/profile", r)
-	http.Handle("/api/kinships", kinships)
+	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
 
