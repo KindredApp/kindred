@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"net/http"
 )
 
 type User struct {
@@ -25,16 +25,16 @@ type UserBcrypt struct {
 }
 
 type UserSurvey struct {
-	Username string
-	Zip string
-	Age int
-	Gender int
-	Ethnicity int 
-	Income int
-	Education int
-	Religiousity int
-	Religion int
-	State string
+	Username       string
+	Zip            string
+	Age            int
+	Gender         int
+	Ethnicity      int
+	Income         int
+	Education      int
+	Religiousity   int
+	Religion       int
+	State          string
 	PoliticalAffil int
 }
 
@@ -54,7 +54,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotds{}, &QotdsAnswerOptions{}, &QotdsAnswers{}, &FeedbackQuestions{}, &FeedbackAnswers{}, &Kinship{}, &Chat{})
+	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotd{}, &QotdAnswerOption{}, &QotdAnswer{}, &FeedbackQuestion{}, &FeedbackAnswer{}, &Kinship{}, &Chat{})
 
 	defer db.Close()
 
@@ -77,6 +77,7 @@ func main() {
 	http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/profile", r)
+	http.HandleFunc("/api/feedback", feedback)
 	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
