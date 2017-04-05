@@ -182,6 +182,48 @@ func feedback(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func wsConnections(w http.ResponseWriter, r *http.Request) {
+	//upgrades get request to a websocket connection
+
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer conn.Close()
+
+	clients[conn] = true
+
+	for {
+		var msg Message
+
+		err := conn.ReadJSON(&msg)
+
+		if err != nil {
+			fmt.Println(err)
+			delete(clients, conn)
+			break
+		}
+
+		broadcast <- msg
+	}
+}
+
+func wsMessages() {
+	for {
+		msg := <- broadcast
+
+		for client := range clients {
+			err := client.WriteJSON(msg)
+			if err != nil {
+				fmt.Println(err);
+				client.Close()
+				delete(clients, client)
+			}
+		}
+	}
+}
+
 // Other potential 'feedback' routes:
 // get all feedback questions
 // get all feedback answers to a particular question

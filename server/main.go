@@ -1,14 +1,16 @@
 package main
 
 import (
+	"log"
 	"fmt"
+	"net/http"
+
+	"github.com/gorilla/websocket"
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
-	"log"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"net/http"
 	"github.com/mediocregopher/radix.v2/redis"
 
 )
@@ -17,6 +19,9 @@ import (
 var db *gorm.DB
 var err error
 var conn *redis.Client
+var clients = make(map[*websocket.Conn]bool)
+var broadcast = make(chan Message)
+var upgrader = websocket.Upgrader{}  
 
 
 func main() {
@@ -53,6 +58,9 @@ func main() {
 		SigningMethod: jwt.SigningMethodHS256,
 	})
 
+	//websockets
+	go wsMessages()
+
 	r.Handle("/api/profile", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(profile))))
@@ -63,6 +71,7 @@ func main() {
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/profile", r)
 	http.HandleFunc("/api/feedback", feedback)
+	http.HandleFunc("api/ws", wsConnections)
 	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
