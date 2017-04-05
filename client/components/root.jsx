@@ -40,34 +40,6 @@ class Root extends Component {
   } 
 }
 
-
-/*const Root = ({store}) => {
-
-  const SignUpForm = Form.create()(SignUp);
-  const LoginForm = Form.create()(Login);
-
-  return (
-    <Provider store={store}>
-      <Router>
-        <div>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/login">Login</Link>
-            <Link to="/signup">Sign Up</Link>
-            <Link to="/video">Video</Link>
-          </nav>
-          <Route exact path="/" component={App} />
-          <Route path="/signup" component={SignUpForm} />
-          <Route path="/login" component={LoginForm} />
-          <Route path="/video" component={Video} />
-        </div>
-      </Router>
-    </Provider>
-  );
-}; */
-
-// export default Root;
-
 function mapStateToProps (state) {
   return {
     user: state.userReducer
