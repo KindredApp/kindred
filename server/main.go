@@ -1,18 +1,17 @@
 package main
 
 import (
-	"log"
 	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/gorilla/websocket"
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/websocket"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/mediocregopher/radix.v2/redis"
-
 )
 
 //global connection variables
@@ -21,8 +20,7 @@ var err error
 var conn *redis.Client
 var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan Message)
-var upgrader = websocket.Upgrader{}  
-
+var upgrader = websocket.Upgrader{}
 
 func main() {
 	// Set environment variable(s)- remove key BEFORE committing!!
@@ -71,11 +69,8 @@ func main() {
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/profile", r)
 	http.HandleFunc("/api/feedback", feedback)
-<<<<<<< HEAD
 	http.HandleFunc("api/ws", wsConnections)
-=======
 	http.HandleFunc("/api/qotd", qotd)
->>>>>>> Set up API for GET random question of the day
 	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
