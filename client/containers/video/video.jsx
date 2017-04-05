@@ -4,10 +4,12 @@ import PubNub from 'pubnub';
 import pubnubConfig from '../../../pubnubConfig.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import { Redirect } from 'react-router-dom'; 
 
 class Video extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       messages: [
         {
@@ -17,17 +19,18 @@ class Video extends React.Component {
       currentMessage: '',
       username: '',
       users: [],
-      video: null
+      video: null,
     };
 
     this.pubnub = new PubNub({
       publishKey: pubnubConfig.publishKey,
       subscribeKey: pubnubConfig.subscribeKey,
       ssl: true,
-      uuid: this.props.user.token.slice(-20),
+      uuid: this.tokenHolder(),
       presenceTimeout: 1
     });
 
+    this.tokenHolder = this.tokenHolder.bind(this);
     this.changedMessage = this.changedMessage.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.makeCall = this.makeCall.bind(this);
@@ -35,6 +38,14 @@ class Video extends React.Component {
     this.setCaller = this.setCaller.bind(this);
     this.login = this.login.bind(this);
     this.endCall = this.endCall.bind(this);
+  }
+
+  tokenHolder() {
+    //THIS IS UGLY FIX IT
+    if (this.props.user) {
+      return this.props.user.token.slice(-20);
+    }
+    return null;
   }
 
   changedMessage() {
