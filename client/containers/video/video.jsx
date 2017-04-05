@@ -11,21 +11,21 @@ class Video extends React.Component {
     this.state = {
       messages: [
         {
-          text: "test",
+          text: 'test',
         }
       ],
-      currentMessage: "",
-      username: "",
+      currentMessage: '',
+      username: '',
       users: [],
       video: null
     };
 
     this.pubnub = new PubNub({
-        publishKey: pubnubConfig.publishKey,
-        subscribeKey: pubnubConfig.subscribeKey,
-        ssl: true,
-        uuid: this.props.user.token.slice(-20),
-        presenceTimeout: 1
+      publishKey: pubnubConfig.publishKey,
+      subscribeKey: pubnubConfig.subscribeKey,
+      ssl: true,
+      uuid: this.props.user.token.slice(-20),
+      presenceTimeout: 1
     });
 
     this.changedMessage = this.changedMessage.bind(this);
@@ -46,13 +46,13 @@ class Video extends React.Component {
   setCallee(e) {
     this.setState({
       callee: e.target.value
-    })
+    });
   }
 
   setCaller(e) {
     this.setState({
       caller: e.target.value
-    })
+    });
   }
 
   sendMessage() {
@@ -99,7 +99,7 @@ class Video extends React.Component {
       channels: ['queue'],
       withPresence: true
     });
-     this.pubnub.addListener({
+    this.pubnub.addListener({
       message: (e) => {
         console.log('Message: ', e.message);
       }
@@ -116,14 +116,14 @@ class Video extends React.Component {
     );
 
     this.pubnub.hereNow(
-    {
-        channels: ["queue"], 
+      {
+        channels: ['queue'], 
         includeUUIDs: true,
         includeState: true
-    },
+      },
     function (status, response) {
-        console.log('Here now status: ', status);
-        console.log('Here now response: ', response);
+      console.log('Here now status: ', status);
+      console.log('Here now response: ', response);
     }
 );
 
@@ -134,28 +134,28 @@ class Video extends React.Component {
 
 
     var phone = window.phone = PHONE({
-        number: this.props.user.userObj.Username || "Anonymous",
-        publish_key: pubnubConfig.publishKey,
-        subscribe_key: pubnubConfig.subscribeKey,
-        ssl: true,
+      number: this.props.user.userObj.Username || 'Anonymous',
+      publish_key: pubnubConfig.publishKey,
+      subscribe_key: pubnubConfig.subscribeKey,
+      ssl: true,
     });	
-    var videoBox = document.getElementById("videoBox");
-    var videoThumbnail = document.getElementById("videoThumbnail");
+    var videoBox = document.getElementById('videoBox');
+    var videoThumbnail = document.getElementById('videoThumbnail');
     var ctrl = window.ctrl = CONTROLLER(phone);
 	  ctrl.ready(() => {
-      console.log('Phone ready');
-      ctrl.addLocalStream(videoThumbnail);
-    });
+    console.log('Phone ready');
+    ctrl.addLocalStream(videoThumbnail);
+  });
 	  ctrl.receive((session) => {
 		  session.connected((session) => {
-        console.log('Connected. Caller: ', this.props.user.userObj.Username);
-        videoBox.appendChild(session.video);
-      });
+    console.log('Connected. Caller: ', this.props.user.userObj.Username);
+    videoBox.appendChild(session.video);
+  });
 	    session.ended((session) => {
-        this.refs.video.innerHTML='';
-        this.refs.userVideo.innerHTML='';
-        ctrl.getVideoElement(session.number).remove();
-      });
+      this.refs.video.innerHTML = '';
+      this.refs.userVideo.innerHTML = '';
+      ctrl.getVideoElement(session.number).remove();
+    });
 	  });
   }
 
@@ -168,38 +168,42 @@ class Video extends React.Component {
 
   endCall() {
     ctrl.hangup();
-    this.refs.video.innerHTML='';
-    this.refs.userVideo.innerHTML='';
+    this.refs.video.innerHTML = '';
+    this.refs.userVideo.innerHTML = '';
   }
 
   render() {
-    return (
-      <div>
-        <h1>Chat</h1>
+    if (!this.props.user) {
+      return (<Redirect to='/login' />);
+    } else {
+      return (
         <div>
-          {this.state.messages.map((message, idx) => {return <p key={idx}>{message.text}</p>})}
+          <h1>Chat</h1>
+          <div>
+            {this.state.messages.map((message, idx) => { return <p key={idx}>{message.text}</p>; })}
+          </div>
+          <div>
+            <input
+              type="text"
+              ref="input"
+              value={this.state.currentMessage}
+              placeholder="Message"
+              onChange={this.changedMessage}
+            />
+            <button onClick={this.sendMessage}>send</button>
+          </div>
+          <h1>Video Call</h1>
+            <input type="submit" value="Log in" onClick={this.login} />
+            <input type="text" name="number" placeholder="Enter user to call" onChange={this.setCallee}/>
+            <input type="submit" value="Call" onClick={this.makeCall}/>
+          <div id="videoBox" ref="video">
+          </div>
+          <div id="videoThumbnail" ref="userVideo">
+          </div>
+          <button onClick={this.endCall}>End Call</button>
         </div>
-        <div>
-          <input
-            type="text"
-            ref="input"
-            value={this.state.currentMessage}
-            placeholder="Message"
-            onChange={this.changedMessage}
-          />
-          <button onClick={this.sendMessage}>send</button>
-        </div>
-        <h1>Video Call</h1>
-          <input type="submit" value="Log in" onClick={this.login} />
-          <input type="text" name="number" placeholder="Enter user to call" onChange={this.setCallee}/>
-          <input type="submit" value="Call" onClick={this.makeCall}/>
-        <div id="videoBox" ref="video">
-        </div>
-        <div id="videoThumbnail" ref="userVideo">
-        </div>
-        <button onClick={this.endCall}>End Call</button>
-      </div>
       );
+    }
   }
 }
 
