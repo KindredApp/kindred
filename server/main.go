@@ -12,6 +12,11 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/mediocregopher/radix.v2/redis"
+<<<<<<< HEAD
+=======
+	"log"
+	"net/http"
+>>>>>>> Resolve merge conflict
 )
 
 //global connection variables
@@ -71,6 +76,7 @@ func main() {
 	http.HandleFunc("/api/feedback", feedback)
 	http.HandleFunc("api/ws", wsConnections)
 	http.HandleFunc("/api/qotd", qotd)
+	http.HandleFunc("api/ws", wsConnections)
 	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
