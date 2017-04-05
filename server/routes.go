@@ -229,3 +229,61 @@ func wsMessages() {
 // get all feedback answers to a particular question
 // get all feedback answers to a particular question on particular day
 // post feedback questions
+type QuestionWOptions struct {
+	QId     uint
+	QType   string
+	QText   string
+	Options []string
+}
+
+func qotd(w http.ResponseWriter, req *http.Request) {
+	if req.Method == http.MethodGet {
+		// 	Later check if a particular question is request or a question from a particular category
+		var randQuestionFromDb Qotd
+		var questionCount int
+		var answerOptionsFromDB []QotdAnswerOption
+		var answerOptions []string
+		db.Table("qotds").Count(&questionCount)
+		db.Find(&randQuestionFromDb, rand.Intn(questionCount)+1)
+		db.Model(&randQuestionFromDb).Related(&answerOptionsFromDB)
+
+		for _, v := range answerOptionsFromDB {
+			answerOptions = append(answerOptions, v.Text)
+		}
+
+		questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
+
+		q, err := json.Marshal(questionWOptions)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(q)
+	} else {
+		var newAnswer QotdAnswer
+		var user UserAuth
+		var questionAnswered Qotd
+		var responseString string
+		decoder := json.NewDecoder(req.Body)
+		defer req.Body.Close()
+		err := decoder.Decode(&newAnswer)
+		if err != nil {
+			panic(err)
+		}
+		db.Model(&newAnswer).Related(&questionAnswered)
+		db.Model(&newAnswer).Related(&user)
+		if questionAnswered.ID != 0 && user.ID != 0 {
+			db.NewRecord(newAnswer)
+			db.Create(&newAnswer)
+			responseString = "Answer successfully posted to db"
+		} else {
+			responseString = "Failed to post answer. Incorrect user or question id."
+		}
+		w.Header().Set("Content-Type", "application/json")
+		response, _ := json.Marshal(responseString)
+		w.Write(response)
+	}
+}
+
+// func seedQotdTable()

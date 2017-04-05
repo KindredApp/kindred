@@ -12,14 +12,17 @@ type UserAuth struct {
 	Email      string `gorm:"not null"`
 	Password   string `gorm:"not null"`
 	Token      string `gorm:"not null"`
+	// QotdAnswers []QotdAnswer
+	// FeedbackAnswers []FeedbackAnswer
+	// Kinships []Kinship
+	// Messages []Message
+	// Chats    []Chat
 }
-
-// db.Where("name = ?", "jinzhu").Find(&UserAuth)
 
 type UserProfile struct {
 	gorm.Model
 	UserAuth       UserAuth
-	UserAuthID     uint   `gorm:"AUTO_INCREMENT"`
+	UserAuthID     uint
 	Zip            string `gorm:"not null"`
 	Age            int    `gorm:"not null"`
 	Gender         int    `gorm:"not null"`
@@ -37,6 +40,8 @@ type Qotd struct {
 	QuestionType string `gorm:"not null"`
 	Category     string
 	Text         string `gorm:"not null"`
+	// QotdAnswerOptions []QotdAnswerOption
+	// QotdAnswers       []QotdAnswer
 }
 
 type QotdAnswerOption struct {
@@ -59,25 +64,26 @@ type FeedbackQuestion struct {
 	gorm.Model
 	Text         string `gorm:"not null"`
 	QuestionType string `gorm:"not null"`
+	// FeedbackAnswers []FeedbackAnswer
 }
 
 type FeedbackAnswer struct {
 	gorm.Model
-	UserAuth           UserAuth
-	UserAuthID         uint `gorm:"not null"`
-	FeedbackQuestion   FeedbackQuestion
+	UserAuth   UserAuth
+	UserAuthID uint `gorm:"not null"`
+	// FeedbackQuestion   FeedbackQuestion
 	FeedbackQuestionID uint   `gorm:"not null"`
 	Answer             string `gorm:"not null"`
 }
 
 type ZipData struct {
 	gorm.Model
-	MedianAge      int // if age not given, use median age
-	AverageIncome  int // if income not given use average income
-	Education      int // if education not given, use most common education
-	Religiousity   int // if religion not given, pair randomly
-	Religion       int // don't assign (if pick most common and the person is not most, common)
-	Ethnicity      int // if Ethnicity
+	MedianAge      int
+	AverageIncome  int
+	Education      int
+	Religiousity   int
+	Religion       int
+	Ethnicity      int
 	State          string
 	PoliticalAffil int
 }
@@ -87,7 +93,15 @@ type Kinship struct {
 	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
 	Friend     uint `gorm:"not null"`
+	// Messages   []Message
 }
+
+// type Message struct {
+// 	gorm.Model
+// 	UserAuth   UserAuth
+// 	UserAuthID uint `gorm:"not null"`
+// 	Text       string
+// }
 
 type Chat struct {
 	gorm.Model
