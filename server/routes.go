@@ -63,6 +63,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 		// still need to implement JSON web token to see if user is already logged in
 		var u User
 		var un UserAuth
+		var usp UserProfile
 
 		decoder := json.NewDecoder(req.Body)
 		defer req.Body.Close()
@@ -103,9 +104,16 @@ func login(w http.ResponseWriter, req *http.Request) {
 		j, _ := json.Marshal(tokenString)
 		db.Model(&un).Update("Token", j)
 
-		//store token in cache
+		//store token and user profile in cache
 		rj := j[1:len(j)-1]
-		conn.Cmd("HMSET", u.Username, "Token", rj, "Name", u.Name)
+		db.Where("user_auth_id = ?", un.ID).First(&usp)
+		out, err := json.Marshal(usp)
+		if err != nil {
+			panic(err)
+		}
+
+		conn.Cmd("HMSET", u.Username, "Token", rj, "Name", un.Name, "Profile", string(out))
+
 
 		//send token back as response
 		w.Write(j)
