@@ -21,8 +21,8 @@ type UserAuth struct {
 
 type UserProfile struct {
 	gorm.Model
-	// UserAuth       UserAuth
-	UserAuthID     uint   `gorm:"AUTO_INCREMENT"`
+	UserAuth       UserAuth
+	UserAuthID     uint
 	Zip            string `gorm:"not null"`
 	Age            int    `gorm:"not null"`
 	Gender         int    `gorm:"not null"`
@@ -46,18 +46,18 @@ type Qotd struct {
 
 type QotdAnswerOption struct {
 	gorm.Model
-	Text string `gorm:"not null"`
-	// Qotd   Qotd
+	Text   string `gorm:"not null"`
+	Qotd   Qotd
 	QotdID uint `gorm:"not null"`
 }
 
 type QotdAnswer struct {
 	gorm.Model
-	// UserAuth   UserAuth
+	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
-	// Qotd       Qotd
-	QotdID uint   `gorm:"not null"`
-	Text   string `gorm:"not null"`
+	Qotd       Qotd
+	QotdID     uint   `gorm:"not null"`
+	Text       string `gorm:"not null"`
 }
 
 type FeedbackQuestion struct {
@@ -69,7 +69,7 @@ type FeedbackQuestion struct {
 
 type FeedbackAnswer struct {
 	gorm.Model
-	// UserAuth   UserAuth
+	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
 	// FeedbackQuestion   FeedbackQuestion
 	FeedbackQuestionID uint   `gorm:"not null"`
@@ -90,23 +90,23 @@ type ZipData struct {
 
 type Kinship struct {
 	gorm.Model
-	// UserAuth   UserAuth
+	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
 	Friend     uint `gorm:"not null"`
 	// Messages   []Message
 }
 
-type Message struct {
-	gorm.Model
-	// UserAuth   UserAuth
-	UserAuthID uint `gorm:"not null"`
-	Text       string
-}
+// type Message struct {
+// 	gorm.Model
+// 	UserAuth   UserAuth
+// 	UserAuthID uint `gorm:"not null"`
+// 	Text       string
+// }
 
 type Chat struct {
 	gorm.Model
-	ChatDate string `gorm:"not null"`
-	// UserAuth   UserAuth
+	ChatDate   string `gorm:"not null"`
+	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
 	PairId     uint `gorm:"not null"`
 }

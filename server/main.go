@@ -12,11 +12,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/mediocregopher/radix.v2/redis"
-<<<<<<< HEAD
-=======
-	"log"
-	"net/http"
->>>>>>> Resolve merge conflict
 )
 
 //global connection variables
