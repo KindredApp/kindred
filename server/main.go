@@ -63,10 +63,6 @@ func main() {
 	r.Handle("/api/profile", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(profile))));
-	
-	// r.Handle("/api/tokenCheck", negroni.New(
-	// 	negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-	// 	negroni.Wrap(http.HandlerFunc(tokenCheck))));
 
 	//routes
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
@@ -78,7 +74,9 @@ func main() {
 	http.HandleFunc("/api/feedback", feedback)
 	http.HandleFunc("api/ws", wsConnections)
 	http.HandleFunc("api/qotd", qotd)
-	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
+	// http.Handle("/api/kinships", kinships)
+
+	//Initialize
 	http.ListenAndServe(":8080", nil)
 }

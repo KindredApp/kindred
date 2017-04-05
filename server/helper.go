@@ -39,45 +39,8 @@ type Cookie struct {
   Token string
 }
 
-// type UserCache struct {
-//   Name string
-//   Token string
-// }
-
-// func populateCache(user map[string]string) *UserCache {
-//   var err error
-//   uc := new(UserCache)
-//   uc.Name = user["Name"]
-//   uc.Token = user["Token"]
-//   return uc
-// }
-
 func defaultSurvey(a UserSurvey) UserProfile {
   var up UserProfile
-
-  // aSlice := []int{0, 18, 25, 35, 45, 55, 65}
-
-  // for i, v := range aSlice {
-  //   if a.Age >= v {
-  //     up.Age = i
-  //   }
-  // }
-
-  // gSlice := []string{"male", "female", "agender", "genderfluid", "transgender", "other"}
-
-  // for i, v := range gSlice {
-  //   if a.Gender == v {
-  //     up.Gender = i
-  //   }
-  // }
-
-  // eSlice := []string{"white", "hispanic or latino", "black or african american", "native american", "asian", "pacific islander", "other"}
-
-  // for i, v := range eSlice {
-  //   if a.Ethnicity == v {
-  //     up.Ethnicity = i
-  //   }
-  // }
 
   up.UserAuthID = a.ID
   up.Age = a.Age // Mandatory
