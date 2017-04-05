@@ -18,6 +18,7 @@ const Root = ({store}) => {
             <Link to="/">Home</Link>
             <Link to="/login">Login</Link>
             <Link to="/signup">Sign Up</Link>
+            <Link to="/video">Video</Link>
           </nav>
           <Route exact path="/" component={App} />
           <Route path="/signup" component={SignUpForm} />
