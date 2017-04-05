@@ -8,7 +8,7 @@ class ExampleList extends Component {
 
   createExampleListItems () {
     return this.props.examples.map((example) => {
-      return <li key={example.id} onClick={() => this.props.selectExample(example) }>{example.example} {example.sample}</li>;
+      return <li key={example.id} onClick={ () => this.props.selectExample(example) }>{example.example} {example.sample}</li>;
     });
   }
 
@@ -24,7 +24,8 @@ class ExampleList extends Component {
 
 function mapStateToProps (state) {
   return {
-    examples: state.examples
+    examples: state.examples,
+    user: state.userReducer
   };
 }
 
