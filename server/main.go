@@ -59,20 +59,24 @@ func main() {
 	//websockets
 	go wsMessages()
 
+	//protected route middleware
 	r.Handle("/api/profile", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(http.HandlerFunc(profile))))
+		negroni.Wrap(http.HandlerFunc(profile))));
 
+	//routes
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
 	http.HandleFunc("/api/login", login)
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/profile", r)
+	http.HandleFunc("/api/tokenCheck", tokenCheck)
 	http.HandleFunc("/api/feedback", feedback)
 	http.HandleFunc("api/ws", wsConnections)
 	http.HandleFunc("api/qotd", qotd)
-	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
-	http.ListenAndServe(":8080", nil)
+	// http.Handle("/api/kinships", kinships)
 
+	//Initialize
+	http.ListenAndServe(":8080", nil)
 }
