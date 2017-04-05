@@ -34,6 +34,11 @@ type Message struct {
   Message string `json:"message"`
 }
 
+type Cookie struct {
+  Username string
+  Token string
+}
+
 // type UserCache struct {
 //   Name string
 //   Token string

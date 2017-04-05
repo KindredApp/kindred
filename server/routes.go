@@ -3,15 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
 	"log"
+	"time"
 	"math/rand"
 	"net/http"
-	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
 
-//-----
+//----- SIGNUP -----//
 
 func signup(w http.ResponseWriter, req *http.Request) {
 	var u User
@@ -57,10 +58,12 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	return
 }
 
+//----- LOGIN -----//
+
+
 func login(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == http.MethodPost {
-		// still need to implement JSON web token to see if user is already logged in
 		var u User
 		var un UserAuth
 		var usp UserProfile
@@ -119,6 +122,42 @@ func login(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+
+//----- CHECK TOKEN -----//
+
+
+func tokenCheck(w http.ResponseWriter, req *http.Request) {
+	var c Cookie
+	var b bool
+
+	decoder := json.NewDecoder(req.Body)
+	defer req.Body.Close()
+	err := decoder.Decode(&c)
+	if err != nil {
+		panic(err)
+	}
+
+
+	if req.Method == http.MethodPost {
+		res, err := conn.Cmd("HGET", c.Username, "Token").Str()
+		if err != nil {
+			panic(err)
+		}
+		b = c.Token == res
+
+		w.Header().Set("Content-Type", "application/json")
+		j, _ := json.Marshal(b)
+		w.Write(j)
+	}
+
+	return
+
+}
+
+
+//----- PROFILE -----//
+
+
 func profile(w http.ResponseWriter, req *http.Request) {
 	var us UserSurvey
 	var un UserAuth
@@ -156,6 +195,10 @@ func profile(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+
+//----- FEEDBACK -----//
+
+
 func feedback(w http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodGet {
 		var randQuestion FeedbackQuestion
@@ -188,6 +231,10 @@ func feedback(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 }
+
+
+//----- MESSAGING -----//
+
 
 func wsConnections(w http.ResponseWriter, r *http.Request) {
 	//upgrades get request to a websocket connection
@@ -243,6 +290,10 @@ type QuestionWOptions struct {
 	QText   string
 	Options []string
 }
+
+
+//----- QUESTION OF THE DAY -----//
+
 
 func qotd(w http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodGet {
