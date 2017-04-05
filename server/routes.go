@@ -105,7 +105,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 		db.Model(&un).Update("Token", j)
 
 		//store token and user profile in cache
-		rj := j[1:len(j)-1]
+		rj := j[1 : len(j)-1]
 		db.Where("user_auth_id = ?", un.ID).First(&usp)
 		out, err := json.Marshal(usp)
 		if err != nil {
@@ -113,7 +113,6 @@ func login(w http.ResponseWriter, req *http.Request) {
 		}
 
 		conn.Cmd("HMSET", u.Username, "Token", rj, "Name", un.Name, "Profile", string(out))
-
 
 		//send token back as response
 		w.Write(j)
@@ -219,12 +218,12 @@ func wsConnections(w http.ResponseWriter, r *http.Request) {
 
 func wsMessages() {
 	for {
-		msg := <- broadcast
+		msg := <-broadcast
 
 		for client := range clients {
 			err := client.WriteJSON(msg)
 			if err != nil {
-				fmt.Println(err);
+				fmt.Println(err)
 				client.Close()
 				delete(clients, client)
 			}
@@ -237,3 +236,62 @@ func wsMessages() {
 // get all feedback answers to a particular question
 // get all feedback answers to a particular question on particular day
 // post feedback questions
+
+type QuestionWOptions struct {
+	QId     uint
+	QType   string
+	QText   string
+	Options []string
+}
+
+func qotd(w http.ResponseWriter, req *http.Request) {
+	if req.Method == http.MethodGet {
+		// 	Later check if a particular question is for a question from a particular category
+		var randQuestionFromDb Qotd
+		var questionCount int
+		var answerOptionsFromDB []QotdAnswerOption
+		var answerOptions []string
+		db.Table("qotds").Count(&questionCount)
+		db.Find(&randQuestionFromDb, rand.Intn(questionCount)+1)
+		db.Model(&randQuestionFromDb).Related(&answerOptionsFromDB)
+		fmt.Println(questionCount)
+		fmt.Println(answerOptionsFromDB)
+
+		for _, v := range answerOptionsFromDB {
+			answerOptions = append(answerOptions, v.Text)
+		}
+
+		questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
+
+		q, err := json.Marshal(questionWOptions)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(q)
+	} else {
+		var newAnswer QotdAnswer
+		var user UserAuth
+		var questionAnswered Qotd
+		var responseString string
+		decoder := json.NewDecoder(req.Body)
+		defer req.Body.Close()
+		err := decoder.Decode(&newAnswer)
+		if err != nil {
+			panic(err)
+		}
+		db.Model(&newAnswer).Related(&questionAnswered)
+		db.Model(&newAnswer).Related(&user)
+		if questionAnswered.ID != 0 && user.ID != 0 {
+			db.NewRecord(newAnswer)
+			db.Create(&newAnswer)
+			responseString = "Answer successfully posted to db"
+		} else {
+			responseString = "Failed to post answer. Incorrect user or question id."
+		}
+		w.Header().Set("Content-Type", "application/json")
+		response, _ := json.Marshal(responseString)
+		w.Write(response)
+	}
+}
