@@ -75,15 +75,15 @@ func defaultSurvey(a UserSurvey) UserProfile {
   // }
 
   up.UserAuthID = a.ID
-  up.Age = a.Age
-  up.Gender = a.Gender
-  up.Ethnicity = a.Ethnicity
-  up.Zip = a.Zip
+  up.Age = a.Age // Mandatory
+  up.Gender = a.Gender // Mandatory
+  up.Ethnicity = a.Ethnicity // Mandatory
+  up.Zip = a.Zip // Mandatory
+  up.State = a.State // Mandatory
   up.Income = a.Income
   up.Education = a.Education
   up.Religiousity = a.Religiousity
   up.Religion = a.Religion
-  up.State = a.State
   up.PoliticalAffil = a.PoliticalAffil
 
   return up
