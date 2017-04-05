@@ -71,7 +71,11 @@ func main() {
 	http.HandleFunc("/api/signup", signup)
 	http.Handle("/api/profile", r)
 	http.HandleFunc("/api/feedback", feedback)
+<<<<<<< HEAD
 	http.HandleFunc("api/ws", wsConnections)
+=======
+	http.HandleFunc("/api/qotd", qotd)
+>>>>>>> Set up API for GET random question of the day
 	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
