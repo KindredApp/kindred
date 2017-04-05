@@ -71,7 +71,6 @@ func main() {
 	http.HandleFunc("/api/feedback", feedback)
 	http.HandleFunc("api/ws", wsConnections)
 	http.HandleFunc("/api/qotd", qotd)
-	http.HandleFunc("api/ws", wsConnections)
 	// http.Handle("/api/kinships", kinships)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
