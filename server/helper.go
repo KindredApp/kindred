@@ -29,6 +29,11 @@ type UserSurvey struct {
 	PoliticalAffil int
 }
 
+type Message struct {
+  Username string `json:"username"`
+  Message string `json:"message"`
+}
+
 // type UserCache struct {
 //   Name string
 //   Token string
