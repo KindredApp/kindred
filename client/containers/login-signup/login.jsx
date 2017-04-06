@@ -17,18 +17,14 @@ class Login extends React.Component {
 
   handleSubmit (e) {
     e.preventDefault();
-    console.log('attempt login');
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log('validated: ', values);
         axios.post('/api/login', values).then((response) => {
-          console.log('GO RESPONSE: ', response);
-
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
 
           Cookies.set(userObj.Username, {Username: userObj.Username, Token: token});
-          let snacks = Cookies.getJSON();
+          let snacks = Cookies.getJSON(); 
 
           //makes sure only one cookie is available at one time
           for (let key in snacks) {
@@ -36,7 +32,6 @@ class Login extends React.Component {
               Cookies.remove(key);
             }
           }
-          console.log('POST REMOVAL: ', Cookies.getJSON());
 
           this.props.actionUser({
             token: token,
@@ -48,6 +43,7 @@ class Login extends React.Component {
     });
   }
   render () {
+    console.log(this.props);
     const { getFieldDecorator } = this.props.form;
     return (
       <div>
