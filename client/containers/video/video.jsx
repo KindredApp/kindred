@@ -23,22 +23,20 @@ class Video extends React.Component {
       username: '',
       users: [],
       video: null,
+      queue: []
     };
 
     this.pubnub = new PubNub({
       publishKey: pubnubConfig.publishKey,
       subscribeKey: pubnubConfig.subscribeKey,
       ssl: true,
-      uuid: this.tokenHolder(),
-      presenceTimeout: 1
+      uuid: this.tokenHolder()
     });
 
     this.tokenHolder = this.tokenHolder.bind(this);
     this.changedMessage = this.changedMessage.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.makeCall = this.makeCall.bind(this);
-    this.setCallee = this.setCallee.bind(this);
-    this.setCaller = this.setCaller.bind(this);
     this.login = this.login.bind(this);
     this.endCall = this.endCall.bind(this);
     this.checkToken = this.checkToken.bind(this);
@@ -71,18 +69,6 @@ class Video extends React.Component {
   changedMessage() {
     this.setState({
       currentMessage: this.refs.input.value
-    });
-  }
-
-  setCallee(e) {
-    this.setState({
-      callee: e.target.value
-    });
-  }
-
-  setCaller(e) {
-    this.setState({
-      caller: e.target.value
     });
   }
 
@@ -133,37 +119,27 @@ class Video extends React.Component {
     this.pubnub.addListener({
       message: (e) => {
         console.log('Message: ', e.message);
+      },
+      presence: (p) => {
+        let action = p.action;
+        let uuid = p.uuid;
+        console.log('actions: ', action);
+        if (p.action === 'join') {
+          this.setState({
+            queue: [...this.state.queue, uuid]
+          });
+          console.log('In queue: ', this.state.queue);
+        }
       }
     });
 
-    this.pubnub.setState(
-      {
-        state: this.props.user.userObj,
-        channels: ['queue']
-      },
-      function (status) {
-        console.log('Status changed or something');
-      }
-    );
-
-    this.pubnub.hereNow(
-      {
-        channels: ['queue'], 
-        includeUUIDs: true,
-        includeState: true
-      },
-      function (status, response) {
-        console.log('Here now status: ', status);
-        console.log('Here now response: ', response);
-      }
-    );
-
+    let id = this.pubnub.getUUID();
     var phone = window.phone = PHONE({
-      number: this.props.user.userObj.Username || 'Anonymous',
+      number: id,
       publish_key: pubnubConfig.publishKey,
       subscribe_key: pubnubConfig.subscribeKey,
       ssl: true,
-    });	
+    });
     var videoBox = document.getElementById('videoBox');
     var videoThumbnail = document.getElementById('videoThumbnail');
     var ctrl = window.ctrl = CONTROLLER(phone);
@@ -180,15 +156,19 @@ class Video extends React.Component {
       this.refs.video.innerHTML = '';
       this.refs.userVideo.innerHTML = '';
       ctrl.getVideoElement(session.number).remove();
-    });
+      });
 	  });
   }
 
   makeCall() {
-    this.pubnub.unsubscribe({
-      channel: 'queue'
+    let id = this.pubnub.getUUID();
+    let calleeList = this.state.queue.filter((userid) => {
+      return userid !== id
     });
-    phone.dial(this.state.callee);
+    let callee = calleeList[Math.floor(Math.random() * calleeList.length)];
+    console.log('callee list: ', calleeList);
+    console.log('Calling: ', callee);
+    phone.dial(callee);
   }
 
   endCall() {
@@ -199,10 +179,10 @@ class Video extends React.Component {
 
   render() {
     const VideoComponent = (
-      <div>
+     <div>
         <h1>Chat</h1>
         <div>
-          {this.state.messages.map((message, idx) => { return <p key={idx}>{message.text}</p>; })}
+          {this.state.messages.map((message, idx) => {return <p key={idx}>{message.text}</p>})}
         </div>
         <div>
           <input
@@ -215,9 +195,8 @@ class Video extends React.Component {
           <button onClick={this.sendMessage}>send</button>
         </div>
         <h1>Video Call</h1>
-          <input type="submit" value="Log in" onClick={this.login} />
-          <input type="text" name="number" placeholder="Enter user to call" onChange={this.setCallee}/>
-          <input type="submit" value="Call" onClick={this.makeCall}/>
+          <input type="submit" value="Ready" onClick={this.login} />
+          <input type="submit" value="Call" onClick={this.makeCall} />
         <div id="videoBox" ref="video">
         </div>
         <div id="videoThumbnail" ref="userVideo">
