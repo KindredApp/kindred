@@ -3,14 +3,14 @@ import { Select, Steps, Button, Input, InputNumber } from 'antd';
 
 const Option = Select.Option;
 
-const Zip = (<Input style={{ width: 300 }} placeholder="What is your zip code?" />);
+const Zip = (<Input style={{ width: 400 }} placeholder="What is your zip code?" />);
 
-const Age = (<InputNumber style={{ width: 300 }} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
+const Age = (<InputNumber style={{ width: 400 }} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
 
 const Gender = (
     <Select
       showSearch
-      style={{ width: 300}}
+      style={{ width: 400}}
       placeholder="Choose your gender"
       optionFilterProp="children"
       onChange={() => { console.log('changed'); }}
@@ -25,7 +25,7 @@ const Gender = (
 const Ethnicity = (
     <Select
       showSearch
-      style={{ width: 300}}
+      style={{ width: 400}}
       placeholder="What is your Ethnicity?"
       optionFilterProp="children"
       onChange={() => { console.log('changed'); }}
@@ -44,7 +44,7 @@ const Ethnicity = (
 const Income = (
   <Select
     showSearch
-    style={{ width: 300}}
+    style={{ width: 400}}
     placeholder="What is your annual income?"
     optionFilterProp="children"
     onChange={() => { console.log('changed'); }}
@@ -64,7 +64,7 @@ const Income = (
 const Education = (
   <Select
     showSearch
-    style={{ width: 300}}
+    style={{ width: 400}}
     placeholder="What is your highest level of education?"
     optionFilterProp="children"
     onChange={() => { console.log('changed'); }}
@@ -86,7 +86,7 @@ const Education = (
 const Religiousity = (
   <Select
     showSearch
-    style={{ width: 300}}
+    style={{ width: 400}}
     placeholder="How spiritual are you as a person?"
     optionFilterProp="children"
     onChange={() => { console.log('changed'); }}
@@ -100,9 +100,13 @@ const Religiousity = (
     <Option value='5 Weekly'>I follow a religion and practice it at least once a week</Option>
     <Option value='6 Daily'>I follow a religion and practice it at least once a day</Option>
     <Option value='7 Often'>I follow a religion and practice it many times a day</Option>
-    <Option value='8 Home'></Option>
+    <Option value='8 Spiritual'>I consider myself spiritual, but it does not relate to religion</Option>
     <Option value='9 Other'>Other</Option>
   </Select>
+);
+
+const Religion = (
+  
 );
 
 
@@ -112,5 +116,6 @@ module.exports = {
   Gender: Gender,
   Ethnicity: Ethnicity,
   Income: Income,
-  Education: Education
+  Education: Education,
+  Religiousity: Religiousity
 };

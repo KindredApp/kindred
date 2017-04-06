@@ -35,6 +35,9 @@ const optionalInformation = (
     <div>
       {Helper.Education}
     </div>
+    <div>
+      {Helper.Religiousity}
+    </div>
   </div>
 );
 
