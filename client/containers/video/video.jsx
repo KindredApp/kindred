@@ -7,7 +7,6 @@ import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom'; 
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import Promise from 'bluebird';
 
 
 class Video extends React.Component {
