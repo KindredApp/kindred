@@ -1,5 +1,6 @@
 package main
 
+// structs
 type User struct {
 	Username string
 	Name     string
@@ -38,6 +39,12 @@ type Cookie struct {
   Username string
   Token string
 }
+
+// type ReqObj struct {
+// Username string
+// }
+
+//helper functions
 
 func defaultSurvey(a UserSurvey) UserProfile {
   var up UserProfile
