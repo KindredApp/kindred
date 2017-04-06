@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"time"
-	"math/rand"
-	"net/http"
-
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
+	"log"
+	"math/rand"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 //----- SIGNUP -----//
@@ -59,7 +59,6 @@ func signup(w http.ResponseWriter, req *http.Request) {
 }
 
 //----- LOGIN -----//
-
 
 func login(w http.ResponseWriter, req *http.Request) {
 
@@ -122,9 +121,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-
 //----- CHECK TOKEN -----//
-
 
 func tokenCheck(w http.ResponseWriter, req *http.Request) {
 	var c Cookie
@@ -136,7 +133,6 @@ func tokenCheck(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-
 
 	if req.Method == http.MethodPost {
 		res, err := conn.Cmd("HGET", c.Username, "Token").Str()
@@ -151,9 +147,7 @@ func tokenCheck(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-
 //----- PROFILE -----//
-
 
 func profile(w http.ResponseWriter, req *http.Request) {
 
@@ -174,7 +168,7 @@ func profile(w http.ResponseWriter, req *http.Request) {
 		db.Where(&UserAuth{Token: "\"" + rh + "\""}).First(&un)
 		us.ID = un.ID
 		db.Where("user_auth_id = ?", un.ID).First(&usp)
-		//create new user profile entry 
+		//create new user profile entry
 		if usp.UserAuthID == 0 {
 			f := defaultSurvey(us)
 
@@ -193,7 +187,7 @@ func profile(w http.ResponseWriter, req *http.Request) {
 
 	//handle get
 	if req.Method == http.MethodGet {
-		u := req.URL.Query();
+		u := req.URL.Query()
 
 		res, err := conn.Cmd("HGET", u["q"], "Profile").Str()
 		if err != nil {
@@ -203,18 +197,18 @@ func profile(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		j, _ := json.Marshal(res)
 		w.Write(j)
-	} 
+	}
 }
-
 
 //----- FEEDBACK -----//
 
-
 func feedback(w http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodGet {
+		fmt.Println("get feedback route")
 		var randQuestion FeedbackQuestion
 		var questionCount int
 		db.Table("feedback_questions").Count(&questionCount)
+		// TODO: only do next lines if question count is more than 0
 		db.Find(&randQuestion, rand.Intn(questionCount)+1)
 		q, err := json.Marshal(randQuestion)
 		if err != nil {
@@ -225,6 +219,7 @@ func feedback(w http.ResponseWriter, req *http.Request) {
 		w.Write(q)
 	} else {
 		// post feedback answer
+		fmt.Println("feedback post")
 		var newAnswer FeedbackAnswer
 		var user UserAuth
 		var question FeedbackQuestion
@@ -243,9 +238,7 @@ func feedback(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-
 //----- MESSAGING -----//
-
 
 func wsConnections(w http.ResponseWriter, r *http.Request) {
 	//upgrades get request to a websocket connection
@@ -302,36 +295,67 @@ type QuestionWOptions struct {
 	Options []string
 }
 
-
 //----- QUESTION OF THE DAY -----//
 
+type UserAnswer struct {
+	Question string
+	Answer   string
+}
 
 func qotd(w http.ResponseWriter, req *http.Request) {
+	param := req.URL.Query().Get("user")
 	if req.Method == http.MethodGet {
-		// 	Later check if a particular question is for a question from a particular category
-		var randQuestionFromDb Qotd
-		var questionCount int
-		var answerOptionsFromDB []QotdAnswerOption
-		var answerOptions []string
-		db.Table("qotds").Count(&questionCount)
-		db.Find(&randQuestionFromDb, rand.Intn(questionCount)+1)
-		db.Model(&randQuestionFromDb).Related(&answerOptionsFromDB)
-		fmt.Println(questionCount)
-		fmt.Println(answerOptionsFromDB)
+		// if query string specifies a user
+		// http://localhost:8080/api/qotd?user=555
+		if param != "" {
+			var allUserAnswers []QotdAnswer
+			userAnswers := make([]UserAnswer, 10)
+			userid, err := strconv.Atoi(param)
+			if err != nil {
+				fmt.Println(err)
+			}
+			db.Where("user_auth_id = ?", userid).Find(&allUserAnswers)
+			numOfAnswers := len(allUserAnswers)
+			if numOfAnswers < 10 {
+				userAnswers = userAnswers[0:numOfAnswers]
+			}
+			for i, answer := range allUserAnswers {
+				var question Qotd
+				db.Model(&answer).Related(&question)
+				userAnswers[i] = UserAnswer{question.Text, answer.Text}
+			}
+			q, err := json.Marshal(userAnswers)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(q)
+		} else {
+			var randQuestionFromDb Qotd
+			var questionCount int
+			var answerOptionsFromDB []QotdAnswerOption
+			var answerOptions []string
+			db.Table("qotds").Count(&questionCount)
+			db.Find(&randQuestionFromDb, rand.Intn(questionCount)+1)
+			db.Model(&randQuestionFromDb).Related(&answerOptionsFromDB)
+			fmt.Println(questionCount)
+			fmt.Println(answerOptionsFromDB)
 
-		for _, v := range answerOptionsFromDB {
-			answerOptions = append(answerOptions, v.Text)
+			for _, v := range answerOptionsFromDB {
+				answerOptions = append(answerOptions, v.Text)
+			}
+
+			questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
+
+			q, err := json.Marshal(questionWOptions)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(q)
 		}
-
-		questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
-
-		q, err := json.Marshal(questionWOptions)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(q)
 	} else {
 		var newAnswer QotdAnswer
 		var user UserAuth
