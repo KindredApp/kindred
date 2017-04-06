@@ -16,8 +16,9 @@ class Video extends React.Component {
     this.state = {
       messages: [],
       currentMessage: '',
-      // username: '',
-      queue: []
+      queue: [],
+      showChat: null,
+      privateChannel: ''
     };
 
     this.pubnub = new PubNub({
@@ -67,31 +68,23 @@ class Video extends React.Component {
   }
 
   sendMessage() {
-    // this.pubnub.publish({
-    //   channel: 'queue',
-    //   message: {
-    //     text: 'Joined queue',
-    //     user: this.props.user.userObj
-    //   }
-    // });
-    // this.setState({
-    //   currentMessage: ''
-    // });
+    this.pubnub.publish({
+      channel: this.state.privateChannel,
+      message: {
+        text: this.state.currentMessage,
+        user: this.pubnub.getUUID()
+      }
+    });
     this.pubnub.subscribe({
       channels: ['queue'],
       withPresence: true
     });
     this.pubnub.addListener({
       message: (e) => {
+        e.message.user = e.message.user === this.pubnub.getUUID() ? 'me' : 'you'
         this.setState({
-          messages: [...this.state.messages, {text: e.message.text}]
+          messages: [...this.state.messages, {text: e.message.text, user: e.message.user}]
         });
-        // this.state.messages.push(
-        //   {text: e.message.text}
-        // );
-        // this.setState({
-        //   messages: this.state.messages
-        // });
       }
     });
   }
@@ -101,24 +94,23 @@ class Video extends React.Component {
       channels: ['queue'],
       withPresence: true
     });
-    this.pubnub.addListener({
-      message: (e) => {
-        console.log('Message: ', e.message);
-      },
-      presence: (p) => {
-        let action = p.action;
-        let uuid = p.uuid;
-        console.log('actions: ', action);
-        if (p.action === 'join') {
-          this.setState({
-            queue: [...this.state.queue, uuid]
-          });
-          console.log('In queue: ', this.state.queue);
-        }
-      }
-    });
 
     let id = this.pubnub.getUUID();
+    var callee = window.callee;
+    this.pubnub.hereNow(
+      {
+        channels: ["queue"],
+        includeUUIDs: true,
+        includeState: true
+      }).then((response) => {
+        let calleeList = response.channels.queue.occupants.filter((user) => {
+          return user.uuid !== id
+        });
+        console.log('In queue: ', calleeList);
+        callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
+        callee ? console.log('Callee: ', callee.uuid) : console.log('no one here yet!');
+      });
+
     var phone = window.phone = PHONE({
       number: id,
       publish_key: pubnubConfig.publishKey,
@@ -129,7 +121,6 @@ class Video extends React.Component {
     var videoThumbnail = document.getElementById('videoThumbnail');
     var ctrl = window.ctrl = CONTROLLER(phone);
 	  ctrl.ready(() => {
-      console.log('Phone ready');
       ctrl.addLocalStream(videoThumbnail);
   });
 	  ctrl.receive((session) => {
@@ -137,26 +128,28 @@ class Video extends React.Component {
         this.pubnub.unsubscribe({
           channels: ['queue']
         });
-        console.log('Connected. Caller: ', this.props.user.userObj.Username);
+        let privateChannel = [this.pubnub.getUUID(), session.number].sort().join('');
+        this.setState({
+          privateChannel: privateChannel
+        });
+        this.pubnub.subscribe({
+          channels: [privateChannel]
+        });
+        this.setState({
+          showChat: true
+        });
         videoBox.appendChild(session.video);
-  });
+      });
 	    session.ended((session) => {
-      this.refs.video.innerHTML = '';
-      this.refs.userVideo.innerHTML = '';
-      ctrl.getVideoElement(session.number).remove();
+        this.refs.video.innerHTML = '';
+        this.refs.userVideo.innerHTML = '';
+        ctrl.getVideoElement(session.number).remove();
       });
 	  });
   }
 
   makeCall() {
-    let id = this.pubnub.getUUID();
-    let calleeList = this.state.queue.filter((userid) => {
-      return userid !== id
-    });
-    let callee = calleeList[Math.floor(Math.random() * calleeList.length)];
-    console.log('callee list: ', calleeList);
-    console.log('Calling: ', callee);
-    phone.dial(callee);
+    phone.dial(window.callee.uuid);
   }
 
   endCall() {
@@ -168,10 +161,14 @@ class Video extends React.Component {
   render() {
     const VideoComponent = (
      <div>
-        <h1>Chat</h1>
-        <div>
-          {this.state.messages.map((message, idx) => {return <p key={idx}>{message.text}</p>})}
-        </div>
+       {this.state.showChat ? 
+          <div>
+            <h1>Chat</h1>
+            <div>
+              {this.state.messages.map((message, idx) => {return <p key={idx}>{message.user}: {message.text}</p>})}
+            </div>
+          </div>
+        : null }
         <div>
           <input
             type="text"
@@ -182,12 +179,12 @@ class Video extends React.Component {
           />
           <button onClick={this.sendMessage}>send</button>
         </div>
-        <h1>Video Call</h1>
+        <h1>Video</h1>
           <input type="submit" value="Ready" onClick={this.login} />
           <input type="submit" value="Pair me" onClick={this.makeCall} />
-        <div id="videoBox" ref="video">
+        <div id="videoBox" ref="video" >
         </div>
-        <div id="videoThumbnail" ref="userVideo">
+        <div id="videoThumbnail" ref="userVideo" >
         </div>
         <button onClick={this.endCall}>End Call</button>
       </div>
