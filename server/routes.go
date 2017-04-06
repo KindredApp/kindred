@@ -310,19 +310,18 @@ func qotd(w http.ResponseWriter, req *http.Request) {
 		if param != "" {
 			var allUserAnswers []QotdAnswer
 			userAnswers := make([]UserAnswer, 10)
-			// var length int
 			userid, err := strconv.Atoi(param)
 			if err != nil {
 				fmt.Println(err)
 			}
-
 			db.Where("user_auth_id = ?", userid).Find(&allUserAnswers)
+			numOfAnswers := len(allUserAnswers)
+			if numOfAnswers < 10 {
+				fmt.Println("numOfAnswers: ", numOfAnswers)
+				userAnswers = userAnswers[0:numOfAnswers]
+			}
 			for i, answer := range allUserAnswers {
 				var question Qotd
-				// if answer.Text == "" {
-				// 	length = i + 1
-				// 	break
-				// }
 				db.Model(&answer).Related(&question)
 				userAnswers[i] = UserAnswer{question.Text, answer.Text}
 			}
