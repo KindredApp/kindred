@@ -62,7 +62,7 @@ func main() {
 	//protected route middleware
 	r.Handle("/api/profile", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(http.HandlerFunc(profile))));
+		negroni.Wrap(http.HandlerFunc(profile))))
 
 	//routes
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
@@ -73,7 +73,7 @@ func main() {
 	http.HandleFunc("/api/tokenCheck", tokenCheck)
 	http.HandleFunc("/api/feedback", feedback)
 	http.HandleFunc("api/ws", wsConnections)
-	http.HandleFunc("api/qotd", qotd)
+	http.HandleFunc("/api/qotd", qotd)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	// http.Handle("/api/kinships", kinships)
 

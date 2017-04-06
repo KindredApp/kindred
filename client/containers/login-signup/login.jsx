@@ -5,6 +5,7 @@ import { Link, hashHistory } from 'react-router-dom';
 import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import Cookies from 'js-cookie';
 
 const FormItem = Form.Item;
 
@@ -22,11 +23,24 @@ class Login extends React.Component {
         console.log('validated: ', values);
         axios.post('/api/login', values).then((response) => {
           console.log('GO RESPONSE: ', response);
-          console.log('PROPS: ', this.props);
-          // window.location = 'http://localhost:8080/'; //HARD CODED FOR LOCAL HOST, CORRECT LATER
+
+          const userObj = JSON.parse(response.config.data);
+          const token = response.data;
+
+          Cookies.set(userObj.Username, {Username: userObj.Username, Token: token});
+          let snacks = Cookies.getJSON();
+
+          //makes sure only one cookie is available at one time
+          for (let key in snacks) {
+            if (key !== 'pnctest' && key !== userObj.Username) {
+              Cookies.remove(key);
+            }
+          }
+          console.log('POST REMOVAL: ', Cookies.getJSON());
+
           this.props.actionUser({
-            token: response.data,
-            userObj: JSON.parse(response.config.data),
+            token: token,
+            userObj: userObj,
             timestamp: response.headers.date
           });
         });
