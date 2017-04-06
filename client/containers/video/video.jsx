@@ -4,7 +4,7 @@ import PubNub from 'pubnub';
 import pubnubConfig from '../../../pubnubConfig.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { Redirect } from 'react-router-dom'; 
+import {Redirect} from 'react-router-dom'; 
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
@@ -14,15 +14,9 @@ class Video extends React.Component {
     super(props);
 
     this.state = {
-      messages: [
-        {
-          text: 'test',
-        }
-      ],
+      messages: [],
       currentMessage: '',
-      username: '',
-      users: [],
-      video: null,
+      // username: '',
       queue: []
     };
 
@@ -73,13 +67,13 @@ class Video extends React.Component {
   }
 
   sendMessage() {
-    this.pubnub.publish({
-      channel: 'queue',
-      message: {
-        text: 'Joined queue',
-        user: this.props.user.userObj
-      }
-    });
+    // this.pubnub.publish({
+    //   channel: 'queue',
+    //   message: {
+    //     text: 'Joined queue',
+    //     user: this.props.user.userObj
+    //   }
+    // });
     // this.setState({
     //   currentMessage: ''
     // });
@@ -89,29 +83,20 @@ class Video extends React.Component {
     });
     this.pubnub.addListener({
       message: (e) => {
-        // this.setState({
-        //   messages: [...this.state.messages, {text: e.message.text}]
-        // });
-        this.state.messages.push(
-          {text: e.message.text}
-        );
         this.setState({
-          messages: this.state.messages
+          messages: [...this.state.messages, {text: e.message.text}]
         });
+        // this.state.messages.push(
+        //   {text: e.message.text}
+        // );
+        // this.setState({
+        //   messages: this.state.messages
+        // });
       }
     });
   }
 
   login(e) {
-    e.preventDefault();
-
-    this.pubnub.publish({
-      channel: 'queue',
-      message: {
-        text: 'Joined queue',
-        user: this.props.user.userObj
-      }
-    });
     this.pubnub.subscribe({
       channels: ['queue'],
       withPresence: true
@@ -144,13 +129,16 @@ class Video extends React.Component {
     var videoThumbnail = document.getElementById('videoThumbnail');
     var ctrl = window.ctrl = CONTROLLER(phone);
 	  ctrl.ready(() => {
-    console.log('Phone ready');
-    ctrl.addLocalStream(videoThumbnail);
+      console.log('Phone ready');
+      ctrl.addLocalStream(videoThumbnail);
   });
 	  ctrl.receive((session) => {
 		  session.connected((session) => {
-    console.log('Connected. Caller: ', this.props.user.userObj.Username);
-    videoBox.appendChild(session.video);
+        this.pubnub.unsubscribe({
+          channels: ['queue']
+        });
+        console.log('Connected. Caller: ', this.props.user.userObj.Username);
+        videoBox.appendChild(session.video);
   });
 	    session.ended((session) => {
       this.refs.video.innerHTML = '';
@@ -196,7 +184,7 @@ class Video extends React.Component {
         </div>
         <h1>Video Call</h1>
           <input type="submit" value="Ready" onClick={this.login} />
-          <input type="submit" value="Call" onClick={this.makeCall} />
+          <input type="submit" value="Pair me" onClick={this.makeCall} />
         <div id="videoBox" ref="video">
         </div>
         <div id="videoThumbnail" ref="userVideo">
