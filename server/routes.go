@@ -171,12 +171,10 @@ func profile(w http.ResponseWriter, req *http.Request) {
 			panic(err)
 		}
 
-		//query for user in UserAuth based on token
 		db.Where(&UserAuth{Token: "\"" + rh + "\""}).First(&un)
-		//set UserSurvey struct ID to their ID in user auth;
 		us.ID = un.ID
-		//query UserPRofile table to see if a profile entry exists for them
 		db.Where("user_auth_id = ?", un.ID).First(&usp)
+		//create new user profile entry 
 		if usp.UserAuthID == 0 {
 			f := defaultSurvey(us)
 
@@ -187,6 +185,7 @@ func profile(w http.ResponseWriter, req *http.Request) {
 			j, _ := json.Marshal("Profile posted")
 			w.Write(j)
 		} else {
+			//update existing user profile entry
 			f := defaultSurvey(us)
 			db.Model(&usp).Updates(f)
 		}
@@ -195,7 +194,6 @@ func profile(w http.ResponseWriter, req *http.Request) {
 	//handle get
 	if req.Method == http.MethodGet {
 		u := req.URL.Query();
-
 
 		res, err := conn.Cmd("HGET", u["q"], "Profile").Str()
 		if err != nil {
