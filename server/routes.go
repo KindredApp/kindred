@@ -317,7 +317,6 @@ func qotd(w http.ResponseWriter, req *http.Request) {
 			db.Where("user_auth_id = ?", userid).Find(&allUserAnswers)
 			numOfAnswers := len(allUserAnswers)
 			if numOfAnswers < 10 {
-				fmt.Println("numOfAnswers: ", numOfAnswers)
 				userAnswers = userAnswers[0:numOfAnswers]
 			}
 			for i, answer := range allUserAnswers {
