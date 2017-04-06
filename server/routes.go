@@ -149,9 +149,6 @@ func tokenCheck(w http.ResponseWriter, req *http.Request) {
 		j, _ := json.Marshal(b)
 		w.Write(j)
 	}
-
-	return
-
 }
 
 
@@ -159,20 +156,21 @@ func tokenCheck(w http.ResponseWriter, req *http.Request) {
 
 
 func profile(w http.ResponseWriter, req *http.Request) {
-	var us UserSurvey
-	var un UserAuth
-	var usp UserProfile
-	rh := req.Header.Get("Authorization")[7:]
 
-	decoder := json.NewDecoder(req.Body)
-	defer req.Body.Close()
-	err := decoder.Decode(&us)
-	log.Println("User profile is", us)
-	if err != nil {
-		panic(err)
-	}
 	//handle post
 	if req.Method == http.MethodPost {
+		var us UserSurvey
+		var un UserAuth
+		var usp UserProfile
+		rh := req.Header.Get("Authorization")[7:]
+
+		decoder := json.NewDecoder(req.Body)
+		defer req.Body.Close()
+		err := decoder.Decode(&us)
+		if err != nil {
+			panic(err)
+		}
+
 		//query for user in UserAuth based on token
 		db.Where(&UserAuth{Token: "\"" + rh + "\""}).First(&un)
 		//set UserSurvey struct ID to their ID in user auth;
@@ -193,6 +191,21 @@ func profile(w http.ResponseWriter, req *http.Request) {
 			db.Model(&usp).Updates(f)
 		}
 	}
+
+	//handle get
+	if req.Method == http.MethodGet {
+		u := req.URL.Query();
+
+
+		res, err := conn.Cmd("HGET", u["q"], "Profile").Str()
+		if err != nil {
+			panic(err)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		j, _ := json.Marshal(res)
+		w.Write(j)
+	} 
 }
 
 
