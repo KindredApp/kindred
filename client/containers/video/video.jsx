@@ -5,6 +5,9 @@ import pubnubConfig from '../../../pubnubConfig.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { Redirect } from 'react-router-dom'; 
+import Cookies from 'js-cookie';
+import axios from 'axios';
+
 
 class Video extends React.Component {
   constructor(props) {
@@ -38,6 +41,23 @@ class Video extends React.Component {
     this.setCaller = this.setCaller.bind(this);
     this.login = this.login.bind(this);
     this.endCall = this.endCall.bind(this);
+    this.checkToken = this.checkToken.bind(this);
+  }
+
+  checkToken() {
+    let cookie = Cookies.getJSON();
+    for (let key in cookie) {
+      if (key !== 'pnctest') {
+        console.log('in check token');
+        return (axios.post('/api/tokenCheck', {
+          Username: cookie[key].Username,
+          Token: cookie[key].Token
+        }).then((response) => {
+          console.log('SUCCESSFUL TOKEN RETRIEVAL: ', response);
+          return response.data;
+        }));
+      }
+    }
   }
 
   tokenHolder() {
@@ -132,17 +152,11 @@ class Video extends React.Component {
         includeUUIDs: true,
         includeState: true
       },
-    function (status, response) {
-      console.log('Here now status: ', status);
-      console.log('Here now response: ', response);
-    }
-);
-
-
-
-
-
-
+      function (status, response) {
+        console.log('Here now status: ', status);
+        console.log('Here now response: ', response);
+      }
+    );
 
     var phone = window.phone = PHONE({
       number: this.props.user.userObj.Username || 'Anonymous',
@@ -184,36 +198,47 @@ class Video extends React.Component {
   }
 
   render() {
-    if (!this.props.user) {
-      return (<Redirect to='/login' />);
-    } else {
-      return (
+    const VideoComponent = (
+      <div>
+        <h1>Chat</h1>
         <div>
-          <h1>Chat</h1>
-          <div>
-            {this.state.messages.map((message, idx) => { return <p key={idx}>{message.text}</p>; })}
-          </div>
-          <div>
-            <input
-              type="text"
-              ref="input"
-              value={this.state.currentMessage}
-              placeholder="Message"
-              onChange={this.changedMessage}
-            />
-            <button onClick={this.sendMessage}>send</button>
-          </div>
-          <h1>Video Call</h1>
-            <input type="submit" value="Log in" onClick={this.login} />
-            <input type="text" name="number" placeholder="Enter user to call" onChange={this.setCallee}/>
-            <input type="submit" value="Call" onClick={this.makeCall}/>
-          <div id="videoBox" ref="video">
-          </div>
-          <div id="videoThumbnail" ref="userVideo">
-          </div>
-          <button onClick={this.endCall}>End Call</button>
+          {this.state.messages.map((message, idx) => { return <p key={idx}>{message.text}</p>; })}
         </div>
-      );
+        <div>
+          <input
+            type="text"
+            ref="input"
+            value={this.state.currentMessage}
+            placeholder="Message"
+            onChange={this.changedMessage}
+          />
+          <button onClick={this.sendMessage}>send</button>
+        </div>
+        <h1>Video Call</h1>
+          <input type="submit" value="Log in" onClick={this.login} />
+          <input type="text" name="number" placeholder="Enter user to call" onChange={this.setCallee}/>
+          <input type="submit" value="Call" onClick={this.makeCall}/>
+        <div id="videoBox" ref="video">
+        </div>
+        <div id="videoThumbnail" ref="userVideo">
+        </div>
+        <button onClick={this.endCall}>End Call</button>
+      </div>
+    );
+
+    if (!this.props.user) {
+      console.log('no user, checking cache');
+      if (!this.checkToken()) {
+        console.log('no cache, redirect');
+        return (<Redirect to='/login' />);
+      } else {
+        console.log('user in cache');
+        // run func that will add user to state
+        return VideoComponent;        
+      }
+    } else {
+      console.log('user in state');
+      return VideoComponent;
     }
   }
 }

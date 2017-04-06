@@ -19,30 +19,39 @@ class App extends React.Component {
     for (let key in cookie) {
       if (key !== 'pnctest') {
         console.log('in check token');
-        axios.post('/api/tokenCheck', {
+        return (axios.post('/api/tokenCheck', {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
           console.log('SUCCESSFUL TOKEN RETRIEVAL: ', response);
-          return true;
-        });
+          return response.data;
+        }));
       }
     }
   }
 
   render() {
-    if (this.props.user) {
-      return (<Redirect to='/login' />);
-    } else if (this.checkToken()) {
-      console.log('CHECK TOKEN RETURNED TRUE');
+    const Home = (
+      <div>
+        <h1>APP SAYS HELLO</h1>
+        <ExampleList />
+        <ExampleClicked />
+      </div>
+    );
+    console.log('checking user');
+    if (!this.props.user) {
+      console.log('no user, checking cache');
+      if (!this.checkToken()) {
+        console.log('no cache, redirect');
+        return (<Redirect to='/login' />);
+      } else {
+        console.log('user in cache');
+        // run func that will add user to state
+        return Home;        
+      }
     } else {
-      return (
-        <div>
-          <h1>APP SAYS HELLO</h1>
-          <ExampleList />
-          <ExampleClicked />
-        </div>
-      );
+      console.log('user in state');
+      return Home;
     }
   }
 }
