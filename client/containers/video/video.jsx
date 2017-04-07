@@ -81,7 +81,7 @@ class Video extends React.Component {
     });
     this.pubnub.addListener({
       message: (e) => {
-        e.message.user = e.message.user === this.pubnub.getUUID() ? 'me' : 'you'
+        e.message.user = e.message.user === this.pubnub.getUUID() ? 'me' : 'you';
         this.setState({
           messages: [...this.state.messages, {text: e.message.text, user: e.message.user}]
         });
@@ -99,12 +99,12 @@ class Video extends React.Component {
     var callee = window.callee;
     this.pubnub.hereNow(
       {
-        channels: ["queue"],
+        channels: ['queue'],
         includeUUIDs: true,
         includeState: true
       }).then((response) => {
         let calleeList = response.channels.queue.occupants.filter((user) => {
-          return user.uuid !== id
+          return user.uuid !== id;
         });
         console.log('In queue: ', calleeList);
         callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
@@ -120,11 +120,11 @@ class Video extends React.Component {
     var videoBox = document.getElementById('videoBox');
     var videoThumbnail = document.getElementById('videoThumbnail');
     var ctrl = window.ctrl = CONTROLLER(phone);
-	  ctrl.ready(() => {
+    ctrl.ready(() => {
       ctrl.addLocalStream(videoThumbnail);
-  });
-	  ctrl.receive((session) => {
-		  session.connected((session) => {
+    });
+    ctrl.receive((session) => {
+      session.connected((session) => {
         this.pubnub.unsubscribe({
           channels: ['queue']
         });
@@ -140,12 +140,12 @@ class Video extends React.Component {
         });
         videoBox.appendChild(session.video);
       });
-	    session.ended((session) => {
+      session.ended((session) => {
         this.refs.video.innerHTML = '';
         this.refs.userVideo.innerHTML = '';
         ctrl.getVideoElement(session.number).remove();
       });
-	  });
+    });
   }
 
   makeCall() {
@@ -159,13 +159,14 @@ class Video extends React.Component {
   }
 
   render() {
+    console.log('PROPS FOR VIDEO', this.props);
     const VideoComponent = (
      <div>
        {this.state.showChat ? 
           <div>
             <h1>Chat</h1>
             <div>
-              {this.state.messages.map((message, idx) => {return <p key={idx}>{message.user}: {message.text}</p>})}
+              {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p> ;})}
             </div>
           </div>
         : null }

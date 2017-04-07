@@ -44,9 +44,11 @@
     "babel-preset-env": "^1.3.2",
     "babel-preset-es2015": "^6.24.0",
     "babel-preset-react": "^6.23.0",
+    "css-loader": "^0.28.0",
     "nodemon": "^1.11.0",
     "path": "^0.12.7",
     "react-polyfill": "0.0.2",
+    "style-loader": "^0.16.1",
     "webpack": "^2.3.2"
   }
 }

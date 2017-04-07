@@ -6,6 +6,7 @@ import App from './app.jsx';
 import SignUp from '../containers/login-signup/signup.jsx';
 import Login from '../containers/login-signup/login.jsx';
 import Video from '../containers/video/video.jsx';
+import Survey from '../containers/account/survey.jsx';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
@@ -28,11 +29,13 @@ class Root extends Component {
               <Link to="/login">Login</Link>
               <Link to="/signup">Sign Up</Link>
               <Link to="/video">Video</Link>
+              <Link to="/survey">Survey</Link>
             </nav>
             <Route exact path="/" component={App} />
             <Route path="/signup" component={SignUpForm} />
             <Route path="/login" component={LoginForm} />
             <Route path="/video" component={Video} />
+            <Route path="/survey" component={Survey} />
           </div>
         </Router>
     </div>
