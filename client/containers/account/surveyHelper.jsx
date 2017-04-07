@@ -1,11 +1,55 @@
 import React from 'react';
 import { Select, Steps, Button, Input, InputNumber } from 'antd';
 
+let userData = {
+  Age: 25
+};
+
+const handleGenderChange = (value) => {
+  userData.Gender = parseInt(value);
+};
+
+const handleAgeChange = (value) => {
+  userData.Age = value;
+};
+
+const handleEthnicityChange = (value) => {
+  userData.Ethnicity = parseInt(value);
+};
+
+const handleIncomeChange = (value) => {
+  userData.Income = parseInt(value);
+};
+
+const handleEducationChange = (value) => {
+  userData.Education = parseInt(value);
+};
+
+const handleReligiousityChange = (value) => {
+  userData.Religiousity = parseInt(value);
+};
+
+const handleReligionChange = (value) => {
+  userData.Religion = parseInt(value);
+};
+
+const handleStateChange = (value) => {
+  userData.State = value.slice(0, 2);
+};
+
+const handlePartyChange = (value) => {
+  userData.Party = parseInt(value);
+};
+
+const handleZipChange = (value) => {
+  userData.Zip = value.slice(0, 5);
+};
+
 const Option = Select.Option;
 
-const Zip = (<Input style={{ width: 400 }} placeholder="What is your zip code?" />);
+const Zip = (<Input onChange={e => handleZipChange(e.target.value)} style={{ width: 400 }} placeholder="What is your zip code?" />);
 
-const Age = (<InputNumber style={{ width: 400 }} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
+const Age = (<InputNumber style={{ width: 400 }} onChange={e => handleAgeChange(e)} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
 
 const Gender = (
     <Select
@@ -13,12 +57,12 @@ const Gender = (
       style={{ width: 400}}
       placeholder="Choose your gender"
       optionFilterProp="children"
-      onChange={() => { console.log('changed'); }}
+      onChange={handleGenderChange}
       filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
     >
-      <Option value='0 Male'>Male</Option>
-      <Option value='1 Female'>Female</Option>
-      <Option value='2 Other'>Other</Option>
+      <Option value='1 Male'>Male</Option>
+      <Option value='2 Female'>Female</Option>
+      <Option value='3 Other'>Other</Option>
     </Select>
   );
 
@@ -28,16 +72,16 @@ const Ethnicity = (
       style={{ width: 400}}
       placeholder="What is your Ethnicity?"
       optionFilterProp="children"
-      onChange={() => { console.log('changed'); }}
+      onChange={handleEthnicityChange}
       filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
     >
-      <Option value='0 African American'>African American</Option>
-      <Option value='1 Asian'>Asian</Option>
-      <Option value='2 Caucasian'>Caucasian</Option>
-      <Option value='3 Hispanic Latino'>Hispanic or Latino</Option>
-      <Option value='4 Pacific Islander'>Pacific Islander</Option>
-      <Option value='5 Multi Racial'>Multi Racial</Option>
-      <Option value='6 Other'>Other</Option>
+      <Option value='1 African American'>African American</Option>
+      <Option value='2 Asian'>Asian</Option>
+      <Option value='3 Caucasian'>Caucasian</Option>
+      <Option value='4 Hispanic Latino'>Hispanic or Latino</Option>
+      <Option value='5 Pacific Islander'>Pacific Islander</Option>
+      <Option value='6 Multi Racial'>Multi Racial</Option>
+      <Option value='7 Other'>Other</Option>
     </Select>
 );
 
@@ -47,17 +91,17 @@ const Income = (
     style={{ width: 400}}
     placeholder="What is your annual income?"
     optionFilterProp="children"
-    onChange={() => { console.log('changed'); }}
+    onChange={handleIncomeChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='0 Zero to 30k'>$0 - $30,000</Option>
-    <Option value='1 30k to 50k'>$30,000 - $50,000</Option>
-    <Option value='2 50k to 75k'>$50,000 - $75,000</Option>
-    <Option value='3 75k to 100k'>$75,000 - $100,000</Option>
-    <Option value='4 100k to 150k'>$100,000 - $150,000</Option>
-    <Option value='5 150k to 200k'>$150,000 - $200,000</Option>
-    <Option value='6 200k plus'>Above $200,000</Option>
-    <Option value='7 other'>I do not have an income</Option>
+    <Option value='1 Zero to 30k'>$0 - $30,000</Option>
+    <Option value='2 30k to 50k'>$30,000 - $50,000</Option>
+    <Option value='3 50k to 75k'>$50,000 - $75,000</Option>
+    <Option value='4 75k to 100k'>$75,000 - $100,000</Option>
+    <Option value='5 100k to 150k'>$100,000 - $150,000</Option>
+    <Option value='6 150k to 200k'>$150,000 - $200,000</Option>
+    <Option value='7 200k plus'>Above $200,000</Option>
+    <Option value='8 other'>I do not have an income</Option>
   </Select>
 );
 
@@ -67,19 +111,19 @@ const Education = (
     style={{ width: 400}}
     placeholder="What is your highest level of education?"
     optionFilterProp="children"
-    onChange={() => { console.log('changed'); }}
+    onChange={handleEducationChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='0 Elementary'>Elementary</Option>
-    <Option value='1 Some secondary'>Some secondary (Middle or High school)</Option>
-    <Option value='2 Secondary'>Completed secondary</Option>
-    <Option value='3 Some college'>Some college</Option>
-    <Option value='4 Associate'>Associate degree (2 year college)</Option>
-    <Option value='5 Bachelor'>Bachelor's degree (4 year college)</Option>
-    <Option value='6 Master'>Master's degree</Option>
-    <Option value='7 Doctorate'>Doctorate or professional degree</Option>
-    <Option value='8 Home'>I was home schooled</Option>
-    <Option value='9 Other'>Other</Option>
+    <Option value='1 Elementary'>Elementary</Option>
+    <Option value='2 Some secondary'>Some secondary (Middle or High school)</Option>
+    <Option value='3 Secondary'>Completed secondary</Option>
+    <Option value='4 Some college'>Some college</Option>
+    <Option value='5 Associate'>Associate degree (2 year college)</Option>
+    <Option value='6 Bachelor'>Bachelor's degree (4 year college)</Option>
+    <Option value='7 Master'>Master's degree</Option>
+    <Option value='8 Doctorate'>Doctorate or professional degree</Option>
+    <Option value='9 Home'>I was home schooled</Option>
+    <Option value='10 Other'>Other</Option>
   </Select>
 );
 
@@ -89,19 +133,19 @@ const Religiousity = (
     style={{ width: 400}}
     placeholder="How spiritual are you as a person?"
     optionFilterProp="children"
-    onChange={() => { console.log('changed'); }}
+    onChange={handleReligiousityChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='0 None'>I do not believe in any higher power</Option>
-    <Option value='1 Higher power'>I believe in a higher power but do not follow a specific religion</Option>
-    <Option value='2 Religious'>I follow a religion but do not actively practice it</Option>
-    <Option value='3 Major Events'>I follow a religion and participate in its major events</Option>
-    <Option value='4 Monthly'>I follow a religion and practice it at least once a month</Option>
-    <Option value='5 Weekly'>I follow a religion and practice it at least once a week</Option>
-    <Option value='6 Daily'>I follow a religion and practice it at least once a day</Option>
-    <Option value='7 Often'>I follow a religion and practice it many times a day</Option>
-    <Option value='8 Spiritual'>I consider myself spiritual, but it does not relate to religion</Option>
-    <Option value='9 Other'>Other</Option>
+    <Option value='1 None'>I do not believe in any higher power</Option>
+    <Option value='2 Higher power'>I believe in a higher power but do not follow a specific religion</Option>
+    <Option value='3 Religious'>I follow a religion but do not actively practice it</Option>
+    <Option value='4 Major Events'>I follow a religion and participate in its major events</Option>
+    <Option value='5 Monthly'>I follow a religion and practice it at least once a month</Option>
+    <Option value='6 Weekly'>I follow a religion and practice it at least once a week</Option>
+    <Option value='7 Daily'>I follow a religion and practice it at least once a day</Option>
+    <Option value='8 Often'>I follow a religion and practice it many times a day</Option>
+    <Option value='9 Spiritual'>I consider myself spiritual, but it does not relate to religion</Option>
+    <Option value='10 Other'>Other</Option>
   </Select>
 );
 
@@ -111,18 +155,18 @@ const Religion = (
     style={{ width: 400}}
     placeholder="What are your religious beliefs?"
     optionFilterProp="children"
-    onChange={() => { console.log('changed'); }}
+    onChange={handleReligionChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='0 Atheist'>Atheist</Option>
-    <Option value='1 Agnostic'>Agnostic</Option>
-    <Option value='2 Buddhism'>Buddhist</Option>
-    <Option value='3 Christianity'>Christian</Option>
-    <Option value='4 Hinduism'>Hindu</Option>
-    <Option value='5 Islam'>Islamic</Option>
-    <Option value='6 Jewish'>Jewish</Option>
-    <Option value='7 Other structured'>Other structured religion</Option>
-    <Option value='8 Other'>Other</Option>
+    <Option value='1 Atheist'>Atheist</Option>
+    <Option value='2 Agnostic'>Agnostic</Option>
+    <Option value='3 Buddhism'>Buddhist</Option>
+    <Option value='4 Christianity'>Christian</Option>
+    <Option value='5 Hinduism'>Hindu</Option>
+    <Option value='6 Islam'>Islamic</Option>
+    <Option value='7 Jewish'>Jewish</Option>
+    <Option value='8 Other structured'>Other structured religion</Option>
+    <Option value='9 Other'>Other</Option>
   </Select> 
 );
 
@@ -132,7 +176,7 @@ const State = (
     style={{ width: 400}}
     placeholder="What state do you live in?"
     optionFilterProp="children"
-    onChange={() => { console.log('changed'); }}
+    onChange={handleStateChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
     <Option value='AL Alabama'>Alabama</Option>
@@ -194,15 +238,15 @@ const Party = (
     style={{ width: 400}}
     placeholder="What political party do you align with?"
     optionFilterProp="children"
-    onChange={() => { console.log('changed'); }}
+    onChange={handlePartyChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='0 Democratic'>Democratic</Option>
-    <Option value='1 Green'>Green</Option>
-    <Option value='2 Independent'>Independent</Option>
-    <Option value='3 Libertarian'>Libertarian</Option>
-    <Option value='4 Republican'>Republican</Option>
-    <Option value='5 Other'>Other</Option>
+    <Option value='1 Democratic'>Democratic</Option>
+    <Option value='2 Green'>Green</Option>
+    <Option value='3 Independent'>Independent</Option>
+    <Option value='4 Libertarian'>Libertarian</Option>
+    <Option value='5 Republican'>Republican</Option>
+    <Option value='6 Other'>Other</Option>
   </Select>
 );
 
@@ -214,6 +258,8 @@ module.exports = {
   Income: Income,
   Education: Education,
   Religiousity: Religiousity,
+  Religion: Religion,
   State: State,
-  Party: Party
+  Party: Party,
+  userData: userData
 };

@@ -20,6 +20,7 @@ class Login extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         axios.post('/api/login', values).then((response) => {
+          console.log(response);
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
 
@@ -43,7 +44,6 @@ class Login extends React.Component {
     });
   }
   render () {
-    console.log(this.props);
     const { getFieldDecorator } = this.props.form;
     return (
       <div>

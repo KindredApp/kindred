@@ -13,13 +13,13 @@ const Step = Steps.Step;
 const requiredInformation = (
   <div>
     <div>
-      {Helper.Zip}
+      {Helper.Gender}
     </div>
     <div>
       What is your age? : {Helper.Age}
     </div>
     <div>
-      {Helper.Gender}
+      {Helper.Zip}
     </div>
   </div>
 );
@@ -37,6 +37,9 @@ const optionalInformation = (
     </div>
     <div>
       {Helper.Religiousity}
+    </div>
+    <div>
+      {Helper.Religion}
     </div>
     <div>
       {Helper.State}
@@ -95,7 +98,7 @@ class Survey extends React.Component {
           {
             this.state.current === steps.length - 1
             &&
-            <Button type="primary" >Done</Button>
+            <Button type="primary" onClick={() => { console.log(Helper.userData); }}>Done</Button>
           }
           {
             this.state.current > 0

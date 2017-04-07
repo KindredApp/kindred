@@ -166,7 +166,7 @@ class Video extends React.Component {
           <div>
             <h1>Chat</h1>
             <div>
-              {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p> ;})}
+              {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p>; })}
             </div>
           </div>
         : null }
@@ -202,7 +202,7 @@ class Video extends React.Component {
         return VideoComponent;        
       }
     } else {
-      console.log('user in state');
+      console.log('user in state', this.props.user);
       return VideoComponent;
     }
   }
