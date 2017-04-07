@@ -105,9 +105,9 @@ const Religiousity = (
   </Select>
 );
 
-const Religion = (
+// const Religion = (
   
-);
+// );
 
 
 module.exports = {
