@@ -38,6 +38,12 @@ const optionalInformation = (
     <div>
       {Helper.Religiousity}
     </div>
+    <div>
+      {Helper.State}
+    </div>
+    <div>
+      {Helper.Party}
+    </div>
   </div>
 );
 
