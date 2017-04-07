@@ -18,7 +18,8 @@ class Video extends React.Component {
       currentMessage: '',
       queue: [],
       showChat: false,
-      privateChannel: ''
+      privateChannel: '',
+      pairs: 0
     };
 
     this.pubnub = new PubNub({
@@ -35,6 +36,7 @@ class Video extends React.Component {
     this.login = this.login.bind(this);
     this.endCall = this.endCall.bind(this);
     this.checkToken = this.checkToken.bind(this);
+    this.checkQueue = this.checkQueue.bind(this);
   }
 
   checkToken() {
@@ -110,6 +112,10 @@ class Video extends React.Component {
   }
 
   login(e) {
+    this.pubnub.subscribe({
+      channels: ['queue'],
+      withPresence: true
+    });
     let id = this.pubnub.getUUID();
 
     var phone = window.phone = PHONE({
@@ -140,6 +146,9 @@ class Video extends React.Component {
           showChat: true
         });
         videoBox.appendChild(session.video);
+        this.setState({
+          pairs: ++this.state.pairs
+        });
       });
       session.ended((session) => {
         this.refs.video.innerHTML = '';
@@ -147,38 +156,58 @@ class Video extends React.Component {
         ctrl.getVideoElement(session.number).remove();
         this.setState({
           showChat: false
-        })
+        });
+        this.pubnub.unsubscribeAll();
       });
     });
   }
  
-  makeCall() {
-    let promiseLogin = Promise.promisify(this.login);
-    promiseLogin();
-
-    this.pubnub.subscribe({
-      channels: ['queue'],
-      withPresence: true
-    });
-
-    this.pubnub.hereNow({
+  checkQueue() {
+    return this.pubnub.hereNow({
         channels: ['queue'],
         includeUUIDs: true,
         includeState: true
-      })
-      .catch((err) => {
+    })
+    .catch((err) => {
         console.log(`Error with PubNub HereNow checking presence in queue: $(err)`);
-      })
-      .then((response) => {
-        let id = this.pubnub.getUUID();
-        let calleeList = response.channels.queue.occupants.filter((user) => {
-          return user.uuid !== id;
-        });
-        let callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
-        console.log('finished checking here now: ', callee);
-      }).then(() => {
-        callee ? phone.dial(callee.uuid) : console.log('no one here yet!');
+    })
+    .then((response) => {
+      let id = this.pubnub.getUUID();
+      let calleeList = response.channels.queue.occupants.filter((user) => {
+        return user.uuid !== id;
       });
+      let callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
+      console.log('finished checking here now: ', callee);
+      return callee;
+    });
+  }
+
+  makeCall() {
+    // let promiseLogin = Promise.promisify(this.login);
+    // promiseLogin();
+    this.login();
+
+    // this.pubnub.hereNow({
+    //     channels: ['queue'],
+    //     includeUUIDs: true,
+    //     includeState: true
+    // })
+    // .catch((err) => {
+    //     console.log(`Error with PubNub HereNow checking presence in queue: $(err)`);
+    // })
+    // .then((response) => {
+    //   let id = this.pubnub.getUUID();
+    //   let calleeList = response.channels.queue.occupants.filter((user) => {
+    //     return user.uuid !== id;
+    //   });
+    //   let callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
+    //   console.log('finished checking here now: ', callee);
+    // })
+    
+    this.checkQueue()
+    .then(() => {
+      callee ? phone.dial(callee.uuid) : console.log('no one here yet!');
+    });
   }
 
   endCall() {
@@ -207,6 +236,7 @@ class Video extends React.Component {
           </div>
         : null }
         <h1>Video</h1>
+        <div>You have {3-this.state.pairs} pairs remaining today</div>
         <button onClick={this.makeCall}>Pair me</button>
         <button onClick={this.endCall}>End Call</button>
         <div id="videoBox" ref="video"></div>

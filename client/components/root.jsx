@@ -12,6 +12,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import '../styles/index.css'
 import Home from '../containers/home/home.jsx';
+import Logout from '../containers/logout/logout.jsx';
 
 const SignUpForm = Form.create()(SignUp);
 const LoginForm = Form.create()(Login);
