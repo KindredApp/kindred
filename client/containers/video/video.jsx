@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom'; 
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import Promise from 'bluebird';
 
 class Video extends React.Component {
   constructor(props) {
@@ -150,15 +151,17 @@ class Video extends React.Component {
       });
     });
   }
-
+ 
   makeCall() {
-      this.pubnub.subscribe({
+    let promiseLogin = Promise.promisify(this.login);
+    promiseLogin();
+
+    this.pubnub.subscribe({
       channels: ['queue'],
       withPresence: true
     });
 
-    this.pubnub.hereNow(
-      {
+    this.pubnub.hereNow({
         channels: ['queue'],
         includeUUIDs: true,
         includeState: true
@@ -174,7 +177,7 @@ class Video extends React.Component {
         let callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
         console.log('finished checking here now: ', callee);
       }).then(() => {
-        callee ?   phone.dial(callee.uuid) : console.log('no one here yet!');
+        callee ? phone.dial(callee.uuid) : console.log('no one here yet!');
       });
   }
 
@@ -185,8 +188,7 @@ class Video extends React.Component {
   }
 
   render() {
-    // const VideoComponent = (
-      return (
+    return (
      <div>
        {this.state.showChat ? 
           <div>
@@ -194,27 +196,23 @@ class Video extends React.Component {
             <div>
               {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p>; })}
             </div>
-          <input
-            type="text"
-            ref="input"
-            value={this.state.currentMessage}
-            placeholder="Message"
-            onChange={this.changedMessage}
-          />
-          <button onClick={this.sendMessage}>send</button>
-        </div>
+            <input
+              type="text"
+              ref="input"
+              value={this.state.currentMessage}
+              placeholder="Message"
+              onChange={this.changedMessage}
+            />
+            <button onClick={this.sendMessage}>send</button>
+          </div>
         : null }
         <h1>Video</h1>
-          <button onClick={this.login}>Ready</button>
-          <button onClick={this.makeCall}>Pair me</button>
-          <button onClick={this.endCall}>End Call</button>
-        <div id="videoBox" ref="video">
-        </div>
-        <div id="videoThumbnail" ref="userVideo">
-        </div>
+        <button onClick={this.makeCall}>Pair me</button>
+        <button onClick={this.endCall}>End Call</button>
+        <div id="videoBox" ref="video"></div>
+        <div id="videoThumbnail" ref="userVideo"></div>
       </div>
-    // );
-      );
+    );
   }
 }
 
