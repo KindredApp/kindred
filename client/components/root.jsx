@@ -28,6 +28,7 @@ class Root extends Component {
           <div className="route-div">
             <Route exact path="/" component={App} />
             <Route path="/signup" component={SignUpForm} />
+            <Route path="/signup" component={SignUpForm} />
             <Route path="/login" component={LoginForm} />
             <Route path="/video" component={Video} />
             <Route path="/survey" component={Survey} />
