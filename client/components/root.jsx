@@ -11,6 +11,7 @@ import Survey from '../containers/account/survey.jsx';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import '../styles/index.css'
+import Home from '../containers/home/home.jsx';
 
 const SignUpForm = Form.create()(SignUp);
 const LoginForm = Form.create()(Login);
@@ -27,6 +28,7 @@ class Root extends Component {
         <Router>
           <div className="route-div">
             <Route exact path="/" component={App} />
+            <Route path="/home" component={Home} />
             <Route path="/signup" component={SignUpForm} />
             <Route path="/signup" component={SignUpForm} />
             <Route path="/login" component={LoginForm} />

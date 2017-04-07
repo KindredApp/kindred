@@ -8,7 +8,6 @@ import {Redirect} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
-
 class Video extends React.Component {
   constructor(props) {
     super(props);
@@ -17,7 +16,7 @@ class Video extends React.Component {
       messages: [],
       currentMessage: '',
       queue: [],
-      showChat: null,
+      showChat: false,
       privateChannel: ''
     };
 
@@ -61,6 +60,26 @@ class Video extends React.Component {
     return null;
   }
 
+  componentDidMount() {
+    if (!this.props.user) {
+      console.log('no user, checking cache');
+      if (!this.checkToken()) {
+        console.log('no cache, redirect');
+        return (
+
+        <Redirect to='/login' />
+        );
+      } else {
+        console.log('user in cache');
+        // run func that will add user to state
+        // return VideoComponent;        
+      }
+    } else {
+      console.log('user in state');
+      // return VideoComponent;
+    }
+  }
+
   changedMessage() {
     this.setState({
       currentMessage: this.refs.input.value
@@ -90,26 +109,7 @@ class Video extends React.Component {
   }
 
   login(e) {
-    this.pubnub.subscribe({
-      channels: ['queue'],
-      withPresence: true
-    });
-
     let id = this.pubnub.getUUID();
-    var callee = window.callee;
-    this.pubnub.hereNow(
-      {
-        channels: ['queue'],
-        includeUUIDs: true,
-        includeState: true
-      }).then((response) => {
-        let calleeList = response.channels.queue.occupants.filter((user) => {
-          return user.uuid !== id;
-        });
-        console.log('In queue: ', calleeList);
-        callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
-        callee ? console.log('Callee: ', callee.uuid) : console.log('no one here yet!');
-      });
 
     var phone = window.phone = PHONE({
       number: id,
@@ -144,12 +144,38 @@ class Video extends React.Component {
         this.refs.video.innerHTML = '';
         this.refs.userVideo.innerHTML = '';
         ctrl.getVideoElement(session.number).remove();
+        this.setState({
+          showChat: false
+        })
       });
     });
   }
 
   makeCall() {
-    phone.dial(window.callee.uuid);
+      this.pubnub.subscribe({
+      channels: ['queue'],
+      withPresence: true
+    });
+
+    this.pubnub.hereNow(
+      {
+        channels: ['queue'],
+        includeUUIDs: true,
+        includeState: true
+      })
+      .catch((err) => {
+        console.log(`Error with PubNub HereNow checking presence in queue: $(err)`);
+      })
+      .then((response) => {
+        let id = this.pubnub.getUUID();
+        let calleeList = response.channels.queue.occupants.filter((user) => {
+          return user.uuid !== id;
+        });
+        let callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
+        console.log('finished checking here now: ', callee);
+      }).then(() => {
+        callee ?   phone.dial(callee.uuid) : console.log('no one here yet!');
+      });
   }
 
   endCall() {
@@ -159,8 +185,8 @@ class Video extends React.Component {
   }
 
   render() {
-    console.log('PROPS FOR VIDEO', this.props);
-    const VideoComponent = (
+    // const VideoComponent = (
+      return (
      <div>
        {this.state.showChat ? 
           <div>
@@ -168,9 +194,6 @@ class Video extends React.Component {
             <div>
               {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p>; })}
             </div>
-          </div>
-        : null }
-        <div>
           <input
             type="text"
             ref="input"
@@ -180,31 +203,18 @@ class Video extends React.Component {
           />
           <button onClick={this.sendMessage}>send</button>
         </div>
+        : null }
         <h1>Video</h1>
-          <input type="submit" value="Ready" onClick={this.login} />
-          <input type="submit" value="Pair me" onClick={this.makeCall} />
-        <div id="videoBox" ref="video" >
+          <button onClick={this.login}>Ready</button>
+          <button onClick={this.makeCall}>Pair me</button>
+          <button onClick={this.endCall}>End Call</button>
+        <div id="videoBox" ref="video">
         </div>
-        <div id="videoThumbnail" ref="userVideo" >
+        <div id="videoThumbnail" ref="userVideo">
         </div>
-        <button onClick={this.endCall}>End Call</button>
       </div>
-    );
-
-    if (!this.props.user) {
-      console.log('no user, checking cache');
-      if (!this.checkToken()) {
-        console.log('no cache, redirect');
-        return (<Redirect to='/login' />);
-      } else {
-        console.log('user in cache');
-        // run func that will add user to state
-        return VideoComponent;        
-      }
-    } else {
-      console.log('user in state', this.props.user);
-      return VideoComponent;
-    }
+    // );
+      );
   }
 }
 
