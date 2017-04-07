@@ -17,7 +17,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="landing-container">
-        
         <div className="landing-header">
           <div>
             <img className="header-logo" src={"../public/assets/kindred-logo.svg"} width="100px" height="100px"/>
@@ -30,16 +29,14 @@ class App extends React.Component {
             </nav>
           </div>
         </div>
-
         <div className="landing-body">
           <div id="blurb">
             <div className="landing-qotd">Question of the day: <span className="element"></span></div>
           </div>
           <div className="landing-description">
-            <p>Kindred Chat connects people with others from different demographics to discuss the question of the day. Sometimes heavy, sometimes light-hearted, always a fresh perspective. Give it a go!</p>
+            <p>Kindred Chat connects people with others from different demographics to discuss the question of the day. Sometimes serious, sometimes light-hearted, always a fresh perspective. Give it a go!</p>
           </div>
         </div>
-
         <div className="landing-footer"></div>
       </div>
     );
