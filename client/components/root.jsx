@@ -10,6 +10,7 @@ import Video from '../containers/video/video.jsx';
 import Survey from '../containers/account/survey.jsx';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import '../styles/index.css'
 
 const SignUpForm = Form.create()(SignUp);
 const LoginForm = Form.create()(Login);
@@ -22,9 +23,9 @@ class Root extends Component {
   render () {
     console.log('ROOT STATE', this.props.user);
     return (
-    <div>
+    <div className="root-div">
         <Router>
-          <div>
+          <div className="route-div">
             <Route exact path="/" component={App} />
             <Route path="/signup" component={SignUpForm} />
             <Route path="/login" component={LoginForm} />
