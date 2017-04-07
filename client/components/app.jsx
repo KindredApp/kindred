@@ -1,69 +1,35 @@
 import React from 'react';
-import ExampleList from '../containers/exampleList.js';
-import ExampleClicked from '../containers/exampleClicked.js';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import { Redirect } from 'react-router-dom'; 
-import Cookies from 'js-cookie';
-import axios from 'axios';
+import { HashRouter as Router, Route, Link } from 'react-router-dom'; 
+import { Form } from 'antd';
+import SignUp from '../containers/login-signup/signup.jsx';
+import Login from '../containers/login-signup/login.jsx';
+import AboutPage from './aboutpage.jsx';
+import '../styles/index.css';
+
+const SignUpForm = Form.create()(SignUp);
+const LoginForm = Form.create()(Login);
 
 class App extends React.Component {
   constructor (props) {
     super (props);
-
-    this.checkToken = this.checkToken.bind(this);
-  }
-
-  checkToken() {
-    let cookie = Cookies.getJSON();
-    for (let key in cookie) {
-      if (key !== 'pnctest') {
-        console.log('in check token');
-        return (axios.post('/api/tokenCheck', {
-          Username: cookie[key].Username,
-          Token: cookie[key].Token
-        }).then((response) => {
-          console.log('SUCCESSFUL TOKEN RETRIEVAL: ', response);
-          return response.data;
-        }));
-      }
-    }
   }
 
   render() {
-    const Home = (
-      <div>
-        <h1>APP SAYS HELLO</h1>
-        <ExampleList />
-        <ExampleClicked />
+    return (
+      <div className="landing-header">
+        <div>
+          <img className="header-logo" src={"../public/assets/kindred-logo.svg"} width="100px" height="100px"/>
+        </div>
+        <div className="header-nav">
+          <nav className="header-links">
+            <Link to="/login">Login </Link>
+            <Link to="/signup">Sign Up </Link>
+            <Link to="/aboutus">About Us </Link>
+          </nav>
+        </div>
       </div>
     );
-    console.log('checking user');
-    if (!this.props.user) {
-      console.log('no user, checking cache');
-      if (!this.checkToken()) {
-        console.log('no cache, redirect');
-        return (<Redirect to='/login' />);
-      } else {
-        console.log('user in cache');
-        // run func that will add user to state
-        return Home;        
-      }
-    } else {
-      console.log('user in state');
-      return Home;
-    }
   }
 }
 
-function mapStateToProps (state) {
-  return {
-    user: state.userReducer
-  };
-}
-
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({}, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

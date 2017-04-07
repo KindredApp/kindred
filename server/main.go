@@ -43,6 +43,7 @@ func main() {
 
 	//routes
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
+	http.Handle("/public/assets/", http.StripPrefix("/public/assets/", http.FileServer(http.Dir("../public/assets/"))))
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.Handle("/api/profile", profileHandler(db, conn))

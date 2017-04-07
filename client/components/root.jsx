@@ -3,6 +3,7 @@ import {Provider} from 'react-redux';
 import { HashRouter as Router, Route, Link } from 'react-router-dom'; 
 import { Form } from 'antd';
 import App from './app.jsx';
+import AboutPage from './aboutpage.jsx';
 import SignUp from '../containers/login-signup/signup.jsx';
 import Login from '../containers/login-signup/login.jsx';
 import Video from '../containers/video/video.jsx';
@@ -24,18 +25,12 @@ class Root extends Component {
     <div>
         <Router>
           <div>
-            <nav>
-              <Link to="/">Home</Link>
-              <Link to="/login">Login</Link>
-              <Link to="/signup">Sign Up</Link>
-              <Link to="/video">Video</Link>
-              <Link to="/survey">Survey</Link>
-            </nav>
             <Route exact path="/" component={App} />
             <Route path="/signup" component={SignUpForm} />
             <Route path="/login" component={LoginForm} />
             <Route path="/video" component={Video} />
             <Route path="/survey" component={Survey} />
+            <Route path="/aboutus" component={AboutPage} />
           </div>
         </Router>
     </div>
