@@ -209,6 +209,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 			if err != nil {
 				panic(err)
 			}
+
 			db.Where(&UserAuth{Token: "\"" + rh + "\""}).First(&un)
 			us.ID = un.ID
 			db.Where("user_auth_id = ?", un.ID).First(&usp)
