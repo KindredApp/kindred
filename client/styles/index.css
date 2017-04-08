@@ -59,7 +59,17 @@
   margin-top: 30px;
 }
 
+.persective {
+  perspective: 15000px;
+}
 
+.shift {
+  transition: transform 1s ease;
+}
+
+.shift:hover {
+  transform: rotateY(-20deg);
+}
 /* --- Login --- */
 
 .login-container {
@@ -93,6 +103,10 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.login-form-button {
   margin: 0 0 10px 0;
 }
 
+.login-error {
+  color: #ef5152;
+}
+
 /* --- Signup --- */
 
 .signup-container {
@@ -124,4 +138,12 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
 
 .signup-icon {
   margin: 0 0 10px 0;
+}
+
+.signup-error {
+  color: #ef5152;
+}
+
+.signup-success {
+  color: #6288c5;
 }
