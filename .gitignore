@@ -4,3 +4,17 @@ bower_components/
 
 build/
 dist/
+
+bundles
+
+dump.rdb
+
+.vscode/
+glide.lock
+vendor/
+devNotes/
+bundles/
+
+pubnubConfig.js
+.DS_Store
+server/config.go

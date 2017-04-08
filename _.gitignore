@@ -1,8 +1,12 @@
 ### node etc ###
 
+bundles/
+
 # Logs
 logs
 *.log
+
+server/config.go
 
 # Runtime data
 pids
@@ -27,3 +31,4 @@ dist/
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 node_modules/
 bower_components/
+server/config.go
