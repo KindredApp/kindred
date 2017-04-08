@@ -18,7 +18,7 @@ import (
 
 //----- SIGNUP -----//
 
-func signupHandler(db *gorm.DB) http.Handler {
+func signupHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		var u User
 		var un UserAuth
@@ -56,6 +56,8 @@ func signupHandler(db *gorm.DB) http.Handler {
 
 		db.NewRecord(user)
 		db.Create(&user)
+
+		conn.Cmd("HMSET", u.Username, "FirstTime", "true");
 
 		w.Header().Set("Content-Type", "application/json")
 		j, _ := json.Marshal("User created")
@@ -156,6 +158,39 @@ func tokenHandler(conn *redis.Client) http.Handler {
 	})
 }
 
+// ----- CHECK VISITS (first time users) =-----//
+
+func visitHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodGet {
+			u := req.URL.Query()
+			log.Println("uri is", u["q"])
+			res, err := conn.Cmd("HGET", u["q"], "FirstTime").Str()
+			if err != nil {
+				panic(err)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			j, _ := json.Marshal(res)
+			w.Write(j)
+		} else if req.Method == http.MethodPost {
+			var v VisitCheck
+
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&v)
+			if err != nil {
+				panic(err)
+			}
+
+			log.Println("Visit check is", v)
+
+			conn.Cmd("HSET", v.Username, "FirstTime", v.FirstTime)
+			j, _ := json.Marshal("Visit check updates")
+			w.Write(j)
+		}
+	})
+}
 
 //----- PROFILE -----//
 

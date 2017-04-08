@@ -73,7 +73,7 @@ class SignUp extends React.Component {
           </Form>
           {/*<ExampleClicked />*/}
         </div>
-        {this.state.taken === true ? <div className="signup-error">Username already exists</div> : this.state.taken === false ? <div className="signup-success">Success, login with link below.</div>: null}
+        {this.state.taken === true ? <div className="signup-error">Username already exists</div> : this.state.taken === false ? <div className="signup-success">Success, login with link below.</div> : null}
         <div className="signup-form-reroute">
           <span>Already have an account? </span>
           <Link to="/login">Login!</Link>

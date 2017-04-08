@@ -68,8 +68,40 @@ class Survey extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
-      current: 0
+      current: 0,
+      firstTime: null
     };
+    this.checkVisits = this.checkVisits.bind(this);
+  }
+  
+  componentDidMount() {
+    this.checkVisits();
+  }
+
+  checkVisits() {
+    let cookie = Cookies.getJSON();
+    for (let key in cookie) {
+      if (key !== 'pnctest') {
+        axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
+        .then((response) => {
+          if (response.data === "true") {
+            axios.post('/api/visitCheck', {
+              Username: `${cookie[key].Username}`,
+              FirstTime: 'false'
+            }).then((data) => {
+              this.setState({
+                firstTime: true
+              });
+            });
+          } else if (response.data === "false") {
+            console.log("first time is ", response.data)
+            this.setState({
+              firstTime: false
+            });
+          }
+        })
+      }
+    }
   }
 
   next() {
@@ -85,6 +117,7 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div>
+        {this.state.firstTime === false ? <Redirect to="/video" /> : null}
         <Steps current={current}>
           {steps.map(item => <Step key={item.title} title={item.title} />)}
         </Steps>
