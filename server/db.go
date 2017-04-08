@@ -18,18 +18,18 @@ type UserAuth struct {
 
 type UserProfile struct {
 	gorm.Model
-	UserAuth       UserAuth
-	UserAuthID     uint   `gorm:"AUTO_INCREMENT"`
-	Zip            string `gorm:"not null"`
-	Age            int    `gorm:"not null"`
-	Gender         int    `gorm:"not null"`
-	Income         int
-	Education      int
-	Religiousity   int
-	Religion       int
-	Ethnicity      int
-	State          string
-	PoliticalAffil int
+	UserAuth     UserAuth
+	UserAuthID   uint   `gorm:"AUTO_INCREMENT"`
+	Zip          string `gorm:"not null"`
+	Age          int    `gorm:"not null"`
+	Gender       int    `gorm:"not null"`
+	Income       int
+	Education    int
+	Religiousity int
+	Religion     int
+	Ethnicity    int
+	State        string
+	Party        int
 }
 
 type Qotd struct {

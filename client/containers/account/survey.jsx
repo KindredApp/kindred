@@ -102,8 +102,29 @@ class Survey extends React.Component {
         })
       }
     }
+    this.onClickDone = this.onClickDone.bind(this);
+    console.log("userObj: ", props.user.userObj);
   }
 
+  onClickDone() {
+    // update user profile in redux too
+    Helper.userData.Username = this.props.user.userObj.Username;
+    // TODO: change ID from string to int
+    // also - why is ID 0?
+    Helper.userData.ID = this.props.user.userObj.UserAuthID; //;
+    console.log("userdata to be sent: ", Helper.userData);
+    // Send a POST request 
+    axios({
+      method: 'post',
+      url: '/api/profile',
+      data: Helper.userData,
+      headers: {
+        'Authorization': 'bearer ' + this.props.user.token[0]
+      }
+    })
+    .then(response => console.log(response));
+  }
+  
   next() {
     const current = this.state.current + 1;
     this.setState({ current });
@@ -131,7 +152,7 @@ class Survey extends React.Component {
           {
             this.state.current === steps.length - 1
             &&
-            <Button type="primary" onClick={() => { console.log(Helper.userData); }}>Done</Button>
+            <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone();}}>Done</Button>
           }
           {
             this.state.current > 0

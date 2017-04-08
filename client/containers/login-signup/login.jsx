@@ -36,8 +36,6 @@ class Login extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         axios.post('/api/login', values).then((response) => {
-          console.log("Response is", response);
-
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
 
@@ -60,13 +58,17 @@ class Login extends React.Component {
         })
         // Get profile information from server, combine into one object saved in Redux store.
         .then(newStore => {
+          console.log('newStore login line 58', newStore);
           axios.get('/api/profile?q=' + newStore.userObj.Username)
           .then(response => {
+            console.log('newStore login line 61', newStore);
+            console.log('response login line 62', response);
             let profileData = this._formatResponse(response.data);
             profileData.Username = newStore.userObj.Username;
             delete profileData.Password;
             delete profileData.Token;
             newStore.userObj = profileData;
+            console.log("saving in redux upon login: ", newStore);
             this.props.actionUser(newStore);
           });
           this.setState({
