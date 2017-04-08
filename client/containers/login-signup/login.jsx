@@ -100,7 +100,7 @@ class Login extends React.Component {
             </FormItem>
             <FormItem>
               {getFieldDecorator('Password')(
-                <Input placeholder="Password" />
+                <Input type="password" placeholder="Password" />
               )}
             </FormItem>
             <div>
@@ -108,7 +108,7 @@ class Login extends React.Component {
             </div>
           </Form>
         </div>
-        {this.state.unauthorized === true ? <div className="login-error">Username or password does not match</div> : this.state.unauthorized === false ? <Redirect to="/survey"/>: null}
+        {this.state.unauthorized === true ? <div className="login-error">Username or password does not match</div> : this.state.unauthorized === false ? <Redirect to="/video"/>: null}
         <div className="login-form-reroute">
           <span>Don't have an account? </span>
           <Link to="/signup">Join Us!</Link>

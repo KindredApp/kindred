@@ -53,7 +53,7 @@ class SignUp extends React.Component {
             </FormItem>
             <FormItem>
               {getFieldDecorator('Password')(
-                <Input placeholder="Password" />
+                <Input type="password" placeholder="Password" />
               )}
             </FormItem>
             <div>
