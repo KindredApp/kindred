@@ -8,9 +8,23 @@
     <script src="https://cdn.pubnub.com/pubnub-3.7.14.min.js"></script>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.7.0.min.js"></script>
     <script src="https://cdn.pubnub.com/webrtc/rtc-controller.js"></script>
+    <script src="https://cdn.rawgit.com/mattboldt/typed.js/master/js/typed.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function(){
+        Typed.new(".element", {
+          strings: ["", "Kanye 2020?", "^2000 What happens after you die?", "^2000 Cats or dogs?"],
+          typeSpeed: 10,
+          backSpeed: 40,
+          startDelay: 1500,
+          backDelay: 500
+        });
+      });
+    </script>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   </head>
   <body>
-    <div>HELLO WORLD!</div>
     <div id="root"></div>
     <script src="/bundles/bundle.js"></script>
   </body>
