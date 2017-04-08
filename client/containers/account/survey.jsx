@@ -103,13 +103,12 @@ class Survey extends React.Component {
       }
     }
     this.onClickDone = this.onClickDone.bind(this);
-    console.log("userObj: ", props.user.userObj);
   }
 
   // TODO: update user profile in redux too
   onClickDone() {
     Helper.userData.Username = this.props.user.userObj.Username;
-    Helper.userData.ID = this.props.user.userObj.UserAuthID; //;
+    Helper.userData.ID = parseInt(this.props.user.userObj.UserAuthID); //;
     console.log("userdata to be sent: ", Helper.userData);
     axios({
       method: 'post',
