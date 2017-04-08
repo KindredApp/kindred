@@ -36,11 +36,7 @@ class Login extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         axios.post('/api/login', values).then((response) => {
-<<<<<<< HEAD
-=======
-          console.log("Response from login post: ", response);
 
->>>>>>> GET profile data upon login, save in redux store
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
 
