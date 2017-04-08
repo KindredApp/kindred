@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/mediocregopher/radix.v2/redis"
-	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -57,7 +57,7 @@ func signupHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 		db.NewRecord(user)
 		db.Create(&user)
 
-		conn.Cmd("HMSET", u.Username, "FirstTime", "true");
+		conn.Cmd("HMSET", u.Username, "FirstTime", "true")
 
 		w.Header().Set("Content-Type", "application/json")
 		j, _ := json.Marshal("User created")
@@ -69,7 +69,7 @@ func signupHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 //----- LOGIN -----//
 
 func loginHandler(db *gorm.DB, conn *redis.Client) http.Handler {
-	return http.HandlerFunc(func( w http.ResponseWriter, req *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 
 		if req.Method == http.MethodPost {
 			var u User
@@ -130,7 +130,6 @@ func loginHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 	})
 }
 
-
 //----- CHECK TOKEN -----//
 func tokenHandler(conn *redis.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -158,7 +157,7 @@ func tokenHandler(conn *redis.Client) http.Handler {
 	})
 }
 
-// ----- CHECK VISITS (first time users) =-----//
+// ----- CHECK VISITS (first time users) -----//
 
 func visitHandler(conn *redis.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -201,6 +200,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 			var us UserSurvey
 			var un UserAuth
 			var usp UserProfile
+
 			rh := req.Header.Get("Authorization")[7:]
 
 			decoder := json.NewDecoder(req.Body)
@@ -213,10 +213,9 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 			db.Where(&UserAuth{Token: "\"" + rh + "\""}).First(&un)
 			us.ID = un.ID
 			db.Where("user_auth_id = ?", un.ID).First(&usp)
-			//create new user profile entry 
+			//create new user profile entry
 			if usp.UserAuthID == 0 {
 				f := defaultSurvey(us)
-
 				//create new database record
 				db.NewRecord(f)
 				db.Create(&f)
@@ -253,7 +252,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 
 		//handle get
 		if req.Method == http.MethodGet {
-			u := req.URL.Query();
+			u := req.URL.Query()
 
 			res, err := conn.Cmd("HGET", u["q"], "Profile").Str()
 			if err != nil {
@@ -263,12 +262,11 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 			j, _ := json.Marshal(res)
 			w.Write(j)
-		} 
+		}
 	})
 }
 
 //----- FEEDBACK -----//
-
 
 func feedbackHandler(db *gorm.DB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -338,7 +336,6 @@ func wsHandler(conn *redis.Client) http.Handler {
 		}
 	})
 }
-
 
 func wsMessages() {
 	for {
@@ -420,15 +417,15 @@ func qotdHandler(db *gorm.DB) http.Handler {
 					answerOptions = append(answerOptions, v.Text)
 				}
 
-			questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
+				questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
 
-			q, err := json.Marshal(questionWOptions)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			w.Header().Set("Content-Type", "application/json")
-			w.Write(q)
+				q, err := json.Marshal(questionWOptions)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(q)
 			}
 		} else {
 			var newAnswer QotdAnswer
@@ -456,4 +453,3 @@ func qotdHandler(db *gorm.DB) http.Handler {
 		}
 	})
 }
-

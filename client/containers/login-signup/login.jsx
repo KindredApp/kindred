@@ -36,7 +36,6 @@ class Login extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         axios.post('/api/login', values).then((response) => {
-          console.log("Response is", response);
 
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
@@ -50,15 +49,29 @@ class Login extends React.Component {
               Cookies.remove(key);
             }
           }
+          
+          this.setState({
+            unauthorized: false
+          });
                     
-          return {
-            token: [token, response.headers.date],
-            userObj: {
-              Username: userObj.Username
-            }
-          };
+          return new Promise((resolve, reject) => {
+            resolve({
+              token: [token, response.headers.date],
+              userObj: {
+                Username: userObj.Username
+              }
+            });
+          });
         })
-        // Get profile information from server, combine into one object login information in one object saved in Redux store.
+
+        //TODO: Remove these fields from server GET profile response:
+        // CreatedAt, DeletedAt, UpdatedAt, ID, UserAuth
+
+        // TODO: Fix Name and Email fields in response from server (currently they're empty strings even if the user has a name and email)
+
+        // TODO: Many of the fields in response that should be ints are strings.
+
+        // Get profile information from server, combine into one object saved in Redux store.
         .then(newStore => {
           axios.get('/api/profile?q=' + newStore.userObj.Username)
           .then(response => {
@@ -67,16 +80,14 @@ class Login extends React.Component {
             delete profileData.Password;
             delete profileData.Token;
             newStore.userObj = profileData;
+            console.log("saving in redux upon login: ", newStore);
             this.props.actionUser(newStore);
           });
-          this.setState({
-            unauthorized: false
-          })
         }).catch((error) => {
           if (error.response) {
             this.setState({
               unauthorized: true
-            })
+            });
             console.log("error data is", error.response.data);
           }
         });
