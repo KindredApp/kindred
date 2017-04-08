@@ -59,7 +59,17 @@
   margin-top: 30px;
 }
 
+.persective {
+  perspective: 15000px;
+}
 
+.shift {
+  transition: transform 1s ease;
+}
+
+.shift:hover {
+  transform: rotateY(-20deg);
+}
 /* --- Login --- */
 
 .login-container {
@@ -91,6 +101,10 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.login-form-button {
 
 .login-icon {
   margin: 0 0 10px 0;
+}
+
+.login-error {
+  color: #ef5152;
 }
 
 /* --- Signup --- */

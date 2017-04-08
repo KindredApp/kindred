@@ -2,7 +2,7 @@ import React from 'react';
 import {Form, Input, Button} from 'antd';
 import axios from 'axios';
 // import querystring from 'querystring';
-import { Link, hashHistory } from 'react-router-dom';
+import { Link, hashHistory, Redirect } from 'react-router-dom';
 import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -13,6 +13,11 @@ const FormItem = Form.Item;
 class Login extends React.Component {
   constructor (props) {
     super(props);
+
+    this.state = {
+      unauthorized: null
+    }
+
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -31,7 +36,7 @@ class Login extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         axios.post('/api/login', values).then((response) => {
-          console.log(response);
+          console.log("Response is", response);
 
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
@@ -64,6 +69,16 @@ class Login extends React.Component {
             newStore.userObj = profileData;
             this.props.actionUser(newStore);
           });
+          this.setState({
+            unauthorized: false
+          })
+        }).catch((error) => {
+          if (error.response) {
+            this.setState({
+              unauthorized: true
+            })
+            console.log("error data is", error.response.data);
+          }
         });
       }
     });
@@ -93,6 +108,7 @@ class Login extends React.Component {
             </div>
           </Form>
         </div>
+        {this.state.unauthorized === true ? <div className="login-error">Username or password does not match</div> : this.state.unauthorized === false ? <Redirect to="/survey"/>: null}
         <div className="login-form-reroute">
           <span>Don't have an account? </span>
           <Link to="/signup">Join Us!</Link>

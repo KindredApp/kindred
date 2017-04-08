@@ -22,10 +22,16 @@ class App extends React.Component {
             <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
           </div>
           <div className="header-nav">
-            <nav className="header-links">
-              <Link to="/login">login </Link>
-              <Link to="/signup">sign up </Link>
-              <Link to="/aboutus">about us </Link>
+            <nav className="header-links perspective">
+              <div className="shift">
+                <Link to="/login">login </Link>
+              </div>
+              <div className="shift">
+                <Link to="/signup">sign up </Link>
+              </div>
+              <div className="shift">
+                <Link to="/aboutus">about us </Link>
+              </div>
             </nav>
           </div>
         </div>
