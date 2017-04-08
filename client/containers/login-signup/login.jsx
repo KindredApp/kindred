@@ -1,6 +1,7 @@
 import React from 'react';
 import {Form, Input, Button} from 'antd';
 import axios from 'axios';
+// import querystring from 'querystring';
 import { Link, hashHistory } from 'react-router-dom';
 import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
@@ -15,12 +16,23 @@ class Login extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  _formatResponse (string) {
+    let map = {};
+    let o = string.replace(/(["\\{}])/g, "").split(',');
+    o.forEach((v) => {
+      var tuple = v.split(':');
+      map[tuple[0]] = tuple[1]
+    }); 
+    return map;
+  }
+
   handleSubmit (e) {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         axios.post('/api/login', values).then((response) => {
           console.log(response);
+
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
 
@@ -33,16 +45,30 @@ class Login extends React.Component {
               Cookies.remove(key);
             }
           }
-
-          this.props.actionUser({
-            token: token,
-            userObj: userObj,
-            timestamp: response.headers.date
+                    
+          return {
+            token: [token, response.headers.date],
+            userObj: {
+              Username: userObj.Username
+            }
+          };
+        })
+        // Get profile information from server, combine into one object login information in one object saved in Redux store.
+        .then(newStore => {
+          axios.get('/api/profile?q=' + newStore.userObj.Username)
+          .then(response => {
+            let profileData = this._formatResponse(response.data);
+            profileData.Username = newStore.userObj.Username;
+            delete profileData.Password;
+            delete profileData.Token;
+            newStore.userObj = profileData;
+            this.props.actionUser(newStore);
           });
         });
       }
     });
   }
+  
   render () {
     const { getFieldDecorator } = this.props.form;
     return (
