@@ -92,3 +92,36 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.login-form-button {
 .login-icon {
   margin: 0 0 10px 0;
 }
+
+/* --- Signup --- */
+
+.signup-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+div.ant-row.ant-form-item {
+  width: 250px;
+}
+
+button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
+  width: 250px;
+}
+
+.signup-form-reroute {
+  margin: 10px 0 0 0;
+}
+
+.signup-icon {
+  margin: 0 0 10px 0;
+}

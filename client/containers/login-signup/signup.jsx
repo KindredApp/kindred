@@ -1,5 +1,6 @@
 import React from 'react';
 import {Form, Input, Button} from 'antd';
+import { Link, hashHistory } from 'react-router-dom';
 import ExampleClicked from '../exampleClicked.js';
 import axios from 'axios';
 
@@ -29,33 +30,42 @@ class SignUp extends React.Component {
     const {getFieldDecorator} = this.props.form; //took this from internet, i assume its equivalent to importing?
 
     return (
-      <div>
-      <Form onSubmit={this.handleSubmit}>
-        <FormItem label='email'>
-          {getFieldDecorator('Email')(
-            <input />
-          )}
-        </FormItem>
-        <FormItem label='Username'>
-          {getFieldDecorator('Username')(
-            <Input />
-          )}
-        </FormItem>
-        <FormItem label='Name'>
-          {getFieldDecorator('Name')(
-            <Input />
-          )}        
-        </FormItem>
-        <FormItem label='Password'>
-          {getFieldDecorator('Password')(
-            <Input />
-          )}
-        </FormItem>
-        <div>
-          <Button type='primary' htmlType='submit' size='large'>Sign Up</Button>
+      <div className="signup-container">
+        <div className="signup-icon">
+          <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
         </div>
-      </Form>
-      <ExampleClicked />
+        <div className="signup-form-container">
+          <Form onSubmit={this.handleSubmit}>
+            <FormItem>
+              {getFieldDecorator('Email')(
+                <Input placeholder="Email Address"/>
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('Username')(
+                <Input placeholder="Username" />
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('Name')(
+                <Input placeholder="Name" />
+              )}        
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('Password')(
+                <Input placeholder="Password" />
+              )}
+            </FormItem>
+            <div>
+              <Button type='primary' htmlType='submit' size='large' className="signup-form-button">Sign Up</Button>
+            </div>
+          </Form>
+          {/*<ExampleClicked />*/}
+        </div>
+        <div className="signup-form-reroute">
+          <span>Already have an account? </span>
+          <Link to="/login">Login!</Link>
+        </div>
       </div>
     );
   }
