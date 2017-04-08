@@ -73,6 +73,9 @@ class Login extends React.Component {
     const { getFieldDecorator } = this.props.form;
     return (
       <div className="login-container">
+        <div className="login-icon">
+          <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
+        </div>
         <div className="login-form-container">
           <Form onSubmit={this.handleSubmit} className="login-form">
             <FormItem>

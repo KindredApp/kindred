@@ -13,6 +13,7 @@
   display: flex;
   justify-content: space-around;
   height: 15%;
+  align-items: center;
 }
 
 .header-nav {
@@ -86,4 +87,8 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.login-form-button {
 
 .login-form-reroute {
   margin: 10px 0 0 0;
+}
+
+.login-icon {
+  margin: 0 0 10px 0;
 }
