@@ -72,21 +72,31 @@ class Login extends React.Component {
   render () {
     const { getFieldDecorator } = this.props.form;
     return (
-      <div>
-        <Form onSubmit={this.handleSubmit}>
-          <FormItem label='Username'>
-            {getFieldDecorator('Username')(
-              <Input />
-            )}
-          </FormItem>
-          <FormItem label='Password'>
-            {getFieldDecorator('Password')(
-              <Input />
-            )}
-          </FormItem>
-          <Button type='primary' htmlType='submit' size='large'>Login</Button>
-        </Form>
-        <Link to="/signup">Don't have an account with us? Join Here!</Link>
+      <div className="login-container">
+        <div className="login-icon">
+          <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
+        </div>
+        <div className="login-form-container">
+          <Form onSubmit={this.handleSubmit} className="login-form">
+            <FormItem>
+              {getFieldDecorator('Username')(
+                <Input placeholder="Username"/>
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('Password')(
+                <Input placeholder="Password" />
+              )}
+            </FormItem>
+            <div>
+              <Button type='primary' htmlType='submit' size='large' className="login-form-button">Login</Button>
+            </div>
+          </Form>
+        </div>
+        <div className="login-form-reroute">
+          <span>Don't have an account? </span>
+          <Link to="/signup">Join Us!</Link>
+        </div>
       </div>
     );
   }

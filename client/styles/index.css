@@ -2,6 +2,8 @@
   height: 100%;
 }
 
+/* --- Landing --- */
+
 .landing-container {
   height: 100%;
   width: 100%;
@@ -11,6 +13,7 @@
   display: flex;
   justify-content: space-around;
   height: 15%;
+  align-items: center;
 }
 
 .header-nav {
@@ -54,4 +57,71 @@
   color: white;
   text-align: center;
   margin-top: 30px;
+}
+
+
+/* --- Login --- */
+
+.login-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+div.ant-row.ant-form-item {
+  width: 250px;
+}
+
+button.ant-btn.ant-btn-primary.ant-btn-lg.login-form-button {
+  width: 250px;
+}
+
+.login-form-reroute {
+  margin: 10px 0 0 0;
+}
+
+.login-icon {
+  margin: 0 0 10px 0;
+}
+
+/* --- Signup --- */
+
+.signup-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+div.ant-row.ant-form-item {
+  width: 250px;
+}
+
+button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
+  width: 250px;
+}
+
+.signup-form-reroute {
+  margin: 10px 0 0 0;
+}
+
+.signup-icon {
+  margin: 0 0 10px 0;
 }

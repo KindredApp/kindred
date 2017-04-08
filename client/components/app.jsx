@@ -19,7 +19,7 @@ class App extends React.Component {
       <div className="landing-container">
         <div className="landing-header">
           <div>
-            <img className="header-logo" src={"../public/assets/kindred-logo.svg"} width="100px" height="100px"/>
+            <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
           </div>
           <div className="header-nav">
             <nav className="header-links">
