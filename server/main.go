@@ -47,10 +47,11 @@ func main() {
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.Handle("/api/profile", profileHandler(db, conn))
-	http.Handle("/api/signup", signupHandler(db))
+	http.Handle("/api/signup", signupHandler(db, conn))
 	http.Handle("/api/login", loginHandler(db, conn))
 	http.Handle("/api/tokenCheck", tokenHandler(conn))
 	http.Handle("/api/feedback", feedbackHandler(db))
+	http.Handle("/api/visitCheck", visitHandler(conn));
 	http.Handle("/api/ws", wsHandler(conn))
 	http.Handle("/api/qotd", qotdHandler(db))
 	

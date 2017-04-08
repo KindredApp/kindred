@@ -40,6 +40,11 @@ type Cookie struct {
   Token string
 }
 
+type VisitCheck struct {
+	Username string `json:"Username"`
+	FirstTime string `json:"FirstTime"`
+}
+
 // type ReqObj struct {
 // Username string
 // }
