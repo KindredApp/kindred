@@ -58,7 +58,7 @@ class Login extends React.Component {
             }
           };
         })
-        // Get profile information from server, combine into one object login information in one object saved in Redux store.
+        // Get profile information from server, combine into one object saved in Redux store.
         .then(newStore => {
           axios.get('/api/profile?q=' + newStore.userObj.Username)
           .then(response => {
