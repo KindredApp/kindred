@@ -2,6 +2,8 @@
   height: 100%;
 }
 
+/* --- Landing --- */
+
 .landing-container {
   height: 100%;
   width: 100%;
@@ -54,4 +56,34 @@
   color: white;
   text-align: center;
   margin-top: 30px;
+}
+
+
+/* --- Login --- */
+
+.login-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+div.ant-row.ant-form-item {
+  width: 250px;
+}
+
+button.ant-btn.ant-btn-primary.ant-btn-lg.login-form-button {
+  width: 250px;
+}
+
+.login-form-reroute {
+  margin: 10px 0 0 0;
 }

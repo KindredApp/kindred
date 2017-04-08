@@ -51,7 +51,9 @@ class SignUp extends React.Component {
             <Input />
           )}
         </FormItem>
-        <Button type='primary' htmlType='submit' size='large'>Sign Up</Button>
+        <div>
+          <Button type='primary' htmlType='submit' size='large'>Sign Up</Button>
+        </div>
       </Form>
       <ExampleClicked />
       </div>
