@@ -9,6 +9,10 @@ const FormItem = Form.Item;
 class SignUp extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      taken: null
+    }
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -19,7 +23,14 @@ class SignUp extends React.Component {
         console.log(values);
         axios.post('/api/signup', values).then((response) => {
           console.log(response);
+          this.setState({
+            taken: false
+          })
           // window.location = 'http://localhost:8080/'; //HARD CODED FOR LOCAL HOST, CORRECT LATER
+        }).catch((error) => {
+          this.setState({
+            taken: true
+          })
         });
       }
     });
@@ -62,6 +73,7 @@ class SignUp extends React.Component {
           </Form>
           {/*<ExampleClicked />*/}
         </div>
+        {this.state.taken === true ? <div className="signup-error">Username already exists</div> : this.state.taken === false ? <div className="signup-success">Success, login with link below.</div>: null}
         <div className="signup-form-reroute">
           <span>Already have an account? </span>
           <Link to="/login">Login!</Link>
