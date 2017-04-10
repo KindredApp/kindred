@@ -22,6 +22,7 @@ class Video extends React.Component {
       pairs: 0
     };
 
+    console.log('PROPS FROM VDIEO', this.props);
     this.pubnub = new PubNub({
       publishKey: pubnubConfig.publishKey,
       subscribeKey: pubnubConfig.subscribeKey,
@@ -41,7 +42,7 @@ class Video extends React.Component {
   tokenHolder() {
     //THIS IS UGLY FIX IT
     if (this.props.user) {
-      return this.props.user.token.slice(-20);
+      return this.props.user.token[0].slice(-20);
     }
     return null;
   }
