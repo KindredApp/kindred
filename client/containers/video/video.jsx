@@ -28,7 +28,8 @@ class Video extends React.Component {
       publishKey: pubnubConfig.publishKey,
       subscribeKey: pubnubConfig.subscribeKey,
       ssl: true,
-      uuid: this.tokenHolder()
+      uuid: this.tokenHolder(),
+      unauthorized: null
     });
 
     this.tokenHolder = this.tokenHolder.bind(this);
@@ -38,6 +39,41 @@ class Video extends React.Component {
     this.login = this.login.bind(this);
     this.endCall = this.endCall.bind(this);
     this.checkQueue = this.checkQueue.bind(this);
+    this.checkToken = this.checkToken.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
+  }
+
+  componentDidMount() {
+    this.checkToken()
+  }
+  checkToken() {
+    let cookie = Cookies.getJSON();
+    let cookieCount = 0;
+    console.log("cookie is", cookie)
+    for (let key in cookie) {
+      cookieCount++;
+      if (key !== 'pnctest') {
+        console.log('in check token');
+        axios.post('/api/tokenCheck', {
+          Username: cookie[key].Username,
+          Token: cookie[key].Token
+        }).then((response) => {
+          if (response.data === true) {
+            this.setState({unauthorized: false})
+          } else if (response.data === false) {
+            this.setState({unauthorized: true})
+          }
+        }).catch((error) => {
+          this.setState({unauthorized: true})
+          console.log("Check token error", error)
+        });
+      }
+    }
+    if (cookieCount === 1) {
+      this.setState({
+        unauthorized: true
+      })
+    }
   }
 
   tokenHolder() {
@@ -187,30 +223,33 @@ class Video extends React.Component {
   }
 
   render() {
-    return (
-     <div>
-       {this.state.showChat ? 
-          <div>
-            <h1>Chat</h1>
-            <div>
-              {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p>; })}
-            </div>
-            <input
-              type="text"
-              ref="input"
-              value={this.state.currentMessage}
-              placeholder="Message"
-              onChange={this.changedMessage}
-            />
-            <button onClick={this.sendMessage}>send</button>
+    return ( 
+      <div>
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? null : null}</div>
+        <div>
+          {this.state.showChat ? 
+              <div>
+                <h1>Chat</h1>
+                <div>
+                  {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p>; })}
+                </div>
+                <input
+                  type="text"
+                  ref="input"
+                  value={this.state.currentMessage}
+                  placeholder="Message"
+                  onChange={this.changedMessage}
+                />
+                <button onClick={this.sendMessage}>send</button>
+              </div>
+            : null }
+            <h1>Video</h1>
+            <div>You have {3-this.state.pairs} pairs remaining today</div>
+            <button onClick={this.makeCall}>Pair me</button>
+            <button onClick={this.endCall}>End Call</button>
+            <div id="videoBox" ref="video"></div>
+            <div id="videoThumbnail" ref="userVideo"></div>
           </div>
-        : null }
-        <h1>Video</h1>
-        <div>You have {3-this.state.pairs} pairs remaining today</div>
-        <button onClick={this.makeCall}>Pair me</button>
-        <button onClick={this.endCall}>End Call</button>
-        <div id="videoBox" ref="video"></div>
-        <div id="videoThumbnail" ref="userVideo"></div>
       </div>
     );
   }
