@@ -43,6 +43,7 @@ class Video extends React.Component {
     this.checkToken = this.checkToken.bind(this);
     this.checkVisits = this.checkVisits.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   componentDidMount() {
@@ -80,6 +81,23 @@ class Video extends React.Component {
         }).catch((error) => {console.log("Check visits error", error)});
       }
     }
+  }
+
+  handleLogout() {
+    let cookie = Cookies.getJSON();
+    let username;
+    let token;
+
+    for (var key in cookie) {
+      if (key !== "pnctest") {
+        username = key;
+        token = cookie[key].Token
+      }
+    }
+
+    axios.post('/api/logout', {Username: username, Token: token}).then((response) => {
+      Cookies.remove(username);
+    });
   }
 
   tokenHolder() {
@@ -232,6 +250,11 @@ class Video extends React.Component {
     return ( 
       <div>
         <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
+        <div className="header-links perspective">
+          <div className="shift" onClick={this.handleLogout}>
+            <a href="#/">Logout</a>
+          </div>
+        </div>
         <div>
           {this.state.showChat ? 
               <div>
