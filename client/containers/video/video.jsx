@@ -19,7 +19,8 @@ class Video extends React.Component {
       queue: [],
       showChat: false,
       privateChannel: '',
-      pairs: 0
+      pairs: 0,
+      userVideo: false
     };
 
     console.log('PROPS FROM VDIEO', this.props);
@@ -92,7 +93,12 @@ class Video extends React.Component {
     var videoThumbnail = document.getElementById('videoThumbnail');
     var ctrl = window.ctrl = CONTROLLER(phone);
     ctrl.ready(() => {
-      ctrl.addLocalStream(videoThumbnail);
+      if (!this.state.userVideo) {
+        this.setState({
+          userVideo: true
+        })
+        ctrl.addLocalStream(videoThumbnail);
+      }
     });
     ctrl.receive((session) => {
       session.connected((session) => {
