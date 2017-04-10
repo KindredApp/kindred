@@ -27,8 +27,7 @@ class Login extends React.Component {
 
 
   _formatResponse (string) {
-    let map = {};
-    let o = string.replace(/(["\\{}])/g, "").split(',');
+    let map = {}, o = string.replace(/(["\\{}])/g, "").split(',');
     o.forEach((v) => {
       var tuple = v.split(':');
       map[tuple[0]] = tuple[1]
@@ -38,9 +37,8 @@ class Login extends React.Component {
 
   checkToken() {
     let cookie = Cookies.getJSON();
-    for (let key in cookie) {
+    for (var key in cookie) {
       if (key !== 'pnctest') {
-        console.log('in check token');
         axios.post('/api/tokenCheck', {
           Username: cookie[key].Username,
           Token: cookie[key].Token
@@ -55,23 +53,20 @@ class Login extends React.Component {
 
   checkVisits() {
     let cookie = Cookies.getJSON();
-    console.log("check visits cookie is", cookie);
     for (let key in cookie) {
       if (key !== 'pnctest') {
         axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
           if (response.data === "true") {
-            console.log("Check visits is", response.data);
             this.setState({
               redirect: true
             })
           } else if (response.data === "false") {
-            console.log("Check visits is", response.data);
             this.setState({
               redirect: false
             });
           }
-        });
+        }).catch((error) => {console.log("Check visits error", error)});
       }
     }
   }
