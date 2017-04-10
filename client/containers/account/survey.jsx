@@ -69,41 +69,11 @@ class Survey extends React.Component {
     super (props);
     this.state = {
       current: 0,
-      firstTime: null
+      redirect: null
     };
-    this.checkVisits = this.checkVisits.bind(this);
-  }
-  
-  componentDidMount() {
-    this.checkVisits();
-  }
-
-  checkVisits() {
-    let cookie = Cookies.getJSON();
-    for (let key in cookie) {
-      if (key !== 'pnctest') {
-        axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
-        .then((response) => {
-          if (response.data === "true") {
-            axios.post('/api/visitCheck', {
-              Username: `${cookie[key].Username}`,
-              FirstTime: 'false'
-            }).then((data) => {
-              this.setState({
-                firstTime: true
-              });
-            });
-          } else if (response.data === "false") {
-            console.log("first time is ", response.data)
-            this.setState({
-              firstTime: false
-            });
-          }
-        })
-      }
-    }
     this.onClickDone = this.onClickDone.bind(this);
   }
+
 
   // TODO: update user profile in redux too
   onClickDone() {
@@ -118,7 +88,11 @@ class Survey extends React.Component {
         'Authorization': 'Bearer ' + this.props.user.token[0]
       }
     })
-    .then(response => console.log(response));
+    .then(response => {
+      this.setState({
+        redirect: true
+      })
+    });
   }
   
   next() {
@@ -134,7 +108,7 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div>
-        {this.state.firstTime === false ? <Redirect to="/video" /> : null}
+        {this.state.redirect === true ? <Redirect to="/video"/> : null}
         <Steps current={current}>
           {steps.map(item => <Step key={item.title} title={item.title} />)}
         </Steps>

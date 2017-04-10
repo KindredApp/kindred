@@ -164,7 +164,7 @@ func visitHandler(conn *redis.Client) http.Handler {
 		if req.Method == http.MethodGet {
 			u := req.URL.Query()
 			log.Println("uri is", u["q"])
-			res, err := conn.Cmd("HGET", u["q"], "FirstTime").Str()
+			res, err := conn.Cmd("HGET", u["q"], "Survey").Str()
 			if err != nil {
 				panic(err)
 			}
@@ -226,7 +226,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 				if err != nil {
 					panic(err)
 				}
-				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true")
+				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true	")
 
 				//write response back
 				w.Header().Set("Content-Type", "application/json")
