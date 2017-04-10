@@ -35,24 +35,7 @@ class Video extends React.Component {
     this.makeCall = this.makeCall.bind(this);
     this.login = this.login.bind(this);
     this.endCall = this.endCall.bind(this);
-    this.checkToken = this.checkToken.bind(this);
     this.checkQueue = this.checkQueue.bind(this);
-  }
-
-  checkToken() {
-    let cookie = Cookies.getJSON();
-    for (let key in cookie) {
-      if (key !== 'pnctest') {
-        console.log('in check token');
-        return (axios.post('/api/tokenCheck', {
-          Username: cookie[key].Username,
-          Token: cookie[key].Token
-        }).then((response) => {
-          console.log('SUCCESSFUL TOKEN RETRIEVAL: ', response);
-          return response.data;
-        }));
-      }
-    }
   }
 
   tokenHolder() {
@@ -61,26 +44,6 @@ class Video extends React.Component {
       return this.props.user.token.slice(-20);
     }
     return null;
-  }
-
-  componentDidMount() {
-    if (!this.props.user) {
-      console.log('no user, checking cache');
-      if (!this.checkToken()) {
-        console.log('no cache, redirect');
-        return (
-
-        <Redirect to='/login' />
-        );
-      } else {
-        console.log('user in cache');
-        // run func that will add user to state
-        // return VideoComponent;        
-      }
-    } else {
-      console.log('user in state');
-      // return VideoComponent;
-    }
   }
 
   changedMessage() {

@@ -17,14 +17,16 @@ class Logout extends React.Component {
   }
 
   logout() {
-    // Cookies.remove('pnctest');
-    // Cookies.remove();
+    let user = this.props.user.userObj.Username;
+    Cookies.remove(user);
+    axios.delete('/api/tokenCheck', {
+      Username: user
+    });
   }
  
   render () {
-    console.log('props for logout: ', this.props);
     return (
-      <div>TESTESTSTSETS 
+      <div> 
      <button onClick={this.logout}>Log out</button>
      </div>
     );
@@ -33,11 +35,12 @@ class Logout extends React.Component {
 
 function mapStateToProps (state) {
   return {
+    user: state.userReducer
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({actionUser: actionUser}, dispatch);
+  return bindActionCreators({}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Logout);
