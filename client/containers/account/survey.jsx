@@ -77,15 +77,24 @@ class Survey extends React.Component {
 
   // TODO: update user profile in redux too
   onClickDone() {
-    Helper.userData.Username = this.props.user.userObj.Username;
-    Helper.userData.ID = parseInt(this.props.user.userObj.UserAuthID); //;
+    let cookies = Cookies.getJSON();
+    let token;
+    Helper.userData.Username;
+
+    for (var key in cookies) {
+      if (key != "pnctest") {
+        Helper.userData.Username = key;
+        token = cookies[key].Token;
+      }
+    }
+    // Helper.userData.ID = parseInt(this.props.user.userObj.UserAuthID); //;
     console.log("userdata to be sent: ", Helper.userData);
     axios({
       method: 'post',
       url: '/api/profile',
       data: Helper.userData,
       headers: {
-        'Authorization': 'Bearer ' + this.props.user.token[0]
+        'Authorization': 'Bearer ' + token
       }
     })
     .then(response => {
