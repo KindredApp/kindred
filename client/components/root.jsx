@@ -60,7 +60,7 @@ class Root extends Component {
   }
 
   render () {
-    console.log('ROOT STATE', this.props.user);
+    console.log('ROOT STATE IS', this.props.user);
     return (
     <div className="root-div">
         <Router>
