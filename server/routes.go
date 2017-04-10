@@ -130,6 +130,28 @@ func loginHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 	})
 }
 
+//----- LOGOUT -----//
+
+func logoutHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodPost {
+			var c Cookie
+
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&c)
+			if err != nil {
+				panic(err)
+			}
+
+			conn.Cmd("HDEL", c.Username, "Token")
+
+			j, err := json.Marshal("User logged out")
+			w.Write(j)
+		}
+	})
+}
+
 //----- CHECK TOKEN -----//
 func tokenHandler(conn *redis.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

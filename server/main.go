@@ -49,6 +49,7 @@ func main() {
 	http.Handle("/api/profile", profileHandler(db, conn))
 	http.Handle("/api/signup", signupHandler(db, conn))
 	http.Handle("/api/login", loginHandler(db, conn))
+	http.Handle("/api/logout", logoutHandler(conn))
 	http.Handle("/api/tokenCheck", tokenHandler(conn))
 	http.Handle("/api/feedback", feedbackHandler(db))
 	http.Handle("/api/visitCheck", visitHandler(conn));

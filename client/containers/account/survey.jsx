@@ -80,7 +80,6 @@ class Survey extends React.Component {
   }
 
   componentDidMount() {
-    console.log("did mount");
     this.checkToken();
   }
 
