@@ -29,7 +29,8 @@ class Video extends React.Component {
       subscribeKey: pubnubConfig.subscribeKey,
       ssl: true,
       uuid: this.tokenHolder(),
-      unauthorized: null
+      unauthorized: null,
+      redirect: null
     });
 
     this.tokenHolder = this.tokenHolder.bind(this);
@@ -40,12 +41,14 @@ class Video extends React.Component {
     this.endCall = this.endCall.bind(this);
     this.checkQueue = this.checkQueue.bind(this);
     this.checkToken = this.checkToken.bind(this);
+    this.checkVisits = this.checkVisits.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
   componentDidMount() {
     this.checkToken()
   }
+
   checkToken() {
     let cookie = Cookies.getJSON(), cookieCount = 0;
     for (let key in cookie) {
@@ -55,11 +58,7 @@ class Video extends React.Component {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
-          if (response.data === true) {
-            this.setState({unauthorized: false})
-          } else if (response.data === false) {
-            this.setState({unauthorized: true})
-          }
+          response.data === true ? this.setState({ unauthorized: false }, () => {this.checkVisits()}) : this.setState({ unauthorized: true })
         }).catch((error) => {
           this.setState({unauthorized: true})
           console.log("Check token error", error)
@@ -68,6 +67,18 @@ class Video extends React.Component {
     }
     if (cookieCount === 1) {
       this.setState({ unauthorized: true })
+    }
+  }
+
+  checkVisits() {
+    let cookie = Cookies.getJSON();
+    for (let key in cookie) {
+      if (key !== 'pnctest') {
+        axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
+        .then((response) => {
+          response.data === "true" ? this.setState({ redirect: false }) : this.setState({ redirect: true})
+        }).catch((error) => {console.log("Check visits error", error)});
+      }
     }
   }
 
@@ -220,7 +231,7 @@ class Video extends React.Component {
   render() {
     return ( 
       <div>
-        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? null : null}</div>
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
         <div>
           {this.state.showChat ? 
               <div>
