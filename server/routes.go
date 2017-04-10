@@ -57,7 +57,7 @@ func signupHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 		db.NewRecord(user)
 		db.Create(&user)
 
-		conn.Cmd("HMSET", u.Username, "FirstTime", "true")
+		conn.Cmd("HMSET", u.Username, "Survey", "false")
 
 		w.Header().Set("Content-Type", "application/json")
 		j, _ := json.Marshal("User created")
@@ -172,22 +172,7 @@ func visitHandler(conn *redis.Client) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 			j, _ := json.Marshal(res)
 			w.Write(j)
-		} else if req.Method == http.MethodPost {
-			var v VisitCheck
-
-			decoder := json.NewDecoder(req.Body)
-			defer req.Body.Close()
-			err := decoder.Decode(&v)
-			if err != nil {
-				panic(err)
-			}
-
-			log.Println("Visit check is", v)
-
-			conn.Cmd("HSET", v.Username, "FirstTime", v.FirstTime)
-			j, _ := json.Marshal("Visit check updates")
-			w.Write(j)
-		}
+		} 
 	})
 }
 
@@ -225,7 +210,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 				if err != nil {
 					panic(err)
 				}
-				conn.Cmd("HSET", un.Username, "Profile", string(out))
+				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true")
 
 				//write response back
 				w.Header().Set("Content-Type", "application/json")
@@ -241,7 +226,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 				if err != nil {
 					panic(err)
 				}
-				conn.Cmd("HSET", un.Username, "Profile", string(out))
+				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true")
 
 				//write response back
 				w.Header().Set("Content-Type", "application/json")
