@@ -69,26 +69,65 @@ class Survey extends React.Component {
     super (props);
     this.state = {
       current: 0,
+      answered: null,
+      unauthorized: null,
       redirect: null
     };
     this.onClickDone = this.onClickDone.bind(this);
+    this.checkToken = this.checkToken.bind(this);
+    this.checkVisits = this.checkVisits.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
 
+  componentDidMount() {
+    console.log("did mount");
+    this.checkToken();
+  }
+
+  checkToken() {
+    let cookie = Cookies.getJSON(), cookieCount = 0;
+    for (var key in cookie) {
+      cookieCount++;
+      if (key !== 'pnctest') {
+        axios.post('/api/tokenCheck', {
+          Username: cookie[key].Username,
+          Token: cookie[key].Token
+        }).then((response) => {
+          console.log("response is", response.data);
+          response.data === true ? this.setState({ unauthorized: false}, () => {this.checkVisits()}) : this.setState({ unauthorized: true })
+        }).catch((error) => {console.log("Check token error", error)});
+      }
+    }
+    if (cookieCount === 1) {
+      this.setState({ unauthorized: true })
+    }
+  }
+
+  checkVisits() {
+    let cookie = Cookies.getJSON();
+    for (let key in cookie) {
+      if (key !== 'pnctest') {
+        axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
+        .then((response) => {
+          response.data === "true" ? this.setState({ redirect: true }) : this.setState({ redirect: false})
+        }).catch((error) => {console.log("Check visits error", error)});
+      }
+    }
+  }
 
   // TODO: update user profile in redux too
   onClickDone() {
-    let cookies = Cookies.getJSON();
+    let cookie = Cookies.getJSON();
     let token;
     Helper.userData.Username;
 
-    for (var key in cookies) {
+    for (var key in cookie) {
       if (key != "pnctest") {
         Helper.userData.Username = key;
-        token = cookies[key].Token;
+        token = cookie[key].Token;
       }
     }
-    // Helper.userData.ID = parseInt(this.props.user.userObj.UserAuthID); //;
-    console.log("userdata to be sent: ", Helper.userData);
+
     axios({
       method: 'post',
       url: '/api/profile',
@@ -99,7 +138,7 @@ class Survey extends React.Component {
     })
     .then(response => {
       this.setState({
-        redirect: true
+        answered: true
       })
     });
   }
@@ -117,29 +156,32 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div>
-        {this.state.redirect === true ? <Redirect to="/video"/> : null}
-        <Steps current={current}>
-          {steps.map(item => <Step key={item.title} title={item.title} />)}
-        </Steps>
-        <div className="steps-content">{steps[this.state.current].content}</div>
-        <div className="steps-action">
-          {
-            this.state.current < steps.length - 1
-            &&
-            <Button type="primary" onClick={() => this.next()}>Next</Button>
-          }
-          {
-            this.state.current === steps.length - 1
-            &&
-            <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone();}}>Done</Button>
-          }
-          {
-            this.state.current > 0
-            &&
-            <Button style={{ marginLeft: 8 }} onClick={() => this.prev()}>
-              Previous
-            </Button>
-          }
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
+        <div>
+          {this.state.answered === true ? <Redirect to="/video"/> : null}
+          <Steps current={current}>
+            {steps.map(item => <Step key={item.title} title={item.title} />)}
+          </Steps>
+          <div className="steps-content">{steps[this.state.current].content}</div>
+          <div className="steps-action">
+            {
+              this.state.current < steps.length - 1
+              &&
+              <Button type="primary" onClick={() => this.next()}>Next</Button>
+            }
+            {
+              this.state.current === steps.length - 1
+              &&
+              <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone();}}>Done</Button>
+            }
+            {
+              this.state.current > 0
+              &&
+              <Button style={{ marginLeft: 8 }} onClick={() => this.prev()}>
+                Previous
+              </Button>
+            }
+          </div>
         </div>
       </div>
     );

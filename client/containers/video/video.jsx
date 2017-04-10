@@ -47,13 +47,10 @@ class Video extends React.Component {
     this.checkToken()
   }
   checkToken() {
-    let cookie = Cookies.getJSON();
-    let cookieCount = 0;
-    console.log("cookie is", cookie)
+    let cookie = Cookies.getJSON(), cookieCount = 0;
     for (let key in cookie) {
       cookieCount++;
       if (key !== 'pnctest') {
-        console.log('in check token');
         axios.post('/api/tokenCheck', {
           Username: cookie[key].Username,
           Token: cookie[key].Token
@@ -70,9 +67,7 @@ class Video extends React.Component {
       }
     }
     if (cookieCount === 1) {
-      this.setState({
-        unauthorized: true
-      })
+      this.setState({ unauthorized: true })
     }
   }
 
