@@ -20,7 +20,13 @@ class Video extends React.Component {
       showChat: false,
       privateChannel: '',
       pairs: 0,
-      userVideo: false
+      userVideo: false,
+      showEndCall: false,
+      qotdID: '',
+      qotdText: '',
+      qotdType: '',
+      qotdOptions: [],
+      component: 'qotd'
     };
 
     console.log('PROPS FROM VDIEO', this.props);
@@ -33,6 +39,13 @@ class Video extends React.Component {
       redirect: null
     });
 
+    this.getQOTD();
+
+
+    if (this.state.component === 'loading') {
+      this.makeCall();
+    }
+
     this.tokenHolder = this.tokenHolder.bind(this);
     this.changedMessage = this.changedMessage.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -44,10 +57,18 @@ class Video extends React.Component {
     this.checkVisits = this.checkVisits.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
+    this.getQOTD = this.getQOTD.bind(this);
+    this.submitQOTDAnswer = this.submitQOTDAnswer.bind(this);
   }
 
   componentDidMount() {
-    this.checkToken()
+    this.checkToken();
+  }
+
+  componentDidUpdate() {
+    if (this.state.component === 'loading') {
+      this.makeCall();
+    }
   }
 
   checkToken() {
@@ -108,6 +129,33 @@ class Video extends React.Component {
     return null;
   }
 
+  getQOTD() {
+    axios.get('/api/qotd')
+    .then((response) => {
+      this.setState({
+        qotdID: response.data.QId,
+        qotdText: response.data.QText,
+        qotdType: response.data.QType,
+        qotdOptions: response.data.Options
+      });
+    });
+  }
+
+  submitQOTDAnswer(e) {
+    e.preventDefault();
+    axios.post('/api/qotd', JSON.stringify
+      ({
+        UserAuthID: 1, // FIX THIS, HARDCODED WHILE PROPS MISSING
+        QotdID: this.state.qotdID,
+        Text: this.state.qotdText
+      })
+    ).then(() => {
+      this.setState({
+        component: 'loading'
+      });
+    });
+  }
+
   changedMessage() {
     this.setState({
       currentMessage: this.refs.input.value
@@ -142,7 +190,6 @@ class Video extends React.Component {
       withPresence: true
     });
     let id = this.pubnub.getUUID();
-
     var phone = window.phone = PHONE({
       number: id,
       publish_key: pubnubConfig.publishKey,
@@ -156,7 +203,7 @@ class Video extends React.Component {
       if (!this.state.userVideo) {
         this.setState({
           userVideo: true
-        })
+        });
         ctrl.addLocalStream(videoThumbnail);
       }
     });
@@ -173,7 +220,9 @@ class Video extends React.Component {
           channels: [privateChannel]
         });
         this.setState({
-          showChat: true
+          showChat: true,
+          showEndCall: true,
+          component: 'video'
         });
         videoBox.appendChild(session.video);
         this.setState({
@@ -208,35 +257,23 @@ class Video extends React.Component {
       });
       let callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
       console.log('finished checking here now: ', callee);
-      return callee;
     });
   }
 
   makeCall() {
-    // let promiseLogin = Promise.promisify(this.login);
-    // promiseLogin();
     this.login();
-
-    // this.pubnub.hereNow({
-    //     channels: ['queue'],
-    //     includeUUIDs: true,
-    //     includeState: true
-    // })
-    // .catch((err) => {
-    //     console.log(`Error with PubNub HereNow checking presence in queue: $(err)`);
-    // })
-    // .then((response) => {
-    //   let id = this.pubnub.getUUID();
-    //   let calleeList = response.channels.queue.occupants.filter((user) => {
-    //     return user.uuid !== id;
-    //   });
-    //   let callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
-    //   console.log('finished checking here now: ', callee);
-    // })
-    
     this.checkQueue()
     .then(() => {
-      callee ? phone.dial(callee.uuid) : console.log('no one here yet!');
+      console.log('callee is: ', callee);
+      if (callee) {
+        this.setState({
+          component: 'video'
+        });
+        phone.dial(callee.uuid);
+      } else {
+        // this.makeCall();
+        console.log('no one here yet!');
+      }
     });
   }
 
@@ -247,6 +284,50 @@ class Video extends React.Component {
   }
 
   render() {
+    const LoadingComponent = (
+      <div>
+        Loading! Please wait
+        <button onClick={this.makeCall}>Pair me</button>        
+      </div>
+    );
+
+    const VideoComponent = (
+      <div>
+        {this.state.showChat ? 
+            <div>
+              <h1>Chat</h1>
+              <div>
+                {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p>; })}
+              </div>
+              <input
+                type="text"
+                ref="input"
+                value={this.state.currentMessage}
+                placeholder="Message"
+                onChange={this.changedMessage}
+              />
+              <button onClick={this.sendMessage}>send</button>
+            </div>
+          : null }
+          <h1>Video</h1>
+          <div>You have {3-this.state.pairs} pairs remaining today</div>
+          <button onClick={this.makeCall}>Pair me</button>
+          {this.state.showEndCall ? <button onClick={this.endCall}>End Call</button> : null}
+      </div>
+    );
+
+    const QOTDComponent = (
+      <div>
+       <h3>{this.state.qotdText}</h3>
+       <form>
+        {this.state.qotdOptions.map((option, idx) => {
+          return (<div key={idx}><input key={idx} type="radio" name="answer" value={option} required />{option}</div>);
+        })}
+        <input type="submit" onClick={this.submitQOTDAnswer} value="Pair me"/>
+        </form>
+      </div>
+    );
+
     return ( 
       <div>
         <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
@@ -255,30 +336,9 @@ class Video extends React.Component {
             <a href="#/">Logout</a>
           </div>
         </div>
-        <div>
-          {this.state.showChat ? 
-              <div>
-                <h1>Chat</h1>
-                <div>
-                  {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p>; })}
-                </div>
-                <input
-                  type="text"
-                  ref="input"
-                  value={this.state.currentMessage}
-                  placeholder="Message"
-                  onChange={this.changedMessage}
-                />
-                <button onClick={this.sendMessage}>send</button>
-              </div>
-            : null }
-            <h1>Video</h1>
-            <div>You have {3-this.state.pairs} pairs remaining today</div>
-            <button onClick={this.makeCall}>Pair me</button>
-            <button onClick={this.endCall}>End Call</button>
-            <div id="videoBox" ref="video"></div>
-            <div id="videoThumbnail" ref="userVideo"></div>
-          </div>
+        {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? LoadingComponent : VideoComponent}
+        <div id="videoBox" ref="video"></div>
+        <div id="videoThumbnail" ref="userVideo"></div>
       </div>
     );
   }
