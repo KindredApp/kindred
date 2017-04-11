@@ -11,8 +11,6 @@ import (
 	"github.com/mediocregopher/radix.v2/redis"
 )
 
-
-
 //eventually get rid of these global variables
 var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan Message)
@@ -52,13 +50,18 @@ func main() {
 	http.Handle("/api/logout", logoutHandler(conn))
 	http.Handle("/api/tokenCheck", tokenHandler(conn))
 	http.Handle("/api/feedback", feedbackHandler(db))
-	http.Handle("/api/visitCheck", visitHandler(conn));
+	http.Handle("/api/visitCheck", visitHandler(conn))
 	http.Handle("/api/ws", wsHandler(conn))
 	http.Handle("/api/qotd", qotdHandler(db))
-	
+
 	// http.Handle("/api/kinships", kinships)
 
 	//Initialize
+	//if on localhost, use ListenAndServe, if on deployment server, use ListenAndServeTLS.
 	// http.ListenAndServe(":8080", nil);
-	http.ListenAndServeTLS(":443", "certFile.pem", "keyFile.pem", nil);
+	err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
