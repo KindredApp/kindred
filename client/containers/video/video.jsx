@@ -28,7 +28,30 @@ class Video extends React.Component {
       qotdText: '',
       qotdType: '',
       qotdOptions: [],
-      component: 'qotd'
+      component: 'qotd',
+      user: {
+        Age: "",
+        CreatedAt: "",
+        DeletedAt: "",
+        Education: "",
+        Ethnicity: "",
+        Gender: "",
+        ID: "",
+        Income: "",
+        Name: "",
+        Party: "",
+        Religion: "",
+        Religiousity: "",
+        State : "",
+        Token : "",
+        UpdatedAt: "",
+        UserAuth: "",
+        UserAuthID: "",
+        Username : "",
+        Zip: ""
+      },
+      unauthorized: null,
+      redirect: null
     };
 
     console.log('PROPS FROM VDIEO', this.props);
@@ -36,17 +59,14 @@ class Video extends React.Component {
       publishKey: pubnubConfig.publishKey,
       subscribeKey: pubnubConfig.subscribeKey,
       ssl: true,
-      uuid: this.tokenHolder(),
-      unauthorized: null,
-      redirect: null
+      uuid: this.tokenHolder()
     });
 
     this.getQOTD();
 
-
-    if (this.state.component === 'loading') {
-      this.makeCall();
-    }
+    // if (this.state.component === 'loading') {
+    //   this.makeCall();
+    // }
 
     this.tokenHolder = this.tokenHolder.bind(this);
     this.changedMessage = this.changedMessage.bind(this);
@@ -63,7 +83,6 @@ class Video extends React.Component {
     this.componentDidMount = this.componentDidMount.bind(this);
     this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
     this.componentDidUpdate = this.componentDidUpdate.bind(this);
-
   }
 
   componentDidMount() {
@@ -80,9 +99,11 @@ class Video extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     console.log("receiving next props", nextProps);
+    this.setState({
+      user: nextProps.user.userObj
+    });
   }
   
-
   checkToken() {
     let cookie = Cookies.getJSON(), cookieCount = 0;
     for (let key in cookie) {
@@ -155,17 +176,17 @@ class Video extends React.Component {
 
   submitQOTDAnswer(e) {
     e.preventDefault();
-    axios.post('/api/qotd', JSON.stringify
-      ({
-        UserAuthID: 1, // FIX THIS, HARDCODED WHILE PROPS MISSING
-        QotdID: this.state.qotdID,
-        Text: this.state.qotdText
-      })
-    ).then(() => {
+    // axios.post('/api/qotd', JSON.stringify
+    //   ({
+    //     UserAuthID: 1, // FIX THIS, HARDCODED WHILE PROPS MISSING
+    //     QotdID: this.state.qotdID,
+    //     Text: this.state.qotdText
+    //   })
+    // ).then(() => {
       this.setState({
         component: 'loading'
       });
-    });
+    // });
   }
 
   changedMessage() {
@@ -183,7 +204,7 @@ class Video extends React.Component {
       }
     });
     this.pubnub.subscribe({
-      channels: ['queue'],
+      channels: [this.state.privateChannel],
       withPresence: true
     });
     this.pubnub.addListener({
@@ -201,6 +222,20 @@ class Video extends React.Component {
       channels: ['queue'],
       withPresence: true
     });
+    this.pubnub.addListener({
+      presence: (e) => {
+        // if (e.action === 'join') {
+          console.log('PRESENCE EVENT: ', e.action);
+          // this.makeCall();
+        // }
+      }
+    });
+    this.pubnub.setState(
+      {
+        state: this.state.user,
+        channels: ['queue']
+      }
+    );
     let id = this.pubnub.getUUID();
     var phone = window.phone = PHONE({
       number: id,
