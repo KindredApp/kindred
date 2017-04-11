@@ -59,5 +59,6 @@ func main() {
 	// http.Handle("/api/kinships", kinships)
 
 	//Initialize
-	http.ListenAndServe(":8080", nil)
+	// http.ListenAndServe(":8080", nil);
+	http.ListenAndServeTLS(":443", "certFile.pem", "keyFile.pem", nil);
 }
