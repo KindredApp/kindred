@@ -10,50 +10,90 @@ import Helper from './surveyHelper.jsx';
 const Option = Select.Option;
 const Step = Steps.Step;
 
+const welcome = (
+  <div>
+    <div>Welcome to Kindred! We are excited to have you join us, but before you do, we need a small amount of information from you.</div>
+    <div>Please follow the instructions on the following steps, and you will be part of our kin before you know it!</div>
+    <div>When you are ready to begin, click the Next button.</div>
+  </div>
+);
 
 const requiredInformation = (
   <div>
     <div>
-      {Helper.Gender}
+      <div>The information requested here is required.</div>
+      <div>We pair you with other individuals based upon your differences, so we need to know the basics of who you are.</div>
+      <div>Please fill out all of the following fields before proceeding.</div>
     </div>
     <div>
       What is your age? : {Helper.Age}
     </div>
     <div>
-      {Helper.Zip}
+      What is your current zip code? : {Helper.Zip}
     </div>
+    <div>
+      What is your gender? : {Helper.Gender}
+    </div>
+    <div>Click Next to proceed.</div>
   </div>
 );
 
 const optionalInformation = (
   <div>
     <div>
-      {Helper.Ethnicity}
+      <div>The information requested here is not necessary for a basic experience with Kindred.</div>
+      <div>However, the better we know you, the better we can pair you appropriately!</div>
+      <div>Please fill out any fields that you wish to provide to us. If you do not fill in a specific field, we will take it upon ourselves to complete it for you!</div>
+      <div>To do this, we simply look at what the average demographic of your zip code says for an answer, and apply that answer to your account.</div>
     </div>
     <div>
-      {Helper.Income}
+      What is your Ethnicity? : {Helper.Ethnicity}
     </div>
     <div>
-      {Helper.Education}
+      What is your Income Bracket? : {Helper.Income}
     </div>
     <div>
-      {Helper.Religiousity}
+      What is your current level of education? : {Helper.Education}
     </div>
     <div>
-      {Helper.Religion}
+      How spiritual are you? : {Helper.Religiousity}
     </div>
     <div>
-      {Helper.State}
+      What religion do you follow? : {Helper.Religion}
     </div>
     <div>
-      {Helper.Party}
+      What state do you live in? : {Helper.State}
     </div>
+    <div>
+      What political party do you align with? : {Helper.Party}
+    </div>
+    <div>Click Next to Proceed.</div>
+  </div>
+);
+
+const overview = (
+  <div>
+    <div>You're almost done! Please take a moment to review your answers below.</div>
+    <div>If you notice anything wrong, please feel free to go back and change it.</div>
+    <div>
+      <div>Your Gender: {Helper.userData.Gender}</div>
+      <div>Your Age: {Helper.userData.Age}</div>
+      <div>Your Zip Code: {Helper.userData.Zip}</div>
+      <div>Your Ethnicity: {Helper.userData.Ethnicity}</div>
+      <div>Your Income Bracket: {Helper.userData.Income}</div>
+      <div>Your Education: {Helper.userData.Education}</div>
+      <div>Your Spirituality: {Helper.userData.Religiousity}</div>
+      <div>Your Religion: {Helper.userData.Religion}</div>
+      <div>Your State: {Helper.userData.State}</div>
+      <div>Your Political Party: {Helper.userData.Party}</div>
+    </div>
+    <div>Click the done button when you are ready for a fresh perspective!</div>
   </div>
 );
 
 const steps = [{
-  title: 'Welcome',
-  content: 'welcome',
+  title: 'Account Creation',
+  content: welcome,
 }, {
   title: 'Required Information',
   content: requiredInformation,
@@ -62,7 +102,7 @@ const steps = [{
   content: optionalInformation,
 }, {
   title: 'New Account Overview',
-  content: 'account overview',
+  content: overview,
 }];
 
 class Survey extends React.Component {
@@ -86,10 +126,10 @@ class Survey extends React.Component {
   }
 
   _formatResponse (string) {
-    let map = {}, o = string.replace(/(["\\{}])/g, "").split(',');
+    let map = {}, o = string.replace(/(["\\{}])/g, '').split(',');
     o.forEach((v) => {
       var tuple = v.split(':');
-      map[tuple[0]] = tuple[1]
+      map[tuple[0]] = tuple[1];
     }); 
     return map;
   }
@@ -102,13 +142,13 @@ class Survey extends React.Component {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
-          console.log("response is", response.data);
-          response.data === true ? this.setState({ unauthorized: false}, () => {this.checkVisits()}) : this.setState({ unauthorized: true })
-        }).catch((error) => {console.log("Check token error", error)});
+          console.log('response is', response.data);
+          response.data === true ? this.setState({ unauthorized: false}, () => { this.checkVisits(); }) : this.setState({ unauthorized: true });
+        }).catch((error) => { console.log('Check token error', error); });
       }
     }
     if (cookieCount === 1) {
-      this.setState({ unauthorized: true })
+      this.setState({ unauthorized: true });
     }
   }
 
@@ -118,8 +158,8 @@ class Survey extends React.Component {
       if (key !== 'pnctest') {
         axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
-          response.data === "true" ? this.setState({ redirect: true }) : this.setState({ redirect: false})
-        }).catch((error) => {console.log("Check visits error", error)});
+          response.data === 'true' ? this.setState({ redirect: true }) : this.setState({ redirect: false});
+        }).catch((error) => { console.log('Check visits error', error); });
       }
     }
   }
@@ -131,7 +171,7 @@ class Survey extends React.Component {
     Helper.userData.Username;
 
     for (var key in cookie) {
-      if (key != "pnctest") {
+      if (key != 'pnctest') {
         Helper.userData.Username = key;
         token = cookie[key].Token;
       }
@@ -148,12 +188,12 @@ class Survey extends React.Component {
     .then(response => {
       this.setState({
         answered: true
-      })
+      });
 
       let userUpdate = {
         token: [cookie[key].Token, response.headers.date],
         userObj: data
-      }
+      };
 
       this.props.actionUser(userUpdate);
     });
@@ -188,7 +228,7 @@ class Survey extends React.Component {
             {
               this.state.current === steps.length - 1
               &&
-              <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData);}}>Done</Button>
+              <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>Done</Button>
             }
             {
               this.state.current > 0

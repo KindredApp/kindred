@@ -18,5 +18,6 @@ bundles/
 pubnubConfig.js
 .DS_Store
 server/config.go
+server/server
 server/certFile.pem
 server/keyFile.pem
