@@ -8,6 +8,8 @@ import {Redirect} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import Promise from 'bluebird';
+import {actionUser} from '../../actions/actionUser.js';
+
 
 class Video extends React.Component {
   constructor(props) {
@@ -55,13 +57,18 @@ class Video extends React.Component {
     this.checkQueue = this.checkQueue.bind(this);
     this.checkToken = this.checkToken.bind(this);
     this.checkVisits = this.checkVisits.bind(this);
-    this.componentDidMount = this.componentDidMount.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
     this.getQOTD = this.getQOTD.bind(this);
     this.submitQOTDAnswer = this.submitQOTDAnswer.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
+
   }
 
   componentDidMount() {
+    console.log("this user props is", this.props.user)
+    let cookie = Cookies.getJSON();
     this.checkToken();
   }
 
@@ -70,6 +77,11 @@ class Video extends React.Component {
       this.makeCall();
     }
   }
+
+  componentWillReceiveProps(nextProps) {
+    console.log("receiving next props", nextProps);
+  }
+  
 
   checkToken() {
     let cookie = Cookies.getJSON(), cookieCount = 0;
@@ -351,7 +363,7 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({actionUser: actionUser}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Video);

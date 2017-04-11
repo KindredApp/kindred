@@ -228,7 +228,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 				db.Create(&f)
 
 				//add profile to cache
-				out, err := json.Marshal(usp)
+				out, err := json.Marshal(f)
 				if err != nil {
 					panic(err)
 				}
@@ -244,10 +244,11 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 				db.Model(&usp).Updates(f)
 
 				//updata profile in cache
-				out, err := json.Marshal(usp)
+				out, err := json.Marshal(f)
 				if err != nil {
 					panic(err)
 				}
+				
 				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true	")
 
 				//write response back

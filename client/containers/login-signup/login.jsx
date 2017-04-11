@@ -66,7 +66,9 @@ class Login extends React.Component {
               redirect: false
             });
           }
-        }).catch((error) => {console.log("Check visits error", error)});
+        }).catch((error) => {
+          console.log("Check visits error", error);
+        });
       }
     }
   }
