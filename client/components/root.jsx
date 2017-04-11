@@ -10,6 +10,7 @@ import Video from '../containers/video/video.jsx';
 import Survey from '../containers/account/survey.jsx';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import {actionUser} from '../actions/actionUser.js';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import '../styles/index.css';
@@ -58,6 +59,38 @@ const authenticate = (props) => {
 class Root extends Component {
   constructor (props) {
     super(props);
+
+    this._formatResponse = this._formatResponse.bind(this);
+    this.getUserDetails = this.getUserDetails.bind(this);
+    this.getUserDetails();
+  }
+
+  _formatResponse (string) {
+    let map = {}, o = string.replace(/(["\\{}])/g, "").split(',');
+    o.forEach((v) => {
+      var tuple = v.split(':');
+      map[tuple[0]] = tuple[1]
+    }); 
+    return map;
+  }
+
+  getUserDetails() {
+    let cookie = Cookies.getJSON();
+    for (var key in cookie) {
+      if (key !== 'pnctest') {
+        let userUpdate = {
+          token: cookie,
+          userObj: ''
+        }
+
+        axios.get(`/api/profile?q=${cookie[key].Username}`).then((response) => {
+          let profileData = this._formatResponse(response.data);
+          userUpdate.userObj = profileData;
+          this.props.actionUser(userUpdate);
+        })
+      }
+    }
+
   }
 
   render () {
@@ -87,7 +120,7 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({actionUser: actionUser}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Root);

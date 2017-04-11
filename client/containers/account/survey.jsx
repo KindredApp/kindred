@@ -1,5 +1,6 @@
 import React from 'react';
 import {bindActionCreators} from 'redux';
+import {actionUser} from '../../actions/actionUser.js';
 import {connect} from 'react-redux';
 import { Redirect, Link } from 'react-router-dom'; 
 import Cookies from 'js-cookie';
@@ -77,12 +78,21 @@ class Survey extends React.Component {
     this.checkToken = this.checkToken.bind(this);
     this.checkVisits = this.checkVisits.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
+    this._formatResponse = this._formatResponse.bind(this);
   }
 
   componentDidMount() {
     this.checkToken();
   }
 
+  _formatResponse (string) {
+    let map = {}, o = string.replace(/(["\\{}])/g, "").split(',');
+    o.forEach((v) => {
+      var tuple = v.split(':');
+      map[tuple[0]] = tuple[1]
+    }); 
+    return map;
+  }
   checkToken() {
     let cookie = Cookies.getJSON(), cookieCount = 0;
     for (var key in cookie) {
@@ -115,7 +125,7 @@ class Survey extends React.Component {
   }
 
   // TODO: update user profile in redux too
-  onClickDone() {
+  onClickDone(data) {
     let cookie = Cookies.getJSON();
     let token;
     Helper.userData.Username;
@@ -130,7 +140,7 @@ class Survey extends React.Component {
     axios({
       method: 'post',
       url: '/api/profile',
-      data: Helper.userData,
+      data: data,
       headers: {
         'Authorization': 'Bearer ' + token
       }
@@ -139,6 +149,13 @@ class Survey extends React.Component {
       this.setState({
         answered: true
       })
+
+      let userUpdate = {
+        token: [cookie[key].Token, response.headers.date],
+        userObj: data
+      }
+
+      this.props.actionUser(userUpdate);
     });
   }
   
@@ -171,7 +188,7 @@ class Survey extends React.Component {
             {
               this.state.current === steps.length - 1
               &&
-              <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone();}}>Done</Button>
+              <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData);}}>Done</Button>
             }
             {
               this.state.current > 0
@@ -194,7 +211,7 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({ actionUser: actionUser}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Survey);
