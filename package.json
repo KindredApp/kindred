@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cd server && go run *.go",
+    "start:deploy": "cd server && sudo go run *.go",
     "startMock": "nodemon server/mockServer.js",
     "build": "webpack",
     "build:watch": "webpack --watch",
