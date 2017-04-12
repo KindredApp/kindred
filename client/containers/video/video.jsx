@@ -212,7 +212,7 @@ class Video extends React.Component {
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     axios.get(req).then((response) => {
       console.log(response.data)
-      let connectOptions = {name: 'testing', logLevel: 'debug'}
+      let connectOptions = {name: 'Kindred'}
       this.setState({
         identity: response.data.identity,
         twilioToken: response.data.token,
@@ -231,19 +231,31 @@ class Video extends React.Component {
     //   activeRoom: room
     // });
     room.on('participantConnected', (participant) => {
-      console.log('participant has connected', participant)
+      console.log('participant has connected', participant.identity)
+
+      // participant.tracks.forEach((track) => {
+      //   document.getElementsByClassname("remote-media").appendChild(track.attach());
+      // })
     });
 
     createLocalTracks({
       audio: true,
       video: { width: 640 }
     }).then((localTracks) => {
-      console.log("token is", this.state.twi)
+      console.log("token is", this.state.twilioToken);
+      console.log("room name is", this.state.activeRoom);
       return TwilioVideo.connect(this.state.twilioToken, {
         name: this.state.activeRoom,
         tracks: localTracks
       });
-    }).then(room => { console.log("connected to room:", room.name)})
+    });
+
+    room.on('trackAdded', (track, participant) => {
+      console.log('adding tracks to page');
+      participant.tracks.forEach((track) => {
+        document.getElementById("remote-media").appendChild(track.attach());
+      });
+    })
   }
 
   render() {
@@ -273,7 +285,7 @@ class Video extends React.Component {
     );
 
     return (
-      <div>
+      <div className="video-container">
         {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
 
         <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
@@ -287,7 +299,7 @@ class Video extends React.Component {
 
         {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
 
-        {/*{this.state.activeRoom ? }*/}
+        <div id="remote-media" ref="video"></div>
    
       </div>
     );
