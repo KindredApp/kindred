@@ -32,7 +32,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotd{}, &QotdAnswerOption{}, &QotdAnswer{}, &FeedbackQuestion{}, &FeedbackAnswer{}, &Kinship{}, &Chat{})
+	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &QotdAnswer{}, &FeedbackQuestion{}, &FeedbackAnswer{}, &Kinship{}, &Chat{})
+
+	seed(db)
 
 	defer db.Close()
 
@@ -58,7 +60,7 @@ func main() {
 
 	//Initialize
 	//if on localhost, use ListenAndServe, if on deployment server, use ListenAndServeTLS.
-	// http.ListenAndServe(":8080", nil);
+	// http.ListenAndServe(":8080", nil)
 	err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
 	if err != nil {
 		log.Fatal(err)
