@@ -22,3 +22,5 @@ server/server
 server/seedData
 server/certFile.pem
 server/keyFile.pem
+
+twilio-server/config.js

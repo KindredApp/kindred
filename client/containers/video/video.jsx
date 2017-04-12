@@ -1,7 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PubNub from 'pubnub';
-import pubnubConfig from '../../../pubnubConfig.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom'; 
@@ -9,22 +7,26 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import Promise from 'bluebird';
 import {actionUser} from '../../actions/actionUser.js';
+import { createLocalTracks } from 'twilio-video';
 
+var localTracks;
 
 class Video extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      messages: [],
-      currentMessage: '',
-      queue: [],
-      showChat: false,
-      privateChannel: '',
-      pairs: 0,
-      userVideo: false,
-      showEndCall: false,
-
+      cookie: {},
+      activeRoom: '',
+      previewTracks: '',
+      identity: '',
+      twilioToken: '',
+      roomName: '',
+      qotdID: '',
+      qotdText: '',
+      qotdType: '',
+      qotdOptions: [],
+      component: 'qotd',
       user: {
         Age: "",
         CreatedAt: "",
@@ -50,49 +52,40 @@ class Video extends React.Component {
       redirect: null
     };
 
-    console.log('PROPS FROM VDIEO', this.props);
-    this.pubnub = new PubNub({
-      publishKey: pubnubConfig.publishKey,
-      subscribeKey: pubnubConfig.subscribeKey,
-      ssl: true,
-      uuid: this.tokenHolder()
-    });
+    this.getQOTD();
 
-    this.pubnub.addListener({
-      presence: (e) => {
-        if (e.action !== 'join') {
-          console.log('Presence event: ', e.action);
-        }
-        if (e.action === 'join') {
-          console.log('USER JOINED QUEUE: ', e.action);
-          // this.makeCall();
-          this.checkQueue()
-          .then((callee) => {
-            console.log('called check queue again')
-            if (callee) {
-              console.log('Found someone!: ', callee);
-              phone.dial(callee.uuid);
-            }
-          });
-        }
-      }
-    });
+    // if (this.state.component === 'loading') {
+    //   this.makeCall();
+    // }
 
     this.tokenHolder = this.tokenHolder.bind(this);
-    this.makeCall = this.makeCall.bind(this);
-    this.login = this.login.bind(this);
-    this.endCall = this.endCall.bind(this);
-    this.checkQueue = this.checkQueue.bind(this);
     this.checkToken = this.checkToken.bind(this);
     this.checkVisits = this.checkVisits.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
-    this.asyncCheckQueue = this.asyncCheckQueue.bind(this);
+    this.getQOTD = this.getQOTD.bind(this);
+    this.submitQOTDAnswer = this.submitQOTDAnswer.bind(this);
+    this.joinHandler = this.joinHandler.bind(this);
   }
 
   componentDidMount() {
-    console.log("this user props is", this.props.user)
-    let cookie = Cookies.getJSON();
+    let cookies = Cookies.getJSON();
+    for (var key in cookies) {
+      if (key != "pnctest") {
+        this.setState({
+          cookie: {
+            Username: cookies[key].Username,
+            Token: cookies[key].Token
+          }
+        });
+      }
+    } 
     this.checkToken();
+    createLocalTracks().then((localTracks) => {
+      console.log("Got audio and video tracks:", localTracks)
+    })
+  }
+
+  componentDidUpdate() {
   }
 
   componentWillReceiveProps(nextProps) {
@@ -160,120 +153,123 @@ class Video extends React.Component {
     return null;
   }
 
-
-  login(e) {
-    this.pubnub.subscribe({
-      channels: ['queue'],
-      withPresence: true
-    });
-    this.pubnub.setState(
-      {
-        state: this.state.user,
-        channels: ['queue']
-      }
-    );
-    let id = this.pubnub.getUUID();
-    var phone = window.phone = PHONE({
-      number: id,
-      publish_key: pubnubConfig.publishKey,
-      subscribe_key: pubnubConfig.subscribeKey,
-      ssl: true,
-    });
-    var videoBox = document.getElementById('videoBox');
-    var videoThumbnail = document.getElementById('videoThumbnail');
-    var ctrl = window.ctrl = CONTROLLER(phone);
-    ctrl.ready(() => {
-      if (!this.state.userVideo) {
-        this.setState({
-          userVideo: true
-        });
-        ctrl.addLocalStream(videoThumbnail);
-      }
-    });
-    ctrl.receive((session) => {
-      session.connected((session) => {
-        this.pubnub.unsubscribe({
-          channels: ['queue']
-        });
-        this.setState({
-          showEndCall: true
-        });
-        videoBox.appendChild(session.video);
-      });
-      session.ended((session) => {
-        this.refs.video.innerHTML = '';
-        this.refs.userVideo.innerHTML = '';
-        ctrl.getVideoElement(session.number).remove();
-        this.pubnub.unsubscribeAll();
-      });
-    });
-
-  }
- 
-  checkQueue() {
-    return this.pubnub.hereNow({
-        channels: ['queue'],
-        includeUUIDs: true,
-        includeState: true
-    })
-    .catch((err) => {
-        console.log(`Error with PubNub HereNow checking presence in queue: $(err)`);
-    })
+  getQOTD() {
+    axios.get('/api/qotd')
     .then((response) => {
-      let id = this.pubnub.getUUID();
-      let calleeList = response.channels.queue.occupants.filter((user) => {
-        return user.uuid !== id;
+      this.setState({
+        qotdID: response.data.QId,
+        qotdText: response.data.QText,
+        qotdType: response.data.QType,
+        qotdOptions: response.data.Options
       });
-      let callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
-      console.log('finished checking here now: ', callee);
     });
   }
 
-  asyncCheckQueue() {
-    this.checkQueue()
-    .then(() => {
-      console.log('callee is: ', callee);
-      if (callee) {
-        phone.dial(callee.uuid);
-      } else {
-        // this.makeCall();
-        console.log('no one here yet!');
-      }
+  submitQOTDAnswer(e) {
+    e.preventDefault();
+    // axios.post('/api/qotd', JSON.stringify
+    //   ({
+    //     UserAuthID: 1, // FIX THIS, HARDCODED WHILE PROPS MISSING
+    //     QotdID: this.state.qotdID,
+    //     Text: this.state.qotdText
+    //   })
+    // ).then(() => {
+      this.setState({
+        component: 'loading'
+      });
+    // });
+  }
+
+  attachTracks(tracks, container) {
+    tracks.forEach((track) => {
+      container.appendChild(track.attach());
+    })
+  }
+
+  attachParticipantTracks(participant, container) {
+    var tracks = Array.from(participant.tracks.values());
+    this.attachTracks(tracks, container);
+  }
+
+  detachTracks(tracks) {
+    tracks.forEach((track) => {
+      track.detach().forEach((detachedElement) => {
+        detachedElement.remove();
+      })
+    })
+  }
+
+  detachParticipantTracks(partipcant) {
+    var tracks = Array.from(participant.tracks.values());
+    this.detachTracks(tracks);
+  }
+
+  leaveRoom() {
+    if (this.state.activeRoom) {
+      this.state.activeRoom.disconnect();
+    }
+  }
+
+  joinHandler() {
+    var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
+    axios.get(req).then((response) => {
+      this.setState({
+        identity: response.data.identity,
+        token: response.data.token
+      }, () => {
+        Twilio.Video.connect(this.state.token, {
+          name: 'testing'
+        }).then(room => {
+          console.log('Connected to room:', room.name)
+        }, error => {
+          console.log('Failed to connect to room')
+        })
+      })
     });
-  }
-
-  makeCall() {
-    this.login();
-    setTimeout(this.asyncCheckQueue, 500);
-  }
-
-  endCall() {
-    ctrl.hangup();
-    this.refs.video.innerHTML = '';
-    this.refs.userVideo.innerHTML = '';
   }
 
   render() {
-
-    const VideoComponent = (
+    const LoadingComponent = (
       <div>
-          <h1>Video</h1>
-          <button onClick={this.makeCall}>Pair me</button>
-          {this.state.showEndCall ? <button onClick={this.endCall}>End Call</button> : null}
-          <div id="videoBox" ref="video"></div>
-          <div id="videoThumbnail" ref="userVideo"></div>
+        Loading! Please wait
       </div>
     );
 
-    return ( 
+    const QOTDComponent = (
       <div>
+       <h3>{this.state.qotdText}</h3>
+       <form>
+        {this.state.qotdOptions.map((option, idx) => {
+          return (<div key={idx}><input key={idx} type="radio" name="answer" value={option} required />{option}</div>);
+        })}
+        <input type="submit" onClick={this.submitQOTDAnswer} value="Submit Answer"/>
+        </form>
+      </div>
+    );
+
+    const VideoComponent = (
+      <div>
+        <div className="room-controls"></div>
+        <div className="button-join" onClick={this.joinHandler}>Join!</div>
+      </div>
+    );
+
+
+
+    return (
+      <div>
+        {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
+
         <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
+        
         <div className="header-links perspective">
           <div className="shift" onClick={this.handleLogout}>
             <a href="#/">Logout</a>
           </div>
         </div>
-        {VideoComponent}
+
+        {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
+   
       </div>
     );
   }
