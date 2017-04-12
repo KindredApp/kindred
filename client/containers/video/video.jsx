@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import Promise from 'bluebird';
 import {actionUser} from '../../actions/actionUser.js';
-import { createLocalTracks } from 'twilio-video';
+import TwilioVideo, { createLocalTracks } from 'twilio-video';
 
 var localTracks;
 
@@ -65,6 +65,7 @@ class Video extends React.Component {
     this.getQOTD = this.getQOTD.bind(this);
     this.submitQOTDAnswer = this.submitQOTDAnswer.bind(this);
     this.joinHandler = this.joinHandler.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
   }
 
   componentDidMount() {
@@ -80,9 +81,6 @@ class Video extends React.Component {
       }
     } 
     this.checkToken();
-    createLocalTracks().then((localTracks) => {
-      console.log("Got audio and video tracks:", localTracks)
-    })
   }
 
   componentDidUpdate() {
@@ -213,19 +211,39 @@ class Video extends React.Component {
   joinHandler() {
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     axios.get(req).then((response) => {
+      console.log(response.data)
+      let connectOptions = {name: 'testing', logLevel: 'debug'}
       this.setState({
         identity: response.data.identity,
-        token: response.data.token
+        twilioToken: response.data.token,
+        activeRoom: connectOptions.name
       }, () => {
-        Twilio.Video.connect(this.state.token, {
-          name: 'testing'
-        }).then(room => {
-          console.log('Connected to room:', room.name)
-        }, error => {
-          console.log('Failed to connect to room')
+        Twilio.Video.connect(this.state.twilioToken, connectOptions)
+        .then(this.joinRoom, (error) => {
+          console.log(`Couldn't connect to Twilio`)
         })
       })
     });
+  }
+  
+  joinRoom(room) {
+    // this.setState({
+    //   activeRoom: room
+    // });
+    room.on('participantConnected', (participant) => {
+      console.log('participant has connected', participant)
+    });
+
+    createLocalTracks({
+      audio: true,
+      video: { width: 640 }
+    }).then((localTracks) => {
+      console.log("token is", this.state.twi)
+      return TwilioVideo.connect(this.state.twilioToken, {
+        name: this.state.activeRoom,
+        tracks: localTracks
+      });
+    }).then(room => { console.log("connected to room:", room.name)})
   }
 
   render() {
@@ -254,8 +272,6 @@ class Video extends React.Component {
       </div>
     );
 
-
-
     return (
       <div>
         {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
@@ -267,8 +283,11 @@ class Video extends React.Component {
             <a href="#/">Logout</a>
           </div>
         </div>
+        
 
         {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
+
+        {/*{this.state.activeRoom ? }*/}
    
       </div>
     );
