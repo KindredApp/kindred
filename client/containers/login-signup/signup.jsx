@@ -3,6 +3,7 @@ import {Form, Input, Button} from 'antd';
 import { Link, hashHistory } from 'react-router-dom';
 import ExampleClicked from '../exampleClicked.js';
 import axios from 'axios';
+import instance from '../../config.js'
 
 const FormItem = Form.Item;
 
@@ -21,7 +22,7 @@ class SignUp extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log(values);
-        axios.post('/api/signup', values).then((response) => {
+        instance.goInstance.post('/api/signup', values).then((response) => {
           console.log(response);
           this.setState({
             taken: false

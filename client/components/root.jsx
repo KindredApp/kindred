@@ -13,6 +13,7 @@ import {connect} from 'react-redux';
 import {actionUser} from '../actions/actionUser.js';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import instance from '../config.js'
 import '../styles/index.css';
 
 const SignUpForm = Form.create()(SignUp);
@@ -83,7 +84,7 @@ class Root extends Component {
           userObj: ''
         }
 
-        axios.get(`/api/profile?q=${cookie[key].Username}`).then((response) => {
+        instance.goInstance.get(`/api/profile?q=${cookie[key].Username}`).then((response) => {
           let profileData = this._formatResponse(response.data);
           userUpdate.userObj = profileData;
           this.props.actionUser(userUpdate);

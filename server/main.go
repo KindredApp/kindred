@@ -52,6 +52,7 @@ func main() {
 	http.Handle("/api/login", loginHandler(db, conn))
 	http.Handle("/api/logout", logoutHandler(conn))
 	http.Handle("/api/tokenCheck", tokenHandler(conn))
+	http.Handle("/api/twilio", http.HandlerFunc(twilioProxy))
 	http.Handle("/api/feedback", feedbackHandler(db))
 	http.Handle("/api/visitCheck", visitHandler(conn))
 	http.Handle("/api/ws", wsHandler(conn))
@@ -61,8 +62,8 @@ func main() {
 
 	//Initialize
 	//if on localhost, use ListenAndServe, if on deployment server, use ListenAndServeTLS.
-	// http.ListenAndServe(":8080", nil)
-	err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
+	http.ListenAndServe(":8080", nil);
+	// err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
