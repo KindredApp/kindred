@@ -202,7 +202,6 @@ func seedUserAuth(db *gorm.DB, numUsers int) {
 }
 
 func seedUserProfiles(db *gorm.DB, conn *redis.Client, numUsers int) {
-	fmt.Println("seedUserProfiles called")
 	if db.HasTable(&UserProfile{}) {
 		db.DropTable(&UserProfile{})
 	}
