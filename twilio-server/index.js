@@ -1,6 +1,8 @@
 require('dotenv').load();
 const express = require('express');
-const http = require('http');
+const https = require('https');
+const path = require('path');
+const fs = require('fs');
 const path = require('path');
 const config = require('./config.js');
 const Promise = require('bluebird');
@@ -13,17 +15,13 @@ const app = express();
 const jsonParser = bodyParser.json();
 const client = require('twilio')(config.accountSid, config.authToken);
 const keyGenerate = Promise.promisify(client.keys.create);
+const httpsOptions = {
+  cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
+  key: fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'))
+}
 
 app.use(cors());
 app.use(jsonParser);
-  
-// client.keys.create({
-//   friendlyName: "Kindred Chat"
-// }, function(err, key) {
-//   console.log(key)
-//   keyId = key.sid;
-//   secret = key.secret;
-// })
 
 app.all('/', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -58,7 +56,8 @@ app.get('/api/twilio', (req, res) => {
   })
 });
 
-app.listen(config.PORT, () => {
-  console.log(`App is listening at port ${config.PORT}.`)
-})
 
+https.createServer(httpsOptions, app)
+  .listen(config.PORT, () => {
+    console.log(`App is listening at port ${config.PORT}.`)
+  });
