@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-var questions = [7]Qotd{
+var questions = [11]Qotd{
 	Qotd{
 		QuestionType: "options",
 		Category:     "personal",
@@ -47,9 +47,29 @@ var questions = [7]Qotd{
 		Category:     "philosophical",
 		Text:         "Are humans more like cats or dogs?",
 	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "political",
+		Text:         "Who should be able to own a gun?",
+	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "social",
+		Text:         "Who among these is the greatest athlete for their respective sport?",
+	},
+	Qotd{
+		QuestionType: "binary",
+		Category:     "philosophical",
+		Text:         "Is there intelligent life in other parts of our galaxy or universe?",
+	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "personal",
+		Text:         "where do you get the majority of your morals from?",
+	},
 }
 
-var answerOptions = [25]QotdAnswerOption{
+var answerOptions = [48]QotdAnswerOption{
 	QotdAnswerOption{
 		QotdID: 1,
 		Text:   "1950s",
@@ -149,6 +169,98 @@ var answerOptions = [25]QotdAnswerOption{
 	QotdAnswerOption{
 		QotdID: 7,
 		Text:   "dogs",
+	},
+	QotdAnswerOption{
+		QotdID: 8,
+		Text:   "Any adult citizen",
+	},
+	QotdAnswerOption{
+		QotdID: 8,
+		Text:   "Any adult citizen with no significant mental health problems",
+	},
+	QotdAnswerOption{
+		QotdID: 8,
+		Text:   "Any adult citizen that undergoes and passes a gun safety course",
+	},
+	QotdAnswerOption{
+		QotdID: 8,
+		Text:   "Any adult citizen, but there should be background checks and safety courses prior to them purchasing one",
+	},
+	QotdAnswerOption{
+		QotdID: 8,
+		Text:   "Most adult citizens, excepting individual groups like serial convicts or suspected terrorists",
+	},
+	QotdAnswerOption{
+		QotdID: 8,
+		Text:   "Only if the citizen has undergone extensive gun training",
+	},
+	QotdAnswerOption{
+		QotdID: 8,
+		Text:   "No one should be able to own guns",
+	},
+	QotdAnswerOption{
+		QotdID: 9,
+		Text:   "Lebron James - Basketball",
+	},
+	QotdAnswerOption{
+		QotdID: 9,
+		Text:   "Michael Phelps - Swimming",
+	},
+	QotdAnswerOption{
+		QotdID: 9,
+		Text:   "Serena Williams - Tennis",
+	},
+	QotdAnswerOption{
+		QotdID: 9,
+		Text:   "Simone Biles - Gymnastics",
+	},
+	QotdAnswerOption{
+		QotdID: 9,
+		Text:   "Christiano Ronaldo - Soccer",
+	},
+	QotdAnswerOption{
+		QotdID: 9,
+		Text:   "Payton Manning - American Football",
+	},
+	QotdAnswerOption{
+		QotdID: 9,
+		Text:   "Usain Bolt - Track",
+	},
+	QotdAnswerOption{
+		QotdID: 9,
+		Text:   "Ronda Rousey - Mixed martial arts",
+	},
+	QotdAnswerOption{
+		QotdID: 10,
+		Text:   "I think so",
+	},
+	QotdAnswerOption{
+		QotdID: 10,
+		Text:   "No way",
+	},
+	QotdAnswerOption{
+		QotdID: 11,
+		Text:   "My family",
+	},
+	QotdAnswerOption{
+		QotdID: 11,
+		Text:   "My religion",
+	},
+	QotdAnswerOption{
+		QotdID: 11,
+		Text:   "My friends",
+	},
+	QotdAnswerOption{
+		QotdID: 11,
+		Text:   "My own life experiences",
+	},
+	QotdAnswerOption{
+		QotdID: 11,
+		Text:   "My morals come from many places",
+	},
+	QotdAnswerOption{
+		QotdID: 11,
+		Text:   "Other",
 	},
 }
 
