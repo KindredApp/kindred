@@ -8,6 +8,7 @@ import axios from 'axios';
 import Promise from 'bluebird';
 import {actionUser} from '../../actions/actionUser.js';
 import TwilioVideo, { createLocalTracks } from 'twilio-video';
+import instance from '../../config.js'
 
 var localTracks;
 
@@ -49,7 +50,8 @@ class Video extends React.Component {
         Zip: ""
       },
       unauthorized: null,
-      redirect: null
+      redirect: null,
+      participantCount: 0
     };
 
     this.getQOTD();
@@ -98,7 +100,7 @@ class Video extends React.Component {
     for (let key in cookie) {
       cookieCount++;
       if (key !== 'pnctest') {
-        axios.post('/api/tokenCheck', {
+        instance.goInstance.post('/api/tokenCheck', {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
@@ -118,7 +120,7 @@ class Video extends React.Component {
     let cookie = Cookies.getJSON();
     for (let key in cookie) {
       if (key !== 'pnctest') {
-        axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
+        instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
           response.data === "true" ? this.setState({ redirect: false }) : this.setState({ redirect: true})
         }).catch((error) => {console.log("Check visits error", error)});
@@ -138,7 +140,7 @@ class Video extends React.Component {
       }
     }
 
-    axios.post('/api/logout', {Username: username, Token: token}).then((response) => {
+    instance.goInstance.post('/api/logout', {Username: username, Token: token}).then((response) => {
       Cookies.remove(username);
     });
   }
@@ -152,7 +154,7 @@ class Video extends React.Component {
   }
 
   getQOTD() {
-    axios.get('/api/qotd')
+    instance.goInstance.get('/api/qotd')
     .then((response) => {
       this.setState({
         qotdID: response.data.QId,
@@ -210,34 +212,20 @@ class Video extends React.Component {
 
   joinHandler() {
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
-    axios.get(req).then((response) => {
+    instance.nodeInstance.get(req).then((response) => {
       console.log(response.data)
-      let connectOptions = {name: 'Kindred'}
+      let connectOptions = {name: 'Kin'}
       this.setState({
         identity: response.data.identity,
         twilioToken: response.data.token,
         activeRoom: connectOptions.name
       }, () => {
-        Twilio.Video.connect(this.state.twilioToken, connectOptions)
-        .then(this.joinRoom, (error) => {
-          console.log(`Couldn't connect to Twilio`)
-        })
+        this.joinRoom();
       })
     });
   }
   
-  joinRoom(room) {
-    // this.setState({
-    //   activeRoom: room
-    // });
-    room.on('participantConnected', (participant) => {
-      console.log('participant has connected', participant.identity)
-
-      // participant.tracks.forEach((track) => {
-      //   document.getElementsByClassname("remote-media").appendChild(track.attach());
-      // })
-    });
-
+  joinRoom() {
     createLocalTracks({
       audio: true,
       video: { width: 640 }
@@ -247,15 +235,25 @@ class Video extends React.Component {
       return TwilioVideo.connect(this.state.twilioToken, {
         name: this.state.activeRoom,
         tracks: localTracks
+      }).then((room) => {
+        room.on('participantConnected', (participant) => {
+          console.log('participant has connected', participant.identity)
+          participant.on('trackAdded', track => {
+            if (participant.identity === this.state.identity) {
+              if (this.state.participantCount < 1) {
+                this.setState({
+                  participantCount: this.state.participantCount + 1
+                }, () => {
+                  document.getElementById("remote-media").appendChild(track.attach());
+                });
+              }
+            } else if (participant.identity !== this.state.identity) {
+              document.getElementById("remote-media").appendChild(track.attach());
+            }
+          });
+        });
       });
     });
-
-    room.on('trackAdded', (track, participant) => {
-      console.log('adding tracks to page');
-      participant.tracks.forEach((track) => {
-        document.getElementById("remote-media").appendChild(track.attach());
-      });
-    })
   }
 
   render() {

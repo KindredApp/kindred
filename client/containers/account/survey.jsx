@@ -9,6 +9,7 @@ import { Select, Steps, Button} from 'antd';
 import Helper from './surveyHelper.jsx';
 const Option = Select.Option;
 const Step = Steps.Step;
+import instance from '../../config.js'
 
 const welcome = (
   <div>
@@ -138,7 +139,7 @@ class Survey extends React.Component {
     for (var key in cookie) {
       cookieCount++;
       if (key !== 'pnctest') {
-        axios.post('/api/tokenCheck', {
+        instance.goInstance.post('/api/tokenCheck', {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
@@ -156,7 +157,7 @@ class Survey extends React.Component {
     let cookie = Cookies.getJSON();
     for (let key in cookie) {
       if (key !== 'pnctest') {
-        axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
+        instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
           response.data === 'true' ? this.setState({ redirect: true }) : this.setState({ redirect: false});
         }).catch((error) => { console.log('Check visits error', error); });
@@ -177,7 +178,7 @@ class Survey extends React.Component {
       }
     }
 
-    axios({
+    instance.goInstance({
       method: 'post',
       url: '/api/profile',
       data: data,

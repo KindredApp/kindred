@@ -7,6 +7,7 @@ import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
+import instance from '../../config.js'
 
 const FormItem = Form.Item;
 
@@ -39,7 +40,7 @@ class Login extends React.Component {
     let cookie = Cookies.getJSON();
     for (var key in cookie) {
       if (key !== 'pnctest') {
-        axios.post('/api/tokenCheck', {
+        instance.goInstance.post('/api/tokenCheck', {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
@@ -55,7 +56,7 @@ class Login extends React.Component {
     let cookie = Cookies.getJSON();
     for (let key in cookie) {
       if (key !== 'pnctest') {
-        axios.get(`/api/visitCheck?q=${cookie[key].Username}`)
+        instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
           if (response.data === "true") {
             this.setState({
@@ -77,7 +78,7 @@ class Login extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        axios.post('/api/login', values).then((response) => {
+        instance.goInstance.post('/api/login', values).then((response) => {
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
 
@@ -114,7 +115,7 @@ class Login extends React.Component {
 
         // Get profile information from server, combine into one object saved in Redux store.
         .then(newStore => {
-          axios.get(`/api/profile?q=${newStore.userObj.Username}`)
+          instance.goInstance.get(`/api/profile?q=${newStore.userObj.Username}`)
           .then(response => {
             let profileData = this._formatResponse(response.data);
             profileData.Username = newStore.userObj.Username;
