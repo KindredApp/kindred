@@ -19,5 +19,6 @@ pubnubConfig.js
 .DS_Store
 server/config.go
 server/server
+server/seedData
 server/certFile.pem
 server/keyFile.pem
