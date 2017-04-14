@@ -161,8 +161,8 @@ div#remote-media {
 div#remote-media video {
   border: 1px solid #272726;
   margin: 3em 2em;
-  height: 70%;
-  max-width: 27% !important;
+  height: 100%;
+  max-width: 60% !important;
   background-color: #272726;
   background-repeat: no-repeat;
 }
@@ -170,4 +170,38 @@ div#remote-media video {
 .video-container {
   width: 500px;
   height: 500px;
+}
+
+/* ---- Survey ----- */
+
+.survey-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  padding: 40px 0;
+}
+
+.steps-section {
+  width: 80%;
+}
+
+.survey-section {
+  height: 50%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.steps-action {
+  margin: 50px 0;
+}
+
+.survey-input {
+  margin: 16px 0;
+}
+.review-input {
+  margin: 10px 0;
 }

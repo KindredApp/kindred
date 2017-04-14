@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import Promise from 'bluebird';
 import {actionUser} from '../../actions/actionUser.js';
-import TwilioVideo, { createLocalTracks } from 'twilio-video';
+import TwilioVideo, { createLocalTracks, createLocalVideoTrack } from 'twilio-video';
 import instance from '../../config.js'
 
 var localTracks;
@@ -16,7 +16,8 @@ class Video extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
+    this.state = { 
+      joinClicked: false,
       cookie: {},
       activeRoom: '',
       previewTracks: '',
@@ -68,6 +69,8 @@ class Video extends React.Component {
     this.submitQOTDAnswer = this.submitQOTDAnswer.bind(this);
     this.joinHandler = this.joinHandler.bind(this);
     this.joinRoom = this.joinRoom.bind(this);
+    this.attachParticipantTracks = this.attachParticipantTracks.bind(this);
+    this.attachTracks = this.attachTracks.bind(this);
   }
 
   componentDidMount() {
@@ -181,6 +184,7 @@ class Video extends React.Component {
   }
 
   attachTracks(tracks, container) {
+    console.log("attaching tracks via attachTracks:", tracks)
     tracks.forEach((track) => {
       container.appendChild(track.attach());
     })
@@ -211,6 +215,8 @@ class Video extends React.Component {
   }
 
   joinHandler() {
+    //uncomment for production build
+    // var req = `/api/twilio?q=${this.state.cookie.Username}`;
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     instance.nodeInstance.get(req).then((response) => {
       console.log(response.data)
@@ -236,8 +242,20 @@ class Video extends React.Component {
         name: this.state.activeRoom,
         tracks: localTracks
       }).then((room) => {
+        console.log("room is", room)
+
+        room.participants.forEach((participant) => {
+          console.log("in for each, participant", participant);
+          let videoContainer = document.getElementById("remote-media");
+          this.attachParticipantTracks(participant, videoContainer)
+        })
+        
+
         room.on('participantConnected', (participant) => {
+          let videoContainer = document.getElementById("remote-media");
           console.log('participant has connected', participant.identity)
+          console.log("console logging participant.tracks", participant.tracks)
+
           participant.on('trackAdded', track => {
             if (participant.identity === this.state.identity) {
               if (this.state.participantCount < 1) {
