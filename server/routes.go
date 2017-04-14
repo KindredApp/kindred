@@ -319,6 +319,53 @@ func feedbackHandler(db *gorm.DB) http.Handler {
 	})
 }
 
+// ----- QUEUE ------ //
+
+func queueHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodGet {
+			var s string
+			ql, err := conn.Cmd("LLEN", "queue").Int()
+			// log.Printf("ql is: v - %v, t - %T", ql, ql)
+			// log.Printf("v - %v, t - %T", ql, ql)
+			qr, err := conn.Cmd("LRANGE", "queue", 0, ql).Array()
+			if err != nil {
+				panic(err)
+			}
+
+			for _, v := range qr {
+				tempS, _ := v.Str()
+				s += tempS + " "
+			}
+
+			j, err := json.Marshal(s)
+			if err != nil {
+				panic(err)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(j)
+		}
+		if req.Method == http.MethodPost {
+			var p UserQueue
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&p)
+			if err != nil {
+				panic(err)
+			}
+
+			out, err := json.Marshal(p)
+			if err != nil {
+				panic(err)
+			}
+
+			conn.Cmd("RPUSH", "queue", string(out))
+			w.Write(out)
+		}
+	})
+}
+
 //----- MESSAGING -----//
 
 func wsHandler(conn *redis.Client) http.Handler {

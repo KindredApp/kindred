@@ -59,6 +59,7 @@ func main() {
 	http.Handle("/api/twilio", http.HandlerFunc(twilioProxy))
 	http.Handle("/api/feedback", feedbackHandler(db))
 	http.Handle("/api/visitCheck", visitHandler(conn))
+	http.Handle("/api/queue", queueHandler(conn))
 	http.Handle("/api/ws", wsHandler(conn))
 	http.Handle("/api/qotd", qotdHandler(db, conn, &qotdCounter))
 

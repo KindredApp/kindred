@@ -71,6 +71,8 @@ class Video extends React.Component {
     this.joinRoom = this.joinRoom.bind(this);
     this.attachParticipantTracks = this.attachParticipantTracks.bind(this);
     this.attachTracks = this.attachTracks.bind(this);
+    this.postToQueue = this.postToQueue.bind(this);
+    this.getVideoQueue = this.getVideoQueue.bind(this);
   }
 
   componentDidMount() {
@@ -214,6 +216,21 @@ class Video extends React.Component {
     }
   }
 
+  postToQueue() {
+    console.log("this props userobj is: ", this.props.user.userObj);
+    if (this.props.user.userObj) {
+      instance.goInstance.post('/api/queue', {
+        userProfile: this.props.user.userObj
+      })
+    }
+  }
+
+  getVideoQueue() {
+    instance.goInstance.get('/api/queue').then((response) => {
+      console.log("queue response is: ", response.data);
+    })
+  }
+
   joinHandler() {
     //uncomment for production build
     // var req = `/api/twilio?q=${this.state.cookie.Username}`;
@@ -226,7 +243,9 @@ class Video extends React.Component {
         twilioToken: response.data.token,
         activeRoom: connectOptions.name
       }, () => {
-        this.joinRoom();
+        // this.joinRoom();
+        // this.postToQueue();
+        this.getVideoQueue()
       })
     });
   }
