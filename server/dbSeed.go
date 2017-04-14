@@ -12,6 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+//Creates questions to seed database with
 var questions = [20]Qotd{
 	Qotd{
 		QuestionType: "options",
@@ -115,6 +116,7 @@ var questions = [20]Qotd{
 	},
 }
 
+//Answers for each question above
 var answerOptions = [105]QotdAnswerOption{
 	QotdAnswerOption{
 		QotdID: 1,
@@ -538,6 +540,7 @@ var answerOptions = [105]QotdAnswerOption{
 	},
 }
 
+//first drops all old tables for a clean slate, then inputs all questions and answers to tables
 func seedQotds(db *gorm.DB) {
 	if db.HasTable(&Qotd{}) {
 		db.DropTable(&Qotd{})
@@ -558,12 +561,14 @@ func seedQotds(db *gorm.DB) {
 	}
 }
 
+//meta function to seed database with fake user profile, and answers to questions
 func seedUsers(db *gorm.DB, conn *redis.Client, numFakeUsers int) {
 	seedUserAuth(db, numFakeUsers)
 	seedUserProfiles(db, conn, numFakeUsers)
 	seedUserAnswers(db, numFakeUsers)
 }
 
+//creates dummy user
 func seedUserAuth(db *gorm.DB, numUsers int) {
 	if db.HasTable(&UserAuth{}) {
 		db.DropTable(&UserAuth{})
@@ -587,6 +592,7 @@ func seedUserAuth(db *gorm.DB, numUsers int) {
 	}
 }
 
+//creates demographic data for dummy users
 func seedUserProfiles(db *gorm.DB, conn *redis.Client, numUsers int) {
 	if db.HasTable(&UserProfile{}) {
 		db.DropTable(&UserProfile{})
@@ -622,6 +628,7 @@ func seedUserProfiles(db *gorm.DB, conn *redis.Client, numUsers int) {
 	}
 }
 
+//Creates dummy answers for each question for each dummy user
 func seedUserAnswers(db *gorm.DB, numUsers int) {
 	if db.HasTable(&QotdAnswer{}) {
 		db.DropTable(&QotdAnswer{})
