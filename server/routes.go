@@ -366,6 +366,56 @@ func queueHandler(conn *redis.Client) http.Handler {
 	})
 }
 
+// ----- Room ------ //
+
+func roomHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodGet {
+			var s string
+			rl, err := conn.Cmd("LLEN", "rooms").Int()
+			r, err := conn.Cmd("LRANGE", "rooms", 0, rl).Array()
+
+			if err != nil {
+				panic(err)
+			}
+
+			for _, v := range r {
+				tempS, _ := v.Str()
+				s += tempS + " "
+			}
+
+			j, err := json.Marshal(s)
+			if err != nil {
+				panic(err)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(j)
+		} 
+
+		if req.Method == http.MethodPost {
+			var r Room
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&r)
+			if err != nil {
+				panic(err)
+			}
+
+			out, err := json.Marshal(r)
+			if err != nil {
+				panic(err)
+			}
+
+			conn.Cmd("RPUSH", "rooms", string(out))
+
+			j, err := json.Marshal("Room added")
+			w.Write(j)
+		}
+	})
+}
+
+
 //----- MESSAGING -----//
 
 func wsHandler(conn *redis.Client) http.Handler {

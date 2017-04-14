@@ -49,6 +49,12 @@ type VisitCheck struct {
 	FirstTime string `json:"FirstTime"`
 }
 
+type Room struct {
+	RoomNumber int
+	ParticipantOne string
+	ParticipantTwo string
+}
+
 // type ReqObj struct {
 // Username string
 // }
