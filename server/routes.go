@@ -402,12 +402,20 @@ func roomHandler(conn *redis.Client) http.Handler {
 				panic(err)
 			}
 
+			rc, err := conn.Cmd("GET", "roomCount").Int()
+			log.Println("roomCount is:", rc)
+			if err != nil {
+				panic(err)
+			}
+			r.RoomNumber = rc + 1
+
 			out, err := json.Marshal(r)
 			if err != nil {
 				panic(err)
 			}
 
 			conn.Cmd("RPUSH", "rooms", string(out))
+			conn.Cmd("INCR", "roomCount")
 
 			j, err := json.Marshal("Room added")
 			w.Write(j)
