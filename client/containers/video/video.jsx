@@ -17,6 +17,7 @@ class Video extends React.Component {
     super(props);
 
     this.state = { 
+      joinClicked: false,
       cookie: {},
       activeRoom: '',
       previewTracks: '',
