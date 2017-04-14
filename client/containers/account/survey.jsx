@@ -13,82 +13,80 @@ import instance from '../../config.js'
 
 const welcome = (
   <div>
-    <div>Welcome to Kindred! We are excited to have you join us, but before you do, we need a small amount of information from you.</div>
-    <div>Please follow the instructions on the following steps, and you will be part of our kin before you know it!</div>
-    <div>When you are ready to begin, click the Next button.</div>
+    <div>We're excited to pair you off with people from around the world, but before we begin we'll need your help!</div>
+    <div>The information ahead helps us accurately pair you with others from a different demographic. </div>
+    <div>While only the required information is ... well required, the optional information will help us pair you accurately.</div>
+    <div>When you are ready to begin, click the 'next' button.</div>
   </div>
 );
 
 const requiredInformation = (
   <div>
-    <div>
-      <div>The information requested here is required.</div>
-      <div>We pair you with other individuals based upon your differences, so we need to know the basics of who you are.</div>
+    {/*<div>
+      <div>To provide you with the experience of pairing with someone from a different demographic, the information below will give us some basic information to start with.</div>
       <div>Please fill out all of the following fields before proceeding.</div>
-    </div>
-    <div>
+    </div>*/}
+    <div className="survey-input">
       What is your age? : {Helper.Age}
     </div>
-    <div>
+    <div className="survey-input"> 
       What is your current zip code? : {Helper.Zip}
     </div>
-    <div>
+    <div className="survey-input">
       What is your gender? : {Helper.Gender}
     </div>
-    <div>Click Next to proceed.</div>
   </div>
 );
 
 const optionalInformation = (
   <div>
-    <div>
+    {/*<div>
       <div>The information requested here is not necessary for a basic experience with Kindred.</div>
       <div>However, the better we know you, the better we can pair you appropriately!</div>
       <div>Please fill out any fields that you wish to provide to us. If you do not fill in a specific field, we will take it upon ourselves to complete it for you!</div>
       <div>To do this, we simply look at what the average demographic of your zip code says for an answer, and apply that answer to your account.</div>
-    </div>
-    <div>
+    </div>*/}
+    <div className="survey-input">
       What is your Ethnicity? : {Helper.Ethnicity}
     </div>
-    <div>
+    <div className="survey-input">
       What is your Income Bracket? : {Helper.Income}
     </div>
-    <div>
+    <div className="survey-input">
       What is your current level of education? : {Helper.Education}
     </div>
-    <div>
+    <div className="survey-input">
       How spiritual are you? : {Helper.Religiousity}
     </div>
-    <div>
+    <div className="survey-input">
       What religion do you follow? : {Helper.Religion}
     </div>
-    <div>
+    <div className="survey-input">
       What state do you live in? : {Helper.State}
     </div>
-    <div>
+    <div className="survey-input">
       What political party do you align with? : {Helper.Party}
     </div>
-    <div>Click Next to Proceed.</div>
   </div>
 );
 
 const overview = (
   <div>
-    <div>You're almost done! Please take a moment to review your answers below.</div>
-    <div>If you notice anything wrong, please feel free to go back and change it.</div>
+    {/*<div>You're almost done! Please take a moment to review your answers below.</div>
+    <div>If you notice anything wrong, please feel free to go back and change it.</div>*/}
     <div>
-      <div>Your Gender: {Helper.userData.Gender}</div>
-      <div>Your Age: {Helper.userData.Age}</div>
-      <div>Your Zip Code: {Helper.userData.Zip}</div>
-      <div>Your Ethnicity: {Helper.userData.Ethnicity}</div>
-      <div>Your Income Bracket: {Helper.userData.Income}</div>
-      <div>Your Education: {Helper.userData.Education}</div>
-      <div>Your Spirituality: {Helper.userData.Religiousity}</div>
-      <div>Your Religion: {Helper.userData.Religion}</div>
-      <div>Your State: {Helper.userData.State}</div>
-      <div>Your Political Party: {Helper.userData.Party}</div>
+      <div className="review-input">Your Gender: {Helper.userData.Gender}</div>
+      <div className="review-input">Your Age: {Helper.userData.Age}</div>
+      <div className="review-input">Your Zip Code: {Helper.userData.Zip}</div>
+      <div className="review-input">Your Ethnicity: {Helper.userData.Ethnicity}</div>
+      <div className="review-input">Your Income Bracket: {Helper.userData.Income}</div>
+      <div className="review-input">Your Education: {Helper.userData.Education}</div>
+      <div className="review-input">Your Spirituality: {Helper.userData.Religiousity}</div>
+      <div className="review-input">Your Religion: {Helper.userData.Religion}</div>
+      <div className="review-input">Your State: {Helper.userData.State}</div>
+      <div className="review-input">Your Political Party: {Helper.userData.Party}</div>
     </div>
-    <div>Click the done button when you are ready for a fresh perspective!</div>
+    {/*<div>Click the done button when you are ready for a fresh perspective!</div>*/}
   </div>
 );
 
@@ -212,33 +210,35 @@ class Survey extends React.Component {
   render () {
     const { current } = this.state;
     return (
-      <div>
+      <div className="survey-container">
         <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
-        <div>
-          {this.state.answered === true ? <Redirect to="/video"/> : null}
+        <div className="steps-section">
           <Steps current={current}>
             {steps.map(item => <Step key={item.title} title={item.title} />)}
           </Steps>
+        </div>
+        <div className="survey-section">
+          {this.state.answered === true ? <Redirect to="/video"/> : null}
           <div className="steps-content">{steps[this.state.current].content}</div>
-          <div className="steps-action">
-            {
-              this.state.current < steps.length - 1
-              &&
-              <Button type="primary" onClick={() => this.next()}>Next</Button>
-            }
-            {
-              this.state.current === steps.length - 1
-              &&
-              <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>Done</Button>
-            }
-            {
-              this.state.current > 0
-              &&
-              <Button style={{ marginLeft: 8 }} onClick={() => this.prev()}>
-                Previous
-              </Button>
-            }
-          </div>
+        </div>
+        <div className="steps-action">
+          {
+            this.state.current > 0
+            &&
+            <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
+              previous
+            </Button>
+          }
+          {
+            this.state.current < steps.length - 1
+            &&
+            <Button type="primary" onClick={() => this.next()}>next</Button>
+          }
+          {
+            this.state.current === steps.length - 1
+            &&
+            <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>done</Button>
+          }
         </div>
       </div>
     );
