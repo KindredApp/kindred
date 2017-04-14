@@ -254,7 +254,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 					panic(err)
 				}
 
-				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true	")
+				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true")
 
 				//write response back
 				w.Header().Set("Content-Type", "application/json")
