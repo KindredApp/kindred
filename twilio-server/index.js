@@ -18,25 +18,25 @@ const keyGenerate = Promise.promisify(client.keys.create);
 const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
   key: fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'))
-}
+};
 
 app.use(cors());
 app.use(jsonParser);
 
 app.all('/', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
   next();
- });
+});
 
 
 app.get('/api/twilio', (req, res) => {
   //api/token?q=s
   var identity = req.query.q;
-  console.log(identity)
+  console.log(identity);
   
-  keyGenerate({ friendlyName: "Kindred Chat"}).then((key, err) => {
-    console.log("key is", key);
+  keyGenerate({ friendlyName: 'Kindred Chat'}).then((key, err) => {
+    console.log('key is', key);
     var token = new AccessToken(
       config.accountSid,
       key.sid,
@@ -53,11 +53,11 @@ app.get('/api/twilio', (req, res) => {
       identity: identity,
       token: token.toJwt()
     });
-  })
+  });
 });
 
 
 https.createServer(httpsOptions, app)
   .listen(config.PORT, () => {
-    console.log(`App is listening at port ${config.PORT}.`)
+    console.log(`App is listening at port ${config.PORT}.`);
   });

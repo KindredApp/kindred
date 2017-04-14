@@ -3,15 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"strconv"
+
 	"github.com/Pallinder/go-randomdata"
 	"github.com/jinzhu/gorm"
 	"github.com/mediocregopher/radix.v2/redis"
 	"golang.org/x/crypto/bcrypt"
-	"math/rand"
-	"strconv"
 )
 
-var questions = [11]Qotd{
+var questions = [20]Qotd{
 	Qotd{
 		QuestionType: "options",
 		Category:     "personal",
@@ -67,9 +68,54 @@ var questions = [11]Qotd{
 		Category:     "personal",
 		Text:         "where do you get the majority of your morals from?",
 	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "fun",
+		Text:         "Who among these would be the last person standing in a fight to the death?",
+	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "personal",
+		Text:         "If you could travel to any continent right now, which one would it be?",
+	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "personal",
+		Text:         "What is your favorite genre to read?",
+	},
+	Qotd{
+		QuestionType: "likert",
+		Category:     "social",
+		Text:         "How much do you agree with the following statement: 'The United States in 10 years will be a better place to live than right now.' ?",
+	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "fun",
+		Text:         "Who among these would win in a rap battle?",
+	},
+	Qotd{
+		QuestionType: "binary",
+		Category:     "philosophical",
+		Text:         "Are most people the same as each other or are most people different from each other?",
+	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "personal",
+		Text:         "Where do you get most of your news?",
+	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "social",
+		Text:         "What is your favorite sport to watch and/or play?",
+	},
+	Qotd{
+		QuestionType: "options",
+		Category:     "political",
+		Text:         "If you had $200 billion dollars and had to donate it to our government for a specified use, which would you pick?",
+	},
 }
 
-var answerOptions = [48]QotdAnswerOption{
+var answerOptions = [105]QotdAnswerOption{
 	QotdAnswerOption{
 		QotdID: 1,
 		Text:   "1950s",
@@ -152,7 +198,7 @@ var answerOptions = [48]QotdAnswerOption{
 	},
 	QotdAnswerOption{
 		QotdID: 5,
-		Text:   "I prefer to one horse sized ducks",
+		Text:   "I prefer to fight one horse sized duck",
 	},
 	QotdAnswerOption{
 		QotdID: 6,
@@ -260,6 +306,234 @@ var answerOptions = [48]QotdAnswerOption{
 	},
 	QotdAnswerOption{
 		QotdID: 11,
+		Text:   "Other",
+	},
+	QotdAnswerOption{
+		QotdID: 12,
+		Text:   "Jon Snow",
+	},
+	QotdAnswerOption{
+		QotdID: 12,
+		Text:   "Arnold Schwarzenegger",
+	},
+	QotdAnswerOption{
+		QotdID: 12,
+		Text:   "Buddy the Elf",
+	},
+	QotdAnswerOption{
+		QotdID: 12,
+		Text:   "Joan of Arc",
+	},
+	QotdAnswerOption{
+		QotdID: 12,
+		Text:   "Bugs Bunny",
+	},
+	QotdAnswerOption{
+		QotdID: 12,
+		Text:   "Susan B. Anthony",
+	},
+	QotdAnswerOption{
+		QotdID: 12,
+		Text:   "I think fighting is barbaric...",
+	},
+	QotdAnswerOption{
+		QotdID: 13,
+		Text:   "Africa",
+	},
+	QotdAnswerOption{
+		QotdID: 13,
+		Text:   "Asia",
+	},
+	QotdAnswerOption{
+		QotdID: 13,
+		Text:   "Australia",
+	},
+	QotdAnswerOption{
+		QotdID: 13,
+		Text:   "Europe",
+	},
+	QotdAnswerOption{
+		QotdID: 13,
+		Text:   "North America",
+	},
+	QotdAnswerOption{
+		QotdID: 13,
+		Text:   "South America",
+	},
+	QotdAnswerOption{
+		QotdID: 13,
+		Text:   "Antarctica",
+	},
+	QotdAnswerOption{
+		QotdID: 14,
+		Text:   "Any non-fiction",
+	},
+	QotdAnswerOption{
+		QotdID: 14,
+		Text:   "Any fiction",
+	},
+	QotdAnswerOption{
+		QotdID: 14,
+		Text:   "Science fiction",
+	},
+	QotdAnswerOption{
+		QotdID: 14,
+		Text:   "Romance",
+	},
+	QotdAnswerOption{
+		QotdID: 14,
+		Text:   "Biographies",
+	},
+	QotdAnswerOption{
+		QotdID: 14,
+		Text:   "Fantasy",
+	},
+	QotdAnswerOption{
+		QotdID: 14,
+		Text:   "Other",
+	},
+	QotdAnswerOption{
+		QotdID: 14,
+		Text:   "I think books are gross",
+	},
+	QotdAnswerOption{
+		QotdID: 15,
+		Text:   "Strongly disagree",
+	},
+	QotdAnswerOption{
+		QotdID: 15,
+		Text:   "Disagree",
+	},
+	QotdAnswerOption{
+		QotdID: 15,
+		Text:   "I think it will be about the same",
+	},
+	QotdAnswerOption{
+		QotdID: 15,
+		Text:   "Agree",
+	},
+	QotdAnswerOption{
+		QotdID: 15,
+		Text:   "Strongly agree",
+	},
+	QotdAnswerOption{
+		QotdID: 16,
+		Text:   "William Shakespeare",
+	},
+	QotdAnswerOption{
+		QotdID: 16,
+		Text:   "Tupac",
+	},
+	QotdAnswerOption{
+		QotdID: 16,
+		Text:   "Eminem",
+	},
+	QotdAnswerOption{
+		QotdID: 16,
+		Text:   "Missy Elliot",
+	},
+	QotdAnswerOption{
+		QotdID: 16,
+		Text:   "Edgar Allen Poe",
+	},
+	QotdAnswerOption{
+		QotdID: 16,
+		Text:   "The Notorious B.I.G.",
+	},
+	QotdAnswerOption{
+		QotdID: 17,
+		Text:   "I think most people are the same",
+	},
+	QotdAnswerOption{
+		QotdID: 17,
+		Text:   "I think most people are different",
+	},
+	QotdAnswerOption{
+		QotdID: 18,
+		Text:   "I don't read the news",
+	},
+	QotdAnswerOption{
+		QotdID: 18,
+		Text:   "Social Media(Facebook, twitter, etc)",
+	},
+	QotdAnswerOption{
+		QotdID: 18,
+		Text:   "Radio",
+	},
+	QotdAnswerOption{
+		QotdID: 18,
+		Text:   "Friends/Community",
+	},
+	QotdAnswerOption{
+		QotdID: 18,
+		Text:   "Local newspaper, magazine",
+	},
+	QotdAnswerOption{
+		QotdID: 18,
+		Text:   "A major network television channel",
+	},
+	QotdAnswerOption{
+		QotdID: 18,
+		Text:   "Other",
+	},
+	QotdAnswerOption{
+		QotdID: 19,
+		Text:   "Basketball",
+	},
+	QotdAnswerOption{
+		QotdID: 19,
+		Text:   "American football",
+	},
+	QotdAnswerOption{
+		QotdID: 19,
+		Text:   "Soccer",
+	},
+	QotdAnswerOption{
+		QotdID: 19,
+		Text:   "Swimming",
+	},
+	QotdAnswerOption{
+		QotdID: 19,
+		Text:   "Track & Field",
+	},
+	QotdAnswerOption{
+		QotdID: 19,
+		Text:   "Baseball/Softball",
+	},
+	QotdAnswerOption{
+		QotdID: 19,
+		Text:   "Hockey",
+	},
+	QotdAnswerOption{
+		QotdID: 19,
+		Text:   "Other",
+	},
+	QotdAnswerOption{
+		QotdID: 20,
+		Text:   "Education",
+	},
+	QotdAnswerOption{
+		QotdID: 20,
+		Text:   "Social security",
+	},
+	QotdAnswerOption{
+		QotdID: 20,
+		Text:   "Reduce international debt",
+	},
+	QotdAnswerOption{
+		QotdID: 20,
+		Text:   "Military",
+	},
+	QotdAnswerOption{
+		QotdID: 20,
+		Text:   "Health care",
+	},
+	QotdAnswerOption{
+		QotdID: 20,
+		Text:   "Building infrastructure",
+	},
+	QotdAnswerOption{
+		QotdID: 20,
 		Text:   "Other",
 	},
 }
