@@ -73,6 +73,7 @@ class Video extends React.Component {
     this.attachTracks = this.attachTracks.bind(this);
     this.postToQueue = this.postToQueue.bind(this);
     this.getVideoQueue = this.getVideoQueue.bind(this);
+    this.getRooms = this.getRooms.bind(this);
   }
 
   componentDidMount() {
@@ -158,6 +159,23 @@ class Video extends React.Component {
     return null;
   }
 
+  _formatResponse (string) {
+    let arr = [], o = string.replace(/(["\\{}])/g, "").split(' ');
+    arr = arr.slice(-1);
+    o.forEach((v) => {
+      var obj = {}
+      console.log("v is: ", v)
+      v.split(',').forEach((pair) => {
+        console.log("pair is:", pair);
+        var tuple = pair.split(':')
+        console.log("tuple one", tuple[1])
+        obj[tuple[0]] = tuple[1];
+      });
+      arr.push(obj);
+    }); 
+    return arr;
+  }
+
   getQOTD() {
     instance.goInstance.get('/api/qotd')
     .then((response) => {
@@ -234,6 +252,7 @@ class Video extends React.Component {
   joinHandler() {
     //uncomment for production build
     // var req = `/api/twilio?q=${this.state.cookie.Username}`;
+
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     instance.nodeInstance.get(req).then((response) => {
       console.log(response.data)
@@ -243,11 +262,37 @@ class Video extends React.Component {
         twilioToken: response.data.token,
         activeRoom: connectOptions.name
       }, () => {
-        // this.joinRoom();
-        // this.postToQueue();
-        this.getVideoQueue()
+        this.getRooms().then((r) => {
+          if (this.state.activeRoom) {
+            this.joinRoom();
+          }
+        })
+
+        this.joinRoom();
+        this.postToQueue();
+        this.getVideoQueue();
+
       })
     });
+  }
+
+
+  getRooms() {
+    return instance.goInstance.get('/api/room').then((response) => {
+      let arr = this._formatResponse(response.data);
+      console.log('returned array: ', arr);
+      return arr;
+    }).then((response) => {
+      response.forEach((room) => {
+        if (room.ParticipantOne === this.state.identity || room.ParticipantTwo === this.state.identity) {
+          console.log("room found inside getRooms", room)
+          this.setState({
+            activeRoom: room
+          })
+        }
+      })
+      return true;
+    })
   }
   
   joinRoom() {
@@ -258,7 +303,7 @@ class Video extends React.Component {
       console.log("token is", this.state.twilioToken);
       console.log("room name is", this.state.activeRoom);
       return TwilioVideo.connect(this.state.twilioToken, {
-        name: this.state.activeRoom,
+        name: this.state.activeRoom.RoomNumber,
         tracks: localTracks
       }).then((room) => {
         console.log("room is", room)
