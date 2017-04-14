@@ -1,7 +1,6 @@
 require('dotenv').load();
 const express = require('express');
 const https = require('https');
-const path = require('path');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config.js');
@@ -15,10 +14,18 @@ const app = express();
 const jsonParser = bodyParser.json();
 const client = require('twilio')(config.accountSid, config.authToken);
 const keyGenerate = Promise.promisify(client.keys.create);
+<<<<<<< HEAD
 const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
   key: fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'))
 };
+=======
+//uncomment below for production build
+// const httpsOptions = {
+//   cert: fs.readFileSync(config.sslCert),
+//   key: fs.readFileSync(config.sslKey)
+// }
+>>>>>>> Further video implementation details
 
 app.use(cors());
 app.use(jsonParser);
@@ -57,7 +64,20 @@ app.get('/api/twilio', (req, res) => {
 });
 
 
+<<<<<<< HEAD
 https.createServer(httpsOptions, app)
   .listen(config.PORT, () => {
     console.log(`App is listening at port ${config.PORT}.`);
   });
+=======
+//development server
+app.listen(config.PORT, () => {
+  console.log(`I'm listening at ${config.PORT}.`)
+})
+
+//production server
+// https.createServer(httpsOptions, app)
+//   .listen(config.PORT, () => {
+//     console.log(`App is listening at port ${config.PORT}.`)
+//   });
+>>>>>>> Further video implementation details
