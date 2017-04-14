@@ -199,7 +199,7 @@ func visitHandler(conn *redis.Client) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 			j, _ := json.Marshal(res)
 			w.Write(j)
-		} 
+		}
 	})
 }
 
@@ -253,7 +253,7 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 				if err != nil {
 					panic(err)
 				}
-				
+
 				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true	")
 
 				//write response back
@@ -385,7 +385,7 @@ type UserAnswer struct {
 
 //----- QUESTION OF THE DAY -----//
 
-func qotdHandler(db *gorm.DB) http.Handler {
+func qotdHandler(db *gorm.DB, conn *redis.Client, qotdCounter *int) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		param := req.URL.Query().Get("user")
 		if req.Method == http.MethodGet {
@@ -415,30 +415,50 @@ func qotdHandler(db *gorm.DB) http.Handler {
 				}
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(q)
-			} else {
-				var randQuestionFromDb Qotd
-				var questionCount int
-				var answerOptionsFromDB []QotdAnswerOption
-				var answerOptions []string
-				db.Table("qotds").Count(&questionCount)
-				db.Find(&randQuestionFromDb, rand.Intn(questionCount)+1)
-				db.Model(&randQuestionFromDb).Related(&answerOptionsFromDB)
-				fmt.Println(questionCount)
-				fmt.Println(answerOptionsFromDB)
+			} else if req.URL.Query().Get("q") == "data" {
+				var qotds []Qotd
+				db.Raw("SELECT * FROM qotds").Scan(&qotds)
 
-				for _, v := range answerOptionsFromDB {
-					answerOptions = append(answerOptions, v.Text)
-				}
-
-				questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
-
-				q, err := json.Marshal(questionWOptions)
+				data, err := json.Marshal(qotds)
 				if err != nil {
 					fmt.Println(err)
 					return
 				}
 				w.Header().Set("Content-Type", "application/json")
-				w.Write(q)
+				w.Write(data)
+				// var randQuestionFromDb Qotd
+				// var questionCount int
+				// var answerOptionsFromDB []QotdAnswerOption
+				// var answerOptions []string
+				// db.Table("qotds").Count(&questionCount)
+				// db.Find(&randQuestionFromDb, rand.Intn(questionCount)+1)
+				// db.Model(&randQuestionFromDb).Related(&answerOptionsFromDB)
+				// fmt.Println(questionCount)
+				// fmt.Println(answerOptionsFromDB)
+
+				// for _, v := range answerOptionsFromDB {
+				// 	answerOptions = append(answerOptions, v.Text)
+				// }
+
+				// questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
+
+				// q, err := json.Marshal(questionWOptions)
+				// if err != nil {
+				// 	fmt.Println(err)
+				// 	return
+				// }
+
+				//BRING BACK LATER
+				// q, err := conn.Cmd("HGET", "QOTD", "Question")
+				// if err != nil {
+				// 	panic(err)
+				// }
+				// q, err = json.Marshal(q)
+				// if err != nil {
+				// 	panic(err)
+				// }
+				// w.Header().Set("Content-Type", "application/json")
+				// w.Write(q)
 			}
 		} else {
 			var newAnswer QotdAnswer
