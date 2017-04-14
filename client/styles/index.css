@@ -59,6 +59,21 @@
   margin-top: 30px;
 }
 
+/*.datamap-outer-container {
+  position: relative;
+  height: 100%
+  padding: 0;
+}*/
+
+.datamap {
+  height: 50%;
+}
+
+#datamap-container {
+  position: relative; 
+  margin: 0 auto;
+}
+
 .persective {
   perspective: 15000px;
 }
