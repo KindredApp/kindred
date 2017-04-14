@@ -276,8 +276,13 @@ class Video extends React.Component {
     })
   }
 
-  createRoom() {
-    
+  createRoom(p1, p2) {
+    return instance.goInstance.post('/api/room', {
+      ParticipantOne: p1,
+      ParticipantTwo: p2
+    }).then((response) => {
+      return response.data;
+    })
   }
 
   joinHandler() {
@@ -297,6 +302,11 @@ class Video extends React.Component {
           } else {
             this.getVideoQueue().then((response) => {
               console.log("result of algorithm is: ", response.result);
+              if (response.result) {
+                this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
+                  console.log("Room has been posted: ", response);
+                })
+              }
             })
           }
         })

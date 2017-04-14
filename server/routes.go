@@ -417,8 +417,7 @@ func roomHandler(conn *redis.Client) http.Handler {
 			conn.Cmd("RPUSH", "rooms", string(out))
 			conn.Cmd("INCR", "roomCount")
 
-			j, err := json.Marshal("Room added")
-			w.Write(j)
+			w.Write(out)
 		}
 	})
 }
