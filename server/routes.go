@@ -2,12 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"bytes"
 	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
+	"net/http/httputil"
+	"io/ioutil"
 	"strconv"
 	"time"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
@@ -57,7 +62,7 @@ func signupHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 		db.NewRecord(user)
 		db.Create(&user)
 
-		conn.Cmd("HMSET", u.Username, "FirstTime", "true")
+		conn.Cmd("HMSET", u.Username, "Survey", "false")
 
 		w.Header().Set("Content-Type", "application/json")
 		j, _ := json.Marshal("User created")
@@ -130,6 +135,28 @@ func loginHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 	})
 }
 
+//----- LOGOUT -----//
+
+func logoutHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodPost {
+			var c Cookie
+
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&c)
+			if err != nil {
+				panic(err)
+			}
+
+			conn.Cmd("HDEL", c.Username, "Token")
+
+			j, err := json.Marshal("User logged out")
+			w.Write(j)
+		}
+	})
+}
+
 //----- CHECK TOKEN -----//
 func tokenHandler(conn *redis.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -164,7 +191,7 @@ func visitHandler(conn *redis.Client) http.Handler {
 		if req.Method == http.MethodGet {
 			u := req.URL.Query()
 			log.Println("uri is", u["q"])
-			res, err := conn.Cmd("HGET", u["q"], "FirstTime").Str()
+			res, err := conn.Cmd("HGET", u["q"], "Survey").Str()
 			if err != nil {
 				panic(err)
 			}
@@ -172,22 +199,7 @@ func visitHandler(conn *redis.Client) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 			j, _ := json.Marshal(res)
 			w.Write(j)
-		} else if req.Method == http.MethodPost {
-			var v VisitCheck
-
-			decoder := json.NewDecoder(req.Body)
-			defer req.Body.Close()
-			err := decoder.Decode(&v)
-			if err != nil {
-				panic(err)
-			}
-
-			log.Println("Visit check is", v)
-
-			conn.Cmd("HSET", v.Username, "FirstTime", v.FirstTime)
-			j, _ := json.Marshal("Visit check updates")
-			w.Write(j)
-		}
+		} 
 	})
 }
 
@@ -221,11 +233,11 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 				db.Create(&f)
 
 				//add profile to cache
-				out, err := json.Marshal(usp)
+				out, err := json.Marshal(f)
 				if err != nil {
 					panic(err)
 				}
-				conn.Cmd("HSET", un.Username, "Profile", string(out))
+				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true")
 
 				//write response back
 				w.Header().Set("Content-Type", "application/json")
@@ -237,11 +249,12 @@ func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 				db.Model(&usp).Updates(f)
 
 				//updata profile in cache
-				out, err := json.Marshal(usp)
+				out, err := json.Marshal(f)
 				if err != nil {
 					panic(err)
 				}
-				conn.Cmd("HSET", un.Username, "Profile", string(out))
+				
+				conn.Cmd("HMSET", un.Username, "Profile", string(out), "Survey", "true	")
 
 				//write response back
 				w.Header().Set("Content-Type", "application/json")
@@ -453,3 +466,41 @@ func qotdHandler(db *gorm.DB) http.Handler {
 		}
 	})
 }
+
+//----- TWILIO REVERSE PROXY ------//
+
+
+func twilioProxy(w http.ResponseWriter, r *http.Request) {
+	log.Println("receiving twilio request from client")
+	r.Host = "localhost:3000"
+
+	j := strings.Join(r.URL.Query()["q"], "")
+	u, _ := url.Parse("http://localhost:300/api/twilio" + j)
+	proxy := httputil.NewSingleHostReverseProxy(u)
+
+	proxy.Transport = &transport{CapturedTransport: http.DefaultTransport}
+	proxy.ServeHTTP(w, r)
+}
+
+type transport struct {
+	CapturedTransport http.RoundTripper
+}
+
+func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
+	// response, err := http.DefaultTransport.RoundTrip(request)
+	response, err := t.CapturedTransport.RoundTrip(request)
+  bodyBytes, err := ioutil.ReadAll(response.Body)
+
+	// body, err := httputil.DumpResponse(response, true)
+	if err != nil {
+		return nil, err
+	}
+
+	defer response.Body.Close()
+	response.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	log.Println("proxy reponse is", response)	
+
+	return response, err
+}
+

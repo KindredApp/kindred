@@ -11,8 +11,6 @@ import (
 	"github.com/mediocregopher/radix.v2/redis"
 )
 
-
-
 //eventually get rid of these global variables
 var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan Message)
@@ -34,7 +32,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &Qotd{}, &QotdAnswerOption{}, &QotdAnswer{}, &FeedbackQuestion{}, &FeedbackAnswer{}, &Kinship{}, &Chat{})
+	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &QotdAnswer{}, &FeedbackQuestion{}, &FeedbackAnswer{}, &Kinship{}, &Chat{})
+
+	seedQotds(db)
+	seedUsers(db, conn, 20) // mock data for presentation
 
 	defer db.Close()
 
@@ -49,14 +50,22 @@ func main() {
 	http.Handle("/api/profile", profileHandler(db, conn))
 	http.Handle("/api/signup", signupHandler(db, conn))
 	http.Handle("/api/login", loginHandler(db, conn))
+	http.Handle("/api/logout", logoutHandler(conn))
 	http.Handle("/api/tokenCheck", tokenHandler(conn))
+	http.Handle("/api/twilio", http.HandlerFunc(twilioProxy))
 	http.Handle("/api/feedback", feedbackHandler(db))
-	http.Handle("/api/visitCheck", visitHandler(conn));
+	http.Handle("/api/visitCheck", visitHandler(conn))
 	http.Handle("/api/ws", wsHandler(conn))
 	http.Handle("/api/qotd", qotdHandler(db))
-	
+
 	// http.Handle("/api/kinships", kinships)
 
 	//Initialize
-	http.ListenAndServe(":8080", nil)
+	//if on localhost, use ListenAndServe, if on deployment server, use ListenAndServeTLS.
+	// http.ListenAndServe(":8080", nil);
+	err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }

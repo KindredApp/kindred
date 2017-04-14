@@ -1,210 +1,306 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PubNub from 'pubnub';
-import pubnubConfig from '../../../pubnubConfig.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom'; 
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import Promise from 'bluebird';
+import {actionUser} from '../../actions/actionUser.js';
+import TwilioVideo, { createLocalTracks } from 'twilio-video';
+import instance from '../../config.js'
 
+var localTracks;
 
 class Video extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      messages: [],
-      currentMessage: '',
-      queue: [],
-      showChat: null,
-      privateChannel: ''
+      cookie: {},
+      activeRoom: '',
+      previewTracks: '',
+      identity: '',
+      twilioToken: '',
+      roomName: '',
+      qotdID: '',
+      qotdText: '',
+      qotdType: '',
+      qotdOptions: [],
+      component: 'qotd',
+      user: {
+        Age: "",
+        CreatedAt: "",
+        DeletedAt: "",
+        Education: "",
+        Ethnicity: "",
+        Gender: "",
+        ID: "",
+        Income: "",
+        Name: "",
+        Party: "",
+        Religion: "",
+        Religiousity: "",
+        State : "",
+        Token : "",
+        UpdatedAt: "",
+        UserAuth: "",
+        UserAuthID: "",
+        Username : "",
+        Zip: ""
+      },
+      unauthorized: null,
+      redirect: null,
+      participantCount: 0
     };
 
-    this.pubnub = new PubNub({
-      publishKey: pubnubConfig.publishKey,
-      subscribeKey: pubnubConfig.subscribeKey,
-      ssl: true,
-      uuid: this.tokenHolder()
-    });
+    this.getQOTD();
+
+    // if (this.state.component === 'loading') {
+    //   this.makeCall();
+    // }
 
     this.tokenHolder = this.tokenHolder.bind(this);
-    this.changedMessage = this.changedMessage.bind(this);
-    this.sendMessage = this.sendMessage.bind(this);
-    this.makeCall = this.makeCall.bind(this);
-    this.login = this.login.bind(this);
-    this.endCall = this.endCall.bind(this);
     this.checkToken = this.checkToken.bind(this);
+    this.checkVisits = this.checkVisits.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
+    this.getQOTD = this.getQOTD.bind(this);
+    this.submitQOTDAnswer = this.submitQOTDAnswer.bind(this);
+    this.joinHandler = this.joinHandler.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
   }
 
+  componentDidMount() {
+    let cookies = Cookies.getJSON();
+    for (var key in cookies) {
+      if (key != "pnctest") {
+        this.setState({
+          cookie: {
+            Username: cookies[key].Username,
+            Token: cookies[key].Token
+          }
+        });
+      }
+    } 
+    this.checkToken();
+  }
+
+  componentDidUpdate() {
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log("receiving next props", nextProps);
+    this.setState({
+      user: nextProps.user.userObj
+    });
+  }
+  
   checkToken() {
-    let cookie = Cookies.getJSON();
+    let cookie = Cookies.getJSON(), cookieCount = 0;
     for (let key in cookie) {
+      cookieCount++;
       if (key !== 'pnctest') {
-        console.log('in check token');
-        return (axios.post('/api/tokenCheck', {
+        instance.goInstance.post('/api/tokenCheck', {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
-          console.log('SUCCESSFUL TOKEN RETRIEVAL: ', response);
-          return response.data;
-        }));
+          response.data === true ? this.setState({ unauthorized: false }, () => {this.checkVisits()}) : this.setState({ unauthorized: true })
+        }).catch((error) => {
+          this.setState({unauthorized: true})
+          console.log("Check token error", error)
+        });
       }
     }
+    if (cookieCount === 1) {
+      this.setState({ unauthorized: true })
+    }
+  }
+
+  checkVisits() {
+    let cookie = Cookies.getJSON();
+    for (let key in cookie) {
+      if (key !== 'pnctest') {
+        instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
+        .then((response) => {
+          response.data === "true" ? this.setState({ redirect: false }) : this.setState({ redirect: true})
+        }).catch((error) => {console.log("Check visits error", error)});
+      }
+    }
+  }
+
+  handleLogout() {
+    let cookie = Cookies.getJSON();
+    let username;
+    let token;
+
+    for (var key in cookie) {
+      if (key !== "pnctest") {
+        username = key;
+        token = cookie[key].Token
+      }
+    }
+
+    instance.goInstance.post('/api/logout', {Username: username, Token: token}).then((response) => {
+      Cookies.remove(username);
+    });
   }
 
   tokenHolder() {
     //THIS IS UGLY FIX IT
     if (this.props.user) {
-      return this.props.user.token.slice(-20);
+      return this.props.user.token[0].slice(-20);
     }
     return null;
   }
 
-  changedMessage() {
-    this.setState({
-      currentMessage: this.refs.input.value
-    });
-  }
-
-  sendMessage() {
-    this.pubnub.publish({
-      channel: this.state.privateChannel,
-      message: {
-        text: this.state.currentMessage,
-        user: this.pubnub.getUUID()
-      }
-    });
-    this.pubnub.subscribe({
-      channels: ['queue'],
-      withPresence: true
-    });
-    this.pubnub.addListener({
-      message: (e) => {
-        e.message.user = e.message.user === this.pubnub.getUUID() ? 'me' : 'you';
-        this.setState({
-          messages: [...this.state.messages, {text: e.message.text, user: e.message.user}]
-        });
-      }
-    });
-  }
-
-  login(e) {
-    this.pubnub.subscribe({
-      channels: ['queue'],
-      withPresence: true
-    });
-
-    let id = this.pubnub.getUUID();
-    var callee = window.callee;
-    this.pubnub.hereNow(
-      {
-        channels: ['queue'],
-        includeUUIDs: true,
-        includeState: true
-      }).then((response) => {
-        let calleeList = response.channels.queue.occupants.filter((user) => {
-          return user.uuid !== id;
-        });
-        console.log('In queue: ', calleeList);
-        callee = window.callee = calleeList[Math.floor(Math.random() * calleeList.length)];
-        callee ? console.log('Callee: ', callee.uuid) : console.log('no one here yet!');
-      });
-
-    var phone = window.phone = PHONE({
-      number: id,
-      publish_key: pubnubConfig.publishKey,
-      subscribe_key: pubnubConfig.subscribeKey,
-      ssl: true,
-    });
-    var videoBox = document.getElementById('videoBox');
-    var videoThumbnail = document.getElementById('videoThumbnail');
-    var ctrl = window.ctrl = CONTROLLER(phone);
-    ctrl.ready(() => {
-      ctrl.addLocalStream(videoThumbnail);
-    });
-    ctrl.receive((session) => {
-      session.connected((session) => {
-        this.pubnub.unsubscribe({
-          channels: ['queue']
-        });
-        let privateChannel = [this.pubnub.getUUID(), session.number].sort().join('');
-        this.setState({
-          privateChannel: privateChannel
-        });
-        this.pubnub.subscribe({
-          channels: [privateChannel]
-        });
-        this.setState({
-          showChat: true
-        });
-        videoBox.appendChild(session.video);
-      });
-      session.ended((session) => {
-        this.refs.video.innerHTML = '';
-        this.refs.userVideo.innerHTML = '';
-        ctrl.getVideoElement(session.number).remove();
+  getQOTD() {
+    instance.goInstance.get('/api/qotd')
+    .then((response) => {
+      this.setState({
+        qotdID: response.data.QId,
+        qotdText: response.data.QText,
+        qotdType: response.data.QType,
+        qotdOptions: response.data.Options
       });
     });
   }
 
-  makeCall() {
-    phone.dial(window.callee.uuid);
+  submitQOTDAnswer(e) {
+    e.preventDefault();
+    // axios.post('/api/qotd', JSON.stringify
+    //   ({
+    //     UserAuthID: 1, // FIX THIS, HARDCODED WHILE PROPS MISSING
+    //     QotdID: this.state.qotdID,
+    //     Text: this.state.qotdText
+    //   })
+    // ).then(() => {
+      this.setState({
+        component: 'loading'
+      });
+    // });
   }
 
-  endCall() {
-    ctrl.hangup();
-    this.refs.video.innerHTML = '';
-    this.refs.userVideo.innerHTML = '';
+  attachTracks(tracks, container) {
+    tracks.forEach((track) => {
+      container.appendChild(track.attach());
+    })
+  }
+
+  attachParticipantTracks(participant, container) {
+    var tracks = Array.from(participant.tracks.values());
+    this.attachTracks(tracks, container);
+  }
+
+  detachTracks(tracks) {
+    tracks.forEach((track) => {
+      track.detach().forEach((detachedElement) => {
+        detachedElement.remove();
+      })
+    })
+  }
+
+  detachParticipantTracks(partipcant) {
+    var tracks = Array.from(participant.tracks.values());
+    this.detachTracks(tracks);
+  }
+
+  leaveRoom() {
+    if (this.state.activeRoom) {
+      this.state.activeRoom.disconnect();
+    }
+  }
+
+  joinHandler() {
+    var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
+    instance.nodeInstance.get(req).then((response) => {
+      console.log(response.data)
+      let connectOptions = {name: 'Kin'}
+      this.setState({
+        identity: response.data.identity,
+        twilioToken: response.data.token,
+        activeRoom: connectOptions.name
+      }, () => {
+        this.joinRoom();
+      })
+    });
+  }
+  
+  joinRoom() {
+    createLocalTracks({
+      audio: true,
+      video: { width: 640 }
+    }).then((localTracks) => {
+      console.log("token is", this.state.twilioToken);
+      console.log("room name is", this.state.activeRoom);
+      return TwilioVideo.connect(this.state.twilioToken, {
+        name: this.state.activeRoom,
+        tracks: localTracks
+      }).then((room) => {
+        room.on('participantConnected', (participant) => {
+          console.log('participant has connected', participant.identity)
+          participant.on('trackAdded', track => {
+            if (participant.identity === this.state.identity) {
+              if (this.state.participantCount < 1) {
+                this.setState({
+                  participantCount: this.state.participantCount + 1
+                }, () => {
+                  document.getElementById("remote-media").appendChild(track.attach());
+                });
+              }
+            } else if (participant.identity !== this.state.identity) {
+              document.getElementById("remote-media").appendChild(track.attach());
+            }
+          });
+        });
+      });
+    });
   }
 
   render() {
-    console.log('PROPS FOR VIDEO', this.props);
-    const VideoComponent = (
-     <div>
-       {this.state.showChat ? 
-          <div>
-            <h1>Chat</h1>
-            <div>
-              {this.state.messages.map((message, idx) => { return <p key={idx}>{message.user}: {message.text}</p>; })}
-            </div>
-          </div>
-        : null }
-        <div>
-          <input
-            type="text"
-            ref="input"
-            value={this.state.currentMessage}
-            placeholder="Message"
-            onChange={this.changedMessage}
-          />
-          <button onClick={this.sendMessage}>send</button>
-        </div>
-        <h1>Video</h1>
-          <input type="submit" value="Ready" onClick={this.login} />
-          <input type="submit" value="Pair me" onClick={this.makeCall} />
-        <div id="videoBox" ref="video" >
-        </div>
-        <div id="videoThumbnail" ref="userVideo" >
-        </div>
-        <button onClick={this.endCall}>End Call</button>
+    const LoadingComponent = (
+      <div>
+        Loading! Please wait
       </div>
     );
 
-    if (!this.props.user) {
-      console.log('no user, checking cache');
-      if (!this.checkToken()) {
-        console.log('no cache, redirect');
-        return (<Redirect to='/login' />);
-      } else {
-        console.log('user in cache');
-        // run func that will add user to state
-        return VideoComponent;        
-      }
-    } else {
-      console.log('user in state', this.props.user);
-      return VideoComponent;
-    }
+    const QOTDComponent = (
+      <div>
+       <h3>{this.state.qotdText}</h3>
+       <form>
+        {this.state.qotdOptions.map((option, idx) => {
+          return (<div key={idx}><input key={idx} type="radio" name="answer" value={option} required />{option}</div>);
+        })}
+        <input type="submit" onClick={this.submitQOTDAnswer} value="Submit Answer"/>
+        </form>
+      </div>
+    );
+
+    const VideoComponent = (
+      <div>
+        <div className="room-controls"></div>
+        <div className="button-join" onClick={this.joinHandler}>Join!</div>
+      </div>
+    );
+
+    return (
+      <div className="video-container">
+        {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
+
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
+        
+        <div className="header-links perspective">
+          <div className="shift" onClick={this.handleLogout}>
+            <a href="#/">Logout</a>
+          </div>
+        </div>
+        
+
+        {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
+
+        <div id="remote-media" ref="video"></div>
+   
+      </div>
+    );
   }
 }
 
@@ -215,7 +311,7 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({actionUser: actionUser}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Video);

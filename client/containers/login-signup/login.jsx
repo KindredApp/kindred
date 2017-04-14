@@ -7,6 +7,7 @@ import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
+import instance from '../../config.js'
 
 const FormItem = Form.Item;
 
@@ -15,15 +16,19 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      unauthorized: null
+      unauthorized: null,
+      redirect: null
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.checkVisits = this.checkVisits.bind(this);
+    this.checkToken = this.checkToken.bind(this);
+    this.checkToken();
   }
 
+
   _formatResponse (string) {
-    let map = {};
-    let o = string.replace(/(["\\{}])/g, "").split(',');
+    let map = {}, o = string.replace(/(["\\{}])/g, "").split(',');
     o.forEach((v) => {
       var tuple = v.split(':');
       map[tuple[0]] = tuple[1]
@@ -31,12 +36,49 @@ class Login extends React.Component {
     return map;
   }
 
+  checkToken() {
+    let cookie = Cookies.getJSON();
+    for (var key in cookie) {
+      if (key !== 'pnctest') {
+        instance.goInstance.post('/api/tokenCheck', {
+          Username: cookie[key].Username,
+          Token: cookie[key].Token
+        }).then((response) => {
+          if (response.data === true) {
+            this.setState({unauthorized: false}, () => {this.checkVisits()})
+          }
+        }).catch((error) => {console.log("Check token error", error)});
+      }
+    }
+  }
+
+  checkVisits() {
+    let cookie = Cookies.getJSON();
+    for (let key in cookie) {
+      if (key !== 'pnctest') {
+        instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
+        .then((response) => {
+          if (response.data === "true") {
+            this.setState({
+              redirect: true
+            })
+          } else if (response.data === "false") {
+            this.setState({
+              redirect: false
+            });
+          }
+        }).catch((error) => {
+          console.log("Check visits error", error);
+        });
+      }
+    }
+  }
+
   handleSubmit (e) {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        axios.post('/api/login', values).then((response) => {
-
+        instance.goInstance.post('/api/login', values).then((response) => {
           const userObj = JSON.parse(response.config.data);
           const token = response.data;
 
@@ -50,8 +92,8 @@ class Login extends React.Component {
             }
           }
           
-          this.setState({
-            unauthorized: false
+          this.setState({ unauthorized: false }, () => { 
+            this.checkVisits() 
           });
                     
           return new Promise((resolve, reject) => {
@@ -73,7 +115,7 @@ class Login extends React.Component {
 
         // Get profile information from server, combine into one object saved in Redux store.
         .then(newStore => {
-          axios.get('/api/profile?q=' + newStore.userObj.Username)
+          instance.goInstance.get(`/api/profile?q=${newStore.userObj.Username}`)
           .then(response => {
             let profileData = this._formatResponse(response.data);
             profileData.Username = newStore.userObj.Username;
@@ -119,7 +161,7 @@ class Login extends React.Component {
             </div>
           </Form>
         </div>
-        {this.state.unauthorized === true ? <div className="login-error">Username or password does not match</div> : this.state.unauthorized === false ? <Redirect to="/survey"/>: null}
+        {this.state.unauthorized === true ? <div className="login-error">Username or password does not match</div> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : this.state.redirect === false ? <Redirect to="/survey"/> : null : null}
         <div className="login-form-reroute">
           <span>Don't have an account? </span>
           <Link to="/signup">Join Us!</Link>
@@ -131,6 +173,7 @@ class Login extends React.Component {
 
 function mapStateToProps (state) {
   return {
+    user: state.userReducer
   };
 }
 
