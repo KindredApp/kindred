@@ -62,8 +62,8 @@ func main() {
 
 	//Initialize
 	//if on localhost, use ListenAndServe, if on deployment server, use ListenAndServeTLS.
-	http.ListenAndServe(":8080", nil);
-	// err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
+	// http.ListenAndServe(":8080", nil);
+	err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
