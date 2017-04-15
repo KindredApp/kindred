@@ -319,7 +319,7 @@ class Video extends React.Component {
             .then((response) => {
               console.log("result of algorithm is: ", response.result);
               if (response.result) {
-                //delete from queue
+                //delete yourself from queue
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
                   console.log("Room has been posted: ", response);
                   console.log("you have been paired with", response.pairedPerson)
@@ -334,6 +334,7 @@ class Video extends React.Component {
                 instance.goInstance.post('api/queue', this.state.queueItem);
                 //add yourself to queue
                 instance.goInstance.post('api/queue', this.props.user.userObj);
+                //figure logic for not adding yourself twice
               }
             });
           }
