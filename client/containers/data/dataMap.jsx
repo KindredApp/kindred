@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
-import Faux from 'react-faux-dom'
+import Faux from 'react-faux-dom';
 import * as topojson from 'topojson';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import QotdList from './pastQotdsList.jsx';
 import '../../styles/index.css';
 
 
@@ -13,16 +12,15 @@ import '../../styles/index.css';
 // http://bl.ocks.org/jczaplew/4444770
 // http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
 class DataMap extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      question: 'Questions to look up',
-    };
+  constructor(props) {
+    super(props);
+    this.state = {};
+    console.log('this.props.questionChoice', this.props.questionChoice);
   }
 
   sizeChange() {
-    d3.select("g").attr("transform", "scale(" + $("#container").width()/900 + ")");
-    $("svg").height($("#container").width() * 0.618);
+    d3.select("g").attr("transform", "scale(" + $("#mapcontainer").width()/900 + ")");
+    $("svg").height($("#mapcontainer").width() * 0.618);
   }
 
   componentDidMount() {
@@ -36,8 +34,8 @@ class DataMap extends React.Component {
     var datamapContainer = Faux.createElement('div');   
     
     d3.select(datamapContainer)
-      .attr('id', "container");
-    
+      .attr('id', "mapcontainer");
+
     var hoverInfo = d3.select(datamapContainer)
       .append('div')
       .attr('id', 'hoverinfo')
@@ -92,7 +90,8 @@ function mapStateToProps (state) {
   return {
     stateData: state.stateDataReducer,
     stateDefaults: state.stateDefaults,
-    mockStateData: state.mockStateData
+    mockStateData: state.mockStateData,
+    questionChoice: state.dataChoice.questionData
   };
 }
 
