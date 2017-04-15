@@ -305,18 +305,24 @@ class Video extends React.Component {
               if (response.result) {
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
                   console.log("Room has been posted: ", response);
-                })
+                  console.log("you have been paired with", response.pairedPerson)
+                  this.setState({
+                    activeRoom: response.RoomNumber
+                  }, () => {
+                    this.joinRoom();
+                  });
+                });
               }
-            })
+            });
           }
-        })
+        });
 
         // this.joinRoom();
         // this.postToQueue();
         // this.getVideoQueue();
         // this.createRoom();
 
-      })
+      });
     });
   }
 
@@ -347,7 +353,7 @@ class Video extends React.Component {
       console.log("token is", this.state.twilioToken);
       console.log("room name is", this.state.activeRoom);
       return TwilioVideo.connect(this.state.twilioToken, {
-        name: this.state.activeRoom.RoomNumber,
+        name: parseInt(this.state.activeRoom.RoomNumber),
         tracks: localTracks
       }).then((room) => {
         console.log("room is", room)
