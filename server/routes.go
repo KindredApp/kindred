@@ -1,18 +1,18 @@
 package main
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
-	"net/url"
 	"net/http/httputil"
-	"io/ioutil"
+	"net/url"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
@@ -390,7 +390,7 @@ func qotdHandler(db *gorm.DB, conn *redis.Client, qotdCounter *int) http.Handler
 		param := req.URL.Query().Get("user")
 		if req.Method == http.MethodGet {
 			// if query string specifies a user
-			// http://localhost:8080/api/qotd?user=555
+			// api/qotd?user=555
 			if param != "" {
 				var allUserAnswers []QotdAnswer
 				userAnswers := make([]UserAnswer, 10)
@@ -416,51 +416,43 @@ func qotdHandler(db *gorm.DB, conn *redis.Client, qotdCounter *int) http.Handler
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(q)
 			} else if req.URL.Query().Get("q") == "data" {
-				var qotds []Qotd
-				db.Raw("SELECT * FROM qotds").Scan(&qotds)
+				// if query string requests the data from the last x QOTDs, for data map etc
+				// api/qotd?q=data
 
-				data, err := json.Marshal(qotds)
+				type QotdData struct {
+					ID           int
+					QuestionType string
+					Category     string
+					QotdText     string
+					UserAuthID   int
+					AnswerText   string
+				}
+
+				var qotdData []QotdData
+
+				db.Raw("SELECT qotds.id, qotds.question_type, qotds.category, qotds.text as QotdText, qotd_answers.user_auth_id, qotd_answers.text as AnswerText from qotds, qotd_answer_options, qotd_answers where qotds.id = qotd_answer_options.qotd_id and qotds.id = qotd_answer_options.qotd_id and qotd_answer_options.text = qotd_answers.text and qotds.id <=? and qotds.id >=?", qotdCounter, *qotdCounter-9).Scan(&qotdData)
+
+				data, err := json.Marshal(qotdData)
 				if err != nil {
-					fmt.Println(err)
-					return
+					panic(err)
 				}
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(data)
-				// var randQuestionFromDb Qotd
-				// var questionCount int
-				// var answerOptionsFromDB []QotdAnswerOption
-				// var answerOptions []string
-				// db.Table("qotds").Count(&questionCount)
-				// db.Find(&randQuestionFromDb, rand.Intn(questionCount)+1)
-				// db.Model(&randQuestionFromDb).Related(&answerOptionsFromDB)
-				// fmt.Println(questionCount)
-				// fmt.Println(answerOptionsFromDB)
+			} else if req.URL.Query().Get("q") == "qotd" {
+				// if query string requests the current qotd
+				// api/qotd?q=qotd
 
-				// for _, v := range answerOptionsFromDB {
-				// 	answerOptions = append(answerOptions, v.Text)
-				// }
-
-				// questionWOptions := QuestionWOptions{randQuestionFromDb.ID, randQuestionFromDb.QuestionType, randQuestionFromDb.Text, answerOptions}
-
-				// q, err := json.Marshal(questionWOptions)
-				// if err != nil {
-				// 	fmt.Println(err)
-				// 	return
-				// }
-
-				//BRING BACK LATER
-				// q, err := conn.Cmd("HGET", "QOTD", "Question")
-				// if err != nil {
-				// 	panic(err)
-				// }
-				// q, err = json.Marshal(q)
-				// if err != nil {
-				// 	panic(err)
-				// }
-				// w.Header().Set("Content-Type", "application/json")
-				// w.Write(q)
+				qotd, err := conn.Cmd("HGETALL", "qotd").Map()
+				defer conn.Close()
+				data, err := json.Marshal(qotd)
+				if err != nil {
+					panic(err)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(data)
 			}
 		} else {
+			// post user qotd answer to db
 			var newAnswer QotdAnswer
 			var user UserAuth
 			var questionAnswered Qotd
@@ -489,7 +481,6 @@ func qotdHandler(db *gorm.DB, conn *redis.Client, qotdCounter *int) http.Handler
 
 //----- TWILIO REVERSE PROXY ------//
 
-
 func twilioProxy(w http.ResponseWriter, r *http.Request) {
 	log.Println("receiving twilio request from client")
 	r.Host = "localhost:3000"
@@ -509,7 +500,7 @@ type transport struct {
 func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
 	// response, err := http.DefaultTransport.RoundTrip(request)
 	response, err := t.CapturedTransport.RoundTrip(request)
-  bodyBytes, err := ioutil.ReadAll(response.Body)
+	bodyBytes, err := ioutil.ReadAll(response.Body)
 
 	// body, err := httputil.DumpResponse(response, true)
 	if err != nil {
@@ -519,8 +510,7 @@ func (t *transport) RoundTrip(request *http.Request) (*http.Response, error) {
 	defer response.Body.Close()
 	response.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 
-	log.Println("proxy reponse is", response)	
+	log.Println("proxy reponse is", response)
 
 	return response, err
 }
-
