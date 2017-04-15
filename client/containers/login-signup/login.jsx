@@ -31,8 +31,13 @@ class Login extends React.Component {
     let map = {}, o = string.replace(/(["\\{}])/g, "").split(',');
     o.forEach((v) => {
       var tuple = v.split(':');
-      map[tuple[0]] = tuple[1]
+      if (tuple[0] !== "Zip" && tuple[0] !== "Username" && tuple[0] !== "State") {
+        map[tuple[0]] = parseInt(tuple[1]);
+      } else {
+        map[tuple[0]] = tuple[1];
+      }
     }); 
+    console.log("map is", map);
     return map;
   }
 

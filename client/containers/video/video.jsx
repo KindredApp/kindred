@@ -16,7 +16,10 @@ class Video extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { 
+    this.state = {
+      inQueue: false,
+      rawQueueItem: '',
+      queueItem: {}, 
       joinClicked: false,
       cookie: {},
       activeRoom: '',
@@ -71,6 +74,11 @@ class Video extends React.Component {
     this.joinRoom = this.joinRoom.bind(this);
     this.attachParticipantTracks = this.attachParticipantTracks.bind(this);
     this.attachTracks = this.attachTracks.bind(this);
+    this.postToQueue = this.postToQueue.bind(this);
+    this.getVideoQueue = this.getVideoQueue.bind(this);
+    this.getRooms = this.getRooms.bind(this);
+    this.createRoom = this.createRoom.bind(this);
+    this._formatQueueResponse = this._formatQueueResponse.bind(this);
   }
 
   componentDidMount() {
@@ -88,8 +96,28 @@ class Video extends React.Component {
     this.checkToken();
   }
 
-  componentDidUpdate() {
+  componentWillMount() {
+
+    window.addEventListener("beforeunload", (e) => {
+      instance.goInstance.post('api/queueRemove', {
+        userProfile: this.props.user.userObj
+      }).then((res) => {
+        console.log("removed from queue");
+      });
+      e.preventDefault();
+      console.log("hey from window listener");
+      return e.returnValue = "are u sure you wanna close"
+    })
   }
+
+  componentWillUnmount() {
+    instance.goInstance.post('api/queueRemove', {
+      userProfile: this.props.user.userObj
+    }).then((response) => {
+      console.log("removed from queue");
+    })
+  }
+
 
   componentWillReceiveProps(nextProps) {
     console.log("receiving next props", nextProps);
@@ -156,6 +184,37 @@ class Video extends React.Component {
     return null;
   }
 
+  _formatResponse (string) {
+    let arr = [], o = string.replace(/(["\\{}])/g, "").split(' ');
+    arr = arr.slice(-1);
+    o.forEach((v) => {
+      var obj = {}
+      console.log("v is: ", v)
+      v.split(',').forEach((pair) => {
+        console.log("pair is:", pair);
+        var tuple = pair.split(':')
+        console.log("tuple one", tuple[1])
+        obj[tuple[0]] = tuple[1];
+      });
+      arr.push(obj);
+    }); 
+    return arr;
+  }
+
+  _formatQueueResponse (string) {
+    let obj = {}
+    let o = string.replace(/(["\\{}])/g, "").split(',');
+    o.forEach((pair) => {
+      var tuple = pair.split(':');
+      if (tuple[0] !== "Username" && tuple[0] !== "Zip" && tuple[0] !== "State") {
+        obj[tuple[0]] = parseInt(tuple[1])
+      } else {
+        obj[tuple[0]] = tuple[1];
+      }
+    })
+    return obj;
+  }
+
   getQOTD() {
     instance.goInstance.get('/api/qotd')
     .then((response) => {
@@ -214,21 +273,143 @@ class Video extends React.Component {
     }
   }
 
+  postToQueue() {
+    console.log("this props userobj is: ", this.props.user.userObj);
+    if (this.props.user.userObj) {
+      instance.goInstance.post('/api/queue', {
+        userProfile: this.props.user.userObj
+      })
+    }
+  }
+
+  getVideoQueue() {
+    return instance.goInstance.get('/api/queue').then((response) => {
+      console.log("new queue retrieve is", response.data);
+      var currentQueueItem = this._formatQueueResponse(response.data);
+      delete currentQueueItem.userProfile;
+      this.setState({
+        queueItem: currentQueueItem,
+        rawQueueItem: response.data
+      })
+      return currentQueueItem;
+    }).then((queueItem) => {
+      console.log('person in queue: ', queueItem)
+      let diffCount = 0;
+      for (let key in queueItem) {
+        if  (key === 'userProfile' || key === 'Username') {
+          continue;
+        }
+        if (queueItem[key] !== this.props.user.userObj[key]) {
+          console.log('differenceFound', key)
+          diffCount++;
+        }
+        if (diffCount > 3) {
+          console.log('were different', diffCount);
+          return {
+            result: true,
+            pairedPerson: queueItem.Username
+          };
+        }
+      }
+      return {
+        result: false
+      }
+    })
+  }
+
+  createRoom(p1, p2) {
+    return instance.goInstance.post('/api/room', {
+      ParticipantOne: p1,
+      ParticipantTwo: p2
+    }).then((response) => {
+      return response.data;
+    })
+  }
+
   joinHandler() {
     //uncomment for production build
     // var req = `/api/twilio?q=${this.state.cookie.Username}`;
+
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     instance.nodeInstance.get(req).then((response) => {
       console.log(response.data)
-      let connectOptions = {name: 'Kin'}
       this.setState({
         identity: response.data.identity,
-        twilioToken: response.data.token,
-        activeRoom: connectOptions.name
+        twilioToken: response.data.token
       }, () => {
-        this.joinRoom();
-      })
+        this.getRooms().then((r) => {
+          if (this.state.activeRoom) {
+            this.joinRoom();
+          } else {
+            this.getVideoQueue()
+            .then((response) => {
+              console.log("result of algorithm is: ", response.result);
+              if (response.result) {
+                //delete yourself from queue 
+                var rawIdentity = {
+                  RawUser: this.props.user.rawUser
+                }
+                instance.goInstance.post('api/queueRemove', rawIdentity).then((response) => {
+                  console.log("in successful pair", response.data)
+                });
+                this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
+                  console.log("Room has been posted: ", response);
+                  console.log("you have been paired with", response.pairedPerson)
+                  this.setState({
+                    activeRoom: response.RoomNumber
+                  }, () => {
+                    this.joinRoom();
+                  });
+                });
+              } else {
+                console.log("this.state.queueItem is: ", this.state.queueItem)
+                //add currently popped person back to queue
+                instance.goInstance.post('api/queue', {
+                  userProfile: this.state.queueItem
+                });
+                //add yourself to queue only if inQueue state is false // set state to true
+                if (!this.state.inQueue) {
+                  console.log("this.props.user.userObj is", this.props.user.userObj);
+                  this.props.user.userObj.Username = this.state.identity;
+                  this.props.user.userObj.Age = parseInt(this.props.user.userObj.Age)
+                  instance.goInstance.post('api/queue', {
+                    userProfile: this.props.user.userObj
+                  });
+                  this.setState({
+                    inQueue: true
+                  });
+                }
+              }
+            });
+          }
+        });
+
+        // this.joinRoom();
+        // this.postToQueue();
+        // this.getVideoQueue();
+        // this.createRoom();
+
+      });
     });
+  }
+
+
+  getRooms() {
+    return instance.goInstance.get('/api/room').then((response) => {
+      let arr = this._formatResponse(response.data);
+      console.log('returned array: ', arr);
+      return arr;
+    }).then((response) => {
+      response.forEach((room) => {
+        if (room.ParticipantOne === this.state.identity || room.ParticipantTwo === this.state.identity) {
+          console.log("room found inside getRooms", room)
+          this.setState({
+            activeRoom: room
+          })
+        }
+      })
+      return true;
+    })
   }
   
   joinRoom() {
@@ -239,7 +420,7 @@ class Video extends React.Component {
       console.log("token is", this.state.twilioToken);
       console.log("room name is", this.state.activeRoom);
       return TwilioVideo.connect(this.state.twilioToken, {
-        name: this.state.activeRoom,
+        name: parseInt(this.state.activeRoom.RoomNumber),
         tracks: localTracks
       }).then((room) => {
         console.log("room is", room)

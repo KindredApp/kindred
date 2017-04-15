@@ -319,6 +319,156 @@ func feedbackHandler(db *gorm.DB) http.Handler {
 	})
 }
 
+// ----- QUEUE ------ //
+
+func queueRemoveHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodPost {
+			var p UserQueue
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&p)
+			if err != nil {
+				panic(err)
+			}
+
+			log.Println("post to queue is:", p)
+
+			out, err := json.Marshal(p)
+			if err != nil {
+				panic(err)
+			}
+
+			conn.Cmd("LREM", "queue", "-1", string(out))
+			w.Write(out)
+		}
+	})
+}
+
+func queueHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodGet {
+
+			qr, err := conn.Cmd("LPOP", "queue").Str()
+			log.Printf("qr is: v - %v, t - %T", qr, qr)
+			if err != nil {
+				panic(err)
+			}
+
+			if qr == "" {
+				//handle
+			}
+
+			j, err := json.Marshal(qr)
+			if err != nil {
+				panic(err)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(j)
+
+
+			// var s string
+			// ql, err := conn.Cmd("LLEN", "queue").Int()
+			// qr, err := conn.Cmd("L`RA`NGE", "queue", 0, ql).Array()
+			// if err != nil {
+			// 	panic(err)
+			// }
+
+			// for _, v := range qr {
+			// 	tempS, _ := v.Str()
+			// 	s += tempS + " "
+			// }
+
+			// j, err := json.Marshal(s)
+			// if err != nil {
+			// 	panic(err)
+			// }
+
+			// w.Header().Set("Content-Type", "application/json")
+			// w.Write(j)
+		}
+		if req.Method == http.MethodPost {
+			var p UserQueue
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&p)
+			if err != nil {
+				panic(err)
+			}
+
+			log.Println("post to queue is:", p)
+
+			out, err := json.Marshal(p)
+			if err != nil {
+				panic(err)
+			}
+
+			conn.Cmd("RPUSH", "queue", string(out))
+			w.Write(out)
+		}
+
+	})
+}
+
+
+// ----- Room ------ //
+
+func roomHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodGet {
+			var s string
+			rl, err := conn.Cmd("LLEN", "rooms").Int()
+			r, err := conn.Cmd("LRANGE", "rooms", 0, rl).Array()
+
+			if err != nil {
+				panic(err)
+			}
+
+			for _, v := range r {
+				tempS, _ := v.Str()
+				s += tempS + " "
+			}
+
+			j, err := json.Marshal(s)
+			if err != nil {
+				panic(err)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(j)
+		} 
+
+		if req.Method == http.MethodPost {
+			var r Room
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&r)
+			if err != nil {
+				panic(err)
+			}
+
+			rc, err := conn.Cmd("GET", "roomCount").Int()
+			log.Println("roomCount is:", rc)
+			if err != nil {
+				panic(err)
+			}
+			r.RoomNumber = rc + 1
+
+			out, err := json.Marshal(r)
+			if err != nil {
+				panic(err)
+			}
+
+			conn.Cmd("RPUSH", "rooms", string(out))
+			conn.Cmd("INCR", "roomCount")
+
+			w.Write(out)
+		}
+	})
+}
+
+
 //----- MESSAGING -----//
 
 func wsHandler(conn *redis.Client) http.Handler {
