@@ -6,7 +6,6 @@ import Login from '../containers/login-signup/login.jsx';
 import DataMap from '../containers/data/dataMap.jsx';
 import AboutPage from './aboutpage.jsx';
 import '../styles/index.css';
-import Data from '../containers/data/data.jsx';
 
 const SignUpForm = Form.create()(SignUp);
 const LoginForm = Form.create()(Login);
@@ -19,7 +18,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="landing-container">
-        <Data />        
         <div className="landing-header">
           <div>
             <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
