@@ -27,9 +27,8 @@
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
     "cors": "^2.8.3",
-    "dotenv": "^4.0.0",
     "d3": "^4.7.4",
-    "datamaps": "^0.5.8",
+    "dotenv": "^4.0.0",
     "express": "^4.15.2",
     "fs": "0.0.1-security",
     "https": "^1.0.0",
@@ -37,13 +36,14 @@
     "pubnub": "^4.7.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-faux-dom": "^3.0.1",
     "react-redux": "^5.0.3",
     "react-router": "^4.0.0",
     "react-router-dom": "^4.0.0",
     "redux": "^3.6.0",
+    "topojson": "^3.0.0",
     "twilio": "^2.11.1",
-    "twilio-video": "^1.0.0-beta5",
-    "topojson": "^3.0.0"
+    "twilio-video": "^1.0.0-beta5"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",

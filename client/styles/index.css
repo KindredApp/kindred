@@ -59,19 +59,22 @@
   margin-top: 30px;
 }
 
-/*.datamap-outer-container {
-  position: relative;
-  height: 100%
-  padding: 0;
-}*/
-
-.datamap {
-  height: 50%;
+/*TODO: Find a way to do this without !important*/
+.states:hover {
+  fill: darkslateblue !important;
 }
 
-#datamap-container {
-  position: relative; 
-  margin: 0 auto;
+#hoverinfo {
+  position: absolute;
+  background-color: white;
+  padding: 5px;
+  height: 50px;
+  width: 50px;
+  border: 2px solid darkslateblue;
+}
+
+.hide {
+  visibility: hidden;
 }
 
 .persective {
