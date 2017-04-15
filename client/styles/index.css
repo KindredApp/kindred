@@ -59,6 +59,24 @@
   margin-top: 30px;
 }
 
+/*TODO: Find a way to do this without !important*/
+.states:hover {
+  fill: darkslateblue !important;
+}
+
+#hoverinfo {
+  position: absolute;
+  background-color: white;
+  padding: 5px;
+  height: 50px;
+  width: 50px;
+  border: 2px solid darkslateblue;
+}
+
+.hide {
+  visibility: hidden;
+}
+
 .persective {
   perspective: 15000px;
 }

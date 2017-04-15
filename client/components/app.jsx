@@ -3,6 +3,7 @@ import { HashRouter as Router, Route, Link } from 'react-router-dom';
 import { Form } from 'antd';
 import SignUp from '../containers/login-signup/signup.jsx';
 import Login from '../containers/login-signup/login.jsx';
+import DataMap from '../containers/data/dataMap.jsx';
 import AboutPage from './aboutpage.jsx';
 import '../styles/index.css';
 import Data from '../containers/data/data.jsx';
@@ -45,6 +46,7 @@ class App extends React.Component {
             <p>Kindred Chat connects you with others from <em>different</em> demographics to discuss the question of the day. Sometimes serious, sometimes light-hearted, always a fresh perspective. Give it a go!</p>
           </div>
         </div>
+        <DataMap/>
         <div className="landing-footer"></div>
       </div>
     );

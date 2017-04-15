@@ -8,12 +8,13 @@ import SignUp from '../containers/login-signup/signup.jsx';
 import Login from '../containers/login-signup/login.jsx';
 import Video from '../containers/video/video.jsx';
 import Survey from '../containers/account/survey.jsx';
+import DataView from '../containers/data/dataView.jsx';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {actionUser} from '../actions/actionUser.js';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import instance from '../config.js'
+import instance from '../config.js';
 import '../styles/index.css';
 
 const SignUpForm = Form.create()(SignUp);
@@ -106,6 +107,7 @@ class Root extends Component {
             <Route path="/video" component={Video} />
             {/*<PrivateRoute path="/video" component={Video} user={this.props.user} />*/}
             <Route path="/survey" component={Survey} />
+            <Route path="/data" component={DataView} />
             <Route path="/aboutus" component={AboutPage} />
           </div>
         </Router>
