@@ -17,6 +17,10 @@ var broadcast = make(chan Message)
 var upgrader = websocket.Upgrader{}
 
 func main() {
+	//qotd
+	var qotdCounter int
+	qotdCounter = 0
+
 	//redis
 	conn, err := redis.Dial("tcp", "localhost:6379")
 	if err != nil {
@@ -56,16 +60,18 @@ func main() {
 	http.Handle("/api/feedback", feedbackHandler(db))
 	http.Handle("/api/visitCheck", visitHandler(conn))
 	http.Handle("/api/ws", wsHandler(conn))
-	http.Handle("/api/qotd", qotdHandler(db))
+	http.Handle("/api/qotd", qotdHandler(db, conn, &qotdCounter))
 
 	// http.Handle("/api/kinships", kinships)
 
+	go worker(db, conn, &qotdCounter)
+
 	//Initialize
 	//if on localhost, use ListenAndServe, if on deployment server, use ListenAndServeTLS.
-	http.ListenAndServe(":8080", nil);
+
+	http.ListenAndServe(":8080", nil)
 	// err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
-
 }
