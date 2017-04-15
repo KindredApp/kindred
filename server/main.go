@@ -17,7 +17,7 @@ var broadcast = make(chan Message)
 var upgrader = websocket.Upgrader{}
 
 func main() {
-	//qotd
+	//qotdCounter for 24hr worker
 	var qotdCounter int
 	qotdCounter = 0
 
