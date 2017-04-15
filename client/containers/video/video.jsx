@@ -16,7 +16,9 @@ class Video extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { 
+    this.state = {
+      rawQueueItem: '',
+      queueItem: {}, 
       joinClicked: false,
       cookie: {},
       activeRoom: '',
@@ -75,6 +77,7 @@ class Video extends React.Component {
     this.getVideoQueue = this.getVideoQueue.bind(this);
     this.getRooms = this.getRooms.bind(this);
     this.createRoom = this.createRoom.bind(this);
+    this._formatQueueResponse = this._formatQueueResponse.bind(this);
   }
 
   componentDidMount() {
@@ -177,6 +180,16 @@ class Video extends React.Component {
     return arr;
   }
 
+  _formatQueueResponse (string) {
+    let obj = {}
+    let o = string.replace(/(["\\{}])/g, "").split(',');
+    o.forEach((pair) => {
+      var tuple = pair.split(':')
+      obj[tuple[0]] = tuple[1];
+    })
+    return obj;
+  }
+
   getQOTD() {
     instance.goInstance.get('/api/qotd')
     .then((response) => {
@@ -246,28 +259,30 @@ class Video extends React.Component {
 
   getVideoQueue() {
     return instance.goInstance.get('/api/queue').then((response) => {
-      var queueArray = this._formatResponse(response.data);
-      return queueArray;
-    }).then((queue) => {
-
-      for (let i = 0; i < queue.length; i++) {
-        console.log('person in queue: ', queue[i])
-        let diffCount = 0;
-        for (let key in queue[i]) {
-          if  (key === 'userProfile' || key === 'Username') {
-            continue;
-          }
-          if (queue[i][key] !== this.props.user.userObj[key]) {
-            console.log('differenceFound', key)
-            diffCount++;
-          }
-          if (diffCount > 3) {
-            console.log('were different', diffCount);
-            return {
-              result: true,
-              pairedPerson: queue[i].Username
-            };
-          }
+      console.log("new queue retrieve is", response.data);
+      var currentQueueItem = this._formatQueueResponse(response.data);
+      this.setState({
+        queueItem: currentQueueItem,
+        rawQueueItem: response.data
+      })
+      return currentQueueItem;
+    }).then((queueItem) => {
+      console.log('person in queue: ', queueItem)
+      let diffCount = 0;
+      for (let key in queueItem) {
+        if  (key === 'userProfile' || key === 'Username') {
+          continue;
+        }
+        if (queueItem[key] !== this.props.user.userObj[key]) {
+          console.log('differenceFound', key)
+          diffCount++;
+        }
+        if (diffCount > 3) {
+          console.log('were different', diffCount);
+          return {
+            result: true,
+            pairedPerson: queueItem.Username
+          };
         }
       }
       return {
@@ -300,9 +315,11 @@ class Video extends React.Component {
           if (this.state.activeRoom) {
             this.joinRoom();
           } else {
-            this.getVideoQueue().then((response) => {
+            this.getVideoQueue()
+            .then((response) => {
               console.log("result of algorithm is: ", response.result);
               if (response.result) {
+                //delete from queue
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
                   console.log("Room has been posted: ", response);
                   console.log("you have been paired with", response.pairedPerson)
@@ -312,6 +329,11 @@ class Video extends React.Component {
                     this.joinRoom();
                   });
                 });
+              } else {
+                //add back to queue
+                instance.goInstance.post('api/queue', this.state.queueItem);
+                //add yourself to queue
+                instance.goInstance.post('api/queue', this.props.user.userObj);
               }
             });
           }

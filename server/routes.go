@@ -324,27 +324,41 @@ func feedbackHandler(db *gorm.DB) http.Handler {
 func queueHandler(conn *redis.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		if req.Method == http.MethodGet {
-			var s string
-			ql, err := conn.Cmd("LLEN", "queue").Int()
-			// log.Printf("ql is: v - %v, t - %T", ql, ql)
-			// log.Printf("v - %v, t - %T", ql, ql)
-			qr, err := conn.Cmd("LRANGE", "queue", 0, ql).Array()
+
+			qr, err := conn.Cmd("LPOP", "queue").Str()
+			log.Printf("qr is: v - %v, t - %T", qr, qr)
 			if err != nil {
 				panic(err)
 			}
 
-			for _, v := range qr {
-				tempS, _ := v.Str()
-				s += tempS + " "
-			}
-
-			j, err := json.Marshal(s)
+			j, err := json.Marshal(qr)
 			if err != nil {
 				panic(err)
 			}
 
 			w.Header().Set("Content-Type", "application/json")
 			w.Write(j)
+
+
+			// var s string
+			// ql, err := conn.Cmd("LLEN", "queue").Int()
+			// qr, err := conn.Cmd("LRANGE", "queue", 0, ql).Array()
+			// if err != nil {
+			// 	panic(err)
+			// }
+
+			// for _, v := range qr {
+			// 	tempS, _ := v.Str()
+			// 	s += tempS + " "
+			// }
+
+			// j, err := json.Marshal(s)
+			// if err != nil {
+			// 	panic(err)
+			// }
+
+			// w.Header().Set("Content-Type", "application/json")
+			// w.Write(j)
 		}
 		if req.Method == http.MethodPost {
 			var p UserQueue
@@ -363,6 +377,7 @@ func queueHandler(conn *redis.Client) http.Handler {
 			conn.Cmd("RPUSH", "queue", string(out))
 			w.Write(out)
 		}
+
 	})
 }
 
