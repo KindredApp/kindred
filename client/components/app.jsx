@@ -5,6 +5,9 @@ import { Form } from 'antd';
 import AboutPage from './aboutpage.jsx';
 import '../styles/index.css';
 
+const SignUpForm = Form.create()(SignUp);
+const LoginForm = Form.create()(Login);
+
 class App extends React.Component {
   constructor (props) {
     super (props);
