@@ -55,6 +55,10 @@ type Room struct {
 	ParticipantTwo string
 }
 
+type QueueRemove struct {
+	RawUser string
+}
+
 // type ReqObj struct {
 // Username string
 // }

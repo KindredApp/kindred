@@ -321,6 +321,30 @@ func feedbackHandler(db *gorm.DB) http.Handler {
 
 // ----- QUEUE ------ //
 
+func queueRemoveHandler(conn *redis.Client) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == http.MethodPost {
+			var p UserQueue
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&p)
+			if err != nil {
+				panic(err)
+			}
+
+			log.Println("post to queue is:", p)
+
+			out, err := json.Marshal(p)
+			if err != nil {
+				panic(err)
+			}
+
+			conn.Cmd("LREM", "queue", "-1", string(out))
+			w.Write(out)
+		}
+	})
+}
+
 func queueHandler(conn *redis.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		if req.Method == http.MethodGet {
@@ -329,6 +353,10 @@ func queueHandler(conn *redis.Client) http.Handler {
 			log.Printf("qr is: v - %v, t - %T", qr, qr)
 			if err != nil {
 				panic(err)
+			}
+
+			if qr == "" {
+				//handle
 			}
 
 			j, err := json.Marshal(qr)
@@ -342,7 +370,7 @@ func queueHandler(conn *redis.Client) http.Handler {
 
 			// var s string
 			// ql, err := conn.Cmd("LLEN", "queue").Int()
-			// qr, err := conn.Cmd("LRANGE", "queue", 0, ql).Array()
+			// qr, err := conn.Cmd("L`RA`NGE", "queue", 0, ql).Array()
 			// if err != nil {
 			// 	panic(err)
 			// }
@@ -369,6 +397,8 @@ func queueHandler(conn *redis.Client) http.Handler {
 				panic(err)
 			}
 
+			log.Println("post to queue is:", p)
+
 			out, err := json.Marshal(p)
 			if err != nil {
 				panic(err)
@@ -380,6 +410,7 @@ func queueHandler(conn *redis.Client) http.Handler {
 
 	})
 }
+
 
 // ----- Room ------ //
 

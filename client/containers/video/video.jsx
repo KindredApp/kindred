@@ -17,6 +17,7 @@ class Video extends React.Component {
     super(props);
 
     this.state = {
+      inQueue: false,
       rawQueueItem: '',
       queueItem: {}, 
       joinClicked: false,
@@ -95,8 +96,28 @@ class Video extends React.Component {
     this.checkToken();
   }
 
-  componentDidUpdate() {
+  componentWillMount() {
+
+    window.addEventListener("beforeunload", (e) => {
+      instance.goInstance.post('api/queueRemove', {
+        userProfile: this.props.user.userObj
+      }).then((res) => {
+        console.log("removed from queue");
+      });
+      e.preventDefault();
+      console.log("hey from window listener");
+      return e.returnValue = "are u sure you wanna close"
+    })
   }
+
+  componentWillUnmount() {
+    instance.goInstance.post('api/queueRemove', {
+      userProfile: this.props.user.userObj
+    }).then((response) => {
+      console.log("removed from queue");
+    })
+  }
+
 
   componentWillReceiveProps(nextProps) {
     console.log("receiving next props", nextProps);
@@ -184,8 +205,12 @@ class Video extends React.Component {
     let obj = {}
     let o = string.replace(/(["\\{}])/g, "").split(',');
     o.forEach((pair) => {
-      var tuple = pair.split(':')
-      obj[tuple[0]] = tuple[1];
+      var tuple = pair.split(':');
+      if (tuple[0] !== "Username" && tuple[0] !== "Zip" && tuple[0] !== "State") {
+        obj[tuple[0]] = parseInt(tuple[1])
+      } else {
+        obj[tuple[0]] = tuple[1];
+      }
     })
     return obj;
   }
@@ -261,6 +286,7 @@ class Video extends React.Component {
     return instance.goInstance.get('/api/queue').then((response) => {
       console.log("new queue retrieve is", response.data);
       var currentQueueItem = this._formatQueueResponse(response.data);
+      delete currentQueueItem.userProfile;
       this.setState({
         queueItem: currentQueueItem,
         rawQueueItem: response.data
@@ -319,7 +345,13 @@ class Video extends React.Component {
             .then((response) => {
               console.log("result of algorithm is: ", response.result);
               if (response.result) {
-                //delete yourself from queue
+                //delete yourself from queue 
+                var rawIdentity = {
+                  RawUser: this.props.user.rawUser
+                }
+                instance.goInstance.post('api/queueRemove', rawIdentity).then((response) => {
+                  console.log("in successful pair", response.data)
+                });
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
                   console.log("Room has been posted: ", response);
                   console.log("you have been paired with", response.pairedPerson)
@@ -330,11 +362,23 @@ class Video extends React.Component {
                   });
                 });
               } else {
-                //add back to queue
-                instance.goInstance.post('api/queue', this.state.queueItem);
-                //add yourself to queue
-                instance.goInstance.post('api/queue', this.props.user.userObj);
-                //figure logic for not adding yourself twice
+                console.log("this.state.queueItem is: ", this.state.queueItem)
+                //add currently popped person back to queue
+                instance.goInstance.post('api/queue', {
+                  userProfile: this.state.queueItem
+                });
+                //add yourself to queue only if inQueue state is false // set state to true
+                if (!this.state.inQueue) {
+                  console.log("this.props.user.userObj is", this.props.user.userObj);
+                  this.props.user.userObj.Username = this.state.identity;
+                  this.props.user.userObj.Age = parseInt(this.props.user.userObj.Age)
+                  instance.goInstance.post('api/queue', {
+                    userProfile: this.props.user.userObj
+                  });
+                  this.setState({
+                    inQueue: true
+                  });
+                }
               }
             });
           }
