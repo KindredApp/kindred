@@ -566,21 +566,29 @@ func qotdHandler(db *gorm.DB, conn *redis.Client, qotdCounter *int) http.Handler
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(q)
 			} else if req.URL.Query().Get("q") == "data" {
-				// if query string requests the data from the last x QOTDs, for data map etc
+				// if query string requests the data from the last 10 QOTDs, for data map etc
 				// api/qotd?q=data
-
 				type QotdData struct {
-					ID           int
-					QuestionType string
-					Category     string
+					QotdID       int
+					QotdType     string
+					QotdCategory string
 					QotdText     string
 					UserAuthID   int
 					AnswerText   string
+					Zip          int
+					Age          int
+					Gender       int
+					Income       int
+					Education    int
+					Religiousity int
+					Ethnicity    int
+					State        string
+					Party        int
 				}
 
 				var qotdData []QotdData
 
-				db.Raw("SELECT qotds.id, qotds.question_type, qotds.category, qotds.text as QotdText, qotd_answers.user_auth_id, qotd_answers.text as AnswerText from qotds, qotd_answer_options, qotd_answers where qotds.id = qotd_answer_options.qotd_id and qotds.id = qotd_answer_options.qotd_id and qotd_answer_options.text = qotd_answers.text and qotds.id <=? and qotds.id >=?", qotdCounter, *qotdCounter-9).Scan(&qotdData)
+				db.Raw("SELECT qotds.id as qotd_id, qotds.question_type AS qotd_type, qotds.category AS qotd_category, qotds.text AS qotd_text, qotd_answers.user_auth_id, qotd_answers.text AS answer_text, user_profiles.zip, user_profiles.age, user_profiles.gender, user_profiles.income, user_profiles.education, user_profiles.religiousity, user_profiles.religion, user_profiles.ethnicity, user_profiles.state, user_profiles.party FROM qotds, qotd_answer_options, qotd_answers, user_profiles WHERE qotds.id = qotd_answer_options.qotd_id AND qotds.id = qotd_answer_options.qotd_id AND qotd_answer_options.text = qotd_answers.text AND qotd_answers.user_auth_id = user_profiles.user_auth_id AND qotds.id <=? AND qotds.id >=?", qotdCounter, *qotdCounter-9).Scan(&qotdData)
 
 				data, err := json.Marshal(qotdData)
 				if err != nil {
@@ -591,7 +599,6 @@ func qotdHandler(db *gorm.DB, conn *redis.Client, qotdCounter *int) http.Handler
 			} else if req.URL.Query().Get("q") == "qotd" {
 				// if query string requests the current qotd
 				// api/qotd?q=qotd
-
 				qotd, err := conn.Cmd("HGETALL", "qotd").Map()
 				defer conn.Close()
 				data, err := json.Marshal(qotd)
