@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import QotdList from './pastQotdsList.jsx';
 import DataMap from './dataMap.jsx';
+import NavLoggedIn from '../../components/navLoggedIn.jsx';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
@@ -16,9 +17,12 @@ class DataView extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="selectedDataTopic">{this.props.questionChoice}</div>
-        <QotdList />
+      <div className="landing-container">
+        <NavLoggedIn/>
+        <div className='mapdata-header'>
+          <div className="selectedDataTopic">{this.props.questionChoice}</div>
+          <QotdList />
+        </div>
         <DataMap />
       </div>
     );
