@@ -14,25 +14,13 @@ func worker(db *gorm.DB, conn *redis.Client, qotdCounter *int) {
 	var qotdLen *int
 
 	f = func() {
-		// get length of qotd table from db
 		db.Table("qotds").Count(&qotdLen)
-
-		// turn qotdCounter into ID number
 		qotdID := *qotdCounter%*qotdLen + 1
-
-		// get qotd from db
 		db.Raw("SELECT * FROM qotds WHERE id = ?", qotdID).Scan(&qotd)
-
-		// insert qotd into redis
-		conn.Cmd("HMSET", "category", qotd.Category, "type", qotd.QuestionType, "text", qotd.Text, "id", qotd.ID)
-
-		// increment qotdcounter
+		conn.Cmd("HMSET", "qotd", "category", qotd.Category, "type", qotd.QuestionType, "text", qotd.Text, "id", qotd.ID)
 		*qotdCounter++
-
 		// repeat function at time specified
 		t = time.AfterFunc(time.Duration(24)*time.Hour, f)
 	}
-
 	f()
-
 }
