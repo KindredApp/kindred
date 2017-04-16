@@ -7,21 +7,29 @@ import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 class QotdList extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      // stub data, questions will later come from reducer.
+      questions: [
+        "Question number 1",
+        "Question number 2",
+        "Question number 3",
+        "Question number 4",
+      ]
+    };
     this.onClick = this.onClick.bind(this);
   }
 
   onClick ({ key }) {
-    this.props.actionQuestionSelect("This is a stub question");
-    message.info(`Click on item ${key}`);
+    this.props.actionQuestionSelect(this.state.questions[key]);
   }
 
   render () {
 
     const menu = (
       <Menu onClick={this.onClick}>
-        <Menu.Item key="0">1st menu item</Menu.Item>
-        <Menu.Item key="1">2nd menu item</Menu.Item>
+        { this.state.questions.map((question, i) => {
+          return <Menu.Item key={i}>{question}</Menu.Item>;
+        })}
       </Menu>
     );
 
