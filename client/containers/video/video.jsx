@@ -8,7 +8,8 @@ import axios from 'axios';
 import Promise from 'bluebird';
 import {actionUser} from '../../actions/actionUser.js';
 import TwilioVideo, { createLocalTracks, createLocalVideoTrack } from 'twilio-video';
-import instance from '../../config.js'
+import instance from '../../config.js';
+import {Button} from 'antd';
 
 var localTracks;
 
@@ -34,29 +35,30 @@ class Video extends React.Component {
       qotdOptions: [],
       component: 'qotd',
       user: {
-        Age: "",
-        CreatedAt: "",
-        DeletedAt: "",
-        Education: "",
-        Ethnicity: "",
-        Gender: "",
-        ID: "",
-        Income: "",
-        Name: "",
-        Party: "",
-        Religion: "",
-        Religiousity: "",
-        State : "",
-        Token : "",
-        UpdatedAt: "",
-        UserAuth: "",
-        UserAuthID: "",
-        Username : "",
-        Zip: ""
+        Age: '',
+        CreatedAt: '',
+        DeletedAt: '',
+        Education: '',
+        Ethnicity: '',
+        Gender: '',
+        ID: '',
+        Income: '',
+        Name: '',
+        Party: '',
+        Religion: '',
+        Religiousity: '',
+        State: '',
+        Token: '',
+        UpdatedAt: '',
+        UserAuth: '',
+        UserAuthID: '',
+        Username: '',
+        Zip: ''
       },
       unauthorized: null,
       redirect: null,
-      participantCount: 0
+      participantCount: 0,
+      loading: false
     };
 
     this.getQOTD();
@@ -80,13 +82,13 @@ class Video extends React.Component {
     this.getRooms = this.getRooms.bind(this);
     this.createRoom = this.createRoom.bind(this);
     this._formatQueueResponse = this._formatQueueResponse.bind(this);
-    this.bindTippy = this.bindTippy.bind(this);
+    // this.bindTippy = this.bindTippy.bind(this);
   }
 
   componentDidMount() {
     let cookies = Cookies.getJSON();
     for (var key in cookies) {
-      if (key != "pnctest") {
+      if (key != 'pnctest') {
         this.setState({
           cookie: {
             Username: cookies[key].Username,
@@ -100,29 +102,29 @@ class Video extends React.Component {
 
   componentWillMount() {
 
-    window.addEventListener("beforeunload", (e) => {
+    window.addEventListener('beforeunload', (e) => {
       instance.goInstance.post('api/queueRemove', {
         userProfile: this.props.user.userObj
       }).then((res) => {
-        console.log("removed from queue");
+        console.log('removed from queue');
       });
       e.preventDefault();
-      console.log("hey from window listener");
-      return e.returnValue = "are u sure you wanna close"
-    })
+      console.log('hey from window listener');
+      return e.returnValue = 'are u sure you wanna close';
+    });
   }
 
   componentWillUnmount() {
     instance.goInstance.post('api/queueRemove', {
       userProfile: this.props.user.userObj
     }).then((response) => {
-      console.log("removed from queue");
-    })
+      console.log('removed from queue');
+    });
   }
 
 
   componentWillReceiveProps(nextProps) {
-    console.log("receiving next props", nextProps);
+    console.log('receiving next props', nextProps);
     this.setState({
       user: nextProps.user.userObj
     });
@@ -137,15 +139,15 @@ class Video extends React.Component {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
-          response.data === true ? this.setState({ unauthorized: false }, () => {this.checkVisits()}) : this.setState({ unauthorized: true })
+          response.data === true ? this.setState({ unauthorized: false }, () => { this.checkVisits(); }) : this.setState({ unauthorized: true });
         }).catch((error) => {
-          this.setState({unauthorized: true})
-          console.log("Check token error", error)
+          this.setState({unauthorized: true});
+          console.log('Check token error', error);
         });
       }
     }
     if (cookieCount === 1) {
-      this.setState({ unauthorized: true })
+      this.setState({ unauthorized: true });
     }
   }
 
@@ -155,8 +157,8 @@ class Video extends React.Component {
       if (key !== 'pnctest') {
         instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
-          response.data === "true" ? this.setState({ redirect: false }) : this.setState({ redirect: true})
-        }).catch((error) => {console.log("Check visits error", error)});
+          response.data === 'true' ? this.setState({ redirect: false }) : this.setState({ redirect: true});
+        }).catch((error) => { console.log('Check visits error', error); });
       }
     }
   }
@@ -167,9 +169,9 @@ class Video extends React.Component {
     let token;
 
     for (var key in cookie) {
-      if (key !== "pnctest") {
+      if (key !== 'pnctest') {
         username = key;
-        token = cookie[key].Token
+        token = cookie[key].Token;
       }
     }
 
@@ -187,15 +189,15 @@ class Video extends React.Component {
   }
 
   _formatResponse (string) {
-    let arr = [], o = string.replace(/(["\\{}])/g, "").split(' ');
+    let arr = [], o = string.replace(/(["\\{}])/g, '').split(' ');
     arr = arr.slice(-1);
     o.forEach((v) => {
-      var obj = {}
-      console.log("v is: ", v)
+      var obj = {};
+      console.log('v is: ', v);
       v.split(',').forEach((pair) => {
-        console.log("pair is:", pair);
-        var tuple = pair.split(':')
-        console.log("tuple one", tuple[1])
+        console.log('pair is:', pair);
+        var tuple = pair.split(':');
+        console.log('tuple one', tuple[1]);
         obj[tuple[0]] = tuple[1];
       });
       arr.push(obj);
@@ -204,23 +206,28 @@ class Video extends React.Component {
   }
 
   _formatQueueResponse (string) {
-    let obj = {}
-    let o = string.replace(/(["\\{}])/g, "").split(',');
+    let obj = {};
+    let o = string.replace(/(["\\{}])/g, '').split(',');
     o.forEach((pair) => {
       var tuple = pair.split(':');
-      if (tuple[0] !== "Username" && tuple[0] !== "Zip" && tuple[0] !== "State") {
-        obj[tuple[0]] = parseInt(tuple[1])
+      if (tuple[0] !== 'Username' && tuple[0] !== 'Zip' && tuple[0] !== 'State') {
+        obj[tuple[0]] = parseInt(tuple[1]);
       } else {
         obj[tuple[0]] = tuple[1];
       }
-    })
+    });
     return obj;
+  }
+
+  enterLoading () {
+    console.log('enter loading triggered');
+    this.setState({ loading: true });
   }
 
   getQOTD() {
     instance.goInstance.get('/api/qotd?q=qotd')
     .then((response) => {
-      console.log("qotd response is", response)
+      console.log('qotd response is', response);
       this.setState({
         qotdID: response.data.ID,
         qotdText: response.data.Text,
@@ -240,17 +247,17 @@ class Video extends React.Component {
     //     Text: this.state.qotdText
     //   })
     // ).then(() => {
-      this.setState({
-        component: 'loading'
-      });
+    this.setState({
+      component: 'loading'
+    });
     // });
   }
 
   attachTracks(tracks, container) {
-    console.log("attaching tracks via attachTracks:", tracks)
+    console.log('attaching tracks via attachTracks:', tracks);
     tracks.forEach((track) => {
       container.appendChild(track.attach());
-    })
+    });
   }
 
   attachParticipantTracks(participant, container) {
@@ -262,8 +269,8 @@ class Video extends React.Component {
     tracks.forEach((track) => {
       track.detach().forEach((detachedElement) => {
         detachedElement.remove();
-      })
-    })
+      });
+    });
   }
 
   detachParticipantTracks(partipcant) {
@@ -278,46 +285,46 @@ class Video extends React.Component {
   }
 
   postToQueue() {
-    console.log("this props userobj is: ", this.props.user.userObj);
+    console.log('this props userobj is: ', this.props.user.userObj);
     if (this.props.user.userObj) {
       instance.goInstance.post('/api/queue', {
         userProfile: this.props.user.userObj
-      })
+      });
     }
   }
 
   getVideoQueue() {
     return instance.goInstance.get('/api/queue').then((response) => {
-      if (response.data === "empty") {
-        console.log("no one in queue")
-        return response.data
+      if (response.data === 'empty') {
+        console.log('no one in queue');
+        return response.data;
       } else {
-        console.log("new queue retrieve is", response.data);
+        console.log('new queue retrieve is', response.data);
         var currentQueueItem = this._formatQueueResponse(response.data);
         delete currentQueueItem.userProfile;
         this.setState({
           queueItem: currentQueueItem,
           rawQueueItem: response.data
-        })
+        });
         return currentQueueItem;
       }
     }).then((queueItem) => {
-      if (queueItem === "empty") {
+      if (queueItem === 'empty') {
         this.setState({
           queueItem: null
-        })
+        });
         return {
           result: false
-        }
+        };
       }
-      console.log('person in queue: ', queueItem)
+      console.log('person in queue: ', queueItem);
       let diffCount = 0;
       for (let key in queueItem) {
-        if  (key === 'userProfile' || key === 'Username') {
+        if (key === 'userProfile' || key === 'Username') {
           continue;
         }
         if (queueItem[key] !== this.props.user.userObj[key]) {
-          console.log('differenceFound', key)
+          console.log('differenceFound', key);
           diffCount++;
         }
         if (diffCount > 3) {
@@ -330,8 +337,8 @@ class Video extends React.Component {
       }
       return {
         result: false
-      }
-    })
+      };
+    });
   }
 
   createRoom(p1, p2) {
@@ -340,18 +347,18 @@ class Video extends React.Component {
       ParticipantTwo: p2
     }).then((response) => {
       return response.data;
-    })
+    });
   }
 
-  bindTippy() {
-    new Tippy(document.querySelector('.room-not-found'), {
-      wait(show) {
-        if (this.state.roomFound === false) {
-          show()
-        }
-      }
-    })
-  }
+  // bindTippy() {
+  //   new Tippy(document.querySelector('.room-not-found'), {
+  //     wait(show) {
+  //       if (this.state.roomFound === false) {
+  //         show();
+  //       }
+  //     }
+  //   });
+  // }
 
   joinHandler() {
     //uncomment for production build
@@ -359,7 +366,7 @@ class Video extends React.Component {
 
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     instance.nodeInstance.get(req).then((response) => {
-      console.log(response.data)
+      console.log(response.data);
       this.setState({
         identity: response.data.identity,
         twilioToken: response.data.token
@@ -368,35 +375,35 @@ class Video extends React.Component {
           if (this.state.activeRoom) {
             this.setState({
               roomFound: true
-            })
+            });
             // this.joinRoom();
           } else {
             this.getVideoQueue()
             .then((response) => {
-              console.log("result of algorithm is: ", response.result);
+              console.log('result of algorithm is: ', response.result);
               if (response.result) {
                 //delete yourself from queue 
                 instance.goInstance.post('api/queueRemove', {
                   userProfile: this.props.user.userObj
                 }).then((response) => {
-                  console.log("removed from queue");
-                })
+                  console.log('removed from queue');
+                });
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
-                  console.log("Room has been posted: ", response);
-                  console.log("you have been paired with", response.pairedPerson)
+                  console.log('Room has been posted: ', response);
+                  console.log('you have been paired with', response.pairedPerson);
                   this.setState({
                     activeRoom: response.RoomNumber
                   }, () => {
                     this.setState({
                       roomFound: true
-                    })
+                    });
                     // this.joinRoom();
                   });
                 });
               } else {
                 this.setState({
                   roomFound: false
-                })
+                });
 
                 //add currently popped person back to queue
                 if (this.state.queueItem) {
@@ -406,9 +413,9 @@ class Video extends React.Component {
                 }
                 //add yourself to queue only if inQueue state is false // set state to true
                 if (!this.state.inQueue) {
-                  console.log("this.props.user.userObj is", this.props.user.userObj);
+                  console.log('this.props.user.userObj is', this.props.user.userObj);
                   this.props.user.userObj.Username = this.state.identity;
-                  this.props.user.userObj.Age = parseInt(this.props.user.userObj.Age)
+                  this.props.user.userObj.Age = parseInt(this.props.user.userObj.Age);
                   instance.goInstance.post('api/queue', {
                     userProfile: this.props.user.userObj
                   });
@@ -418,8 +425,8 @@ class Video extends React.Component {
                 }
 
                 setTimeout(() => {
-                  this.joinHandler()
-                }, 5000)
+                  this.joinHandler();
+                }, 5000);
               }
             });
           }
@@ -438,14 +445,14 @@ class Video extends React.Component {
     }).then((response) => {
       response.forEach((room) => {
         if (room.ParticipantOne === this.state.identity || room.ParticipantTwo === this.state.identity) {
-          console.log("room found inside getRooms", room)
+          console.log('room found inside getRooms', room);
           this.setState({
             activeRoom: room
-          })
+          });
         }
-      })
+      });
       return true;
-    })
+    });
   }
   
   joinRoom() {
@@ -453,25 +460,25 @@ class Video extends React.Component {
       audio: true,
       video: { width: 640 }
     }).then((localTracks) => {
-      console.log("token is", this.state.twilioToken);
-      console.log("room name is", this.state.activeRoom);
+      console.log('token is', this.state.twilioToken);
+      console.log('room name is', this.state.activeRoom);
       return TwilioVideo.connect(this.state.twilioToken, {
         name: parseInt(this.state.activeRoom.RoomNumber),
         tracks: localTracks
       }).then((room) => {
-        console.log("room is", room)
+        console.log('room is', room);
 
         room.participants.forEach((participant) => {
-          console.log("in for each, participant", participant);
-          let videoContainer = document.getElementById("remote-media");
-          this.attachParticipantTracks(participant, videoContainer)
-        })
+          console.log('in for each, participant', participant);
+          let videoContainer = document.getElementById('remote-media');
+          this.attachParticipantTracks(participant, videoContainer);
+        });
         
 
         room.on('participantConnected', (participant) => {
-          let videoContainer = document.getElementById("remote-media");
-          console.log('participant has connected', participant.identity)
-          console.log("console logging participant.tracks", participant.tracks)
+          let videoContainer = document.getElementById('remote-media');
+          console.log('participant has connected', participant.identity);
+          console.log('console logging participant.tracks', participant.tracks);
 
           participant.on('trackAdded', track => {
             if (participant.identity === this.state.identity) {
@@ -479,11 +486,11 @@ class Video extends React.Component {
                 this.setState({
                   participantCount: this.state.participantCount + 1
                 }, () => {
-                  document.getElementById("remote-media").appendChild(track.attach());
+                  document.getElementById('remote-media').appendChild(track.attach());
                 });
               }
             } else if (participant.identity !== this.state.identity) {
-              document.getElementById("remote-media").appendChild(track.attach());
+              document.getElementById('remote-media').appendChild(track.attach());
             }
           });
         });
@@ -512,17 +519,20 @@ class Video extends React.Component {
 
     const RoomFoundComponent = (
       <div>
-        <button className="btn tippy room-found" title="I'm a tooltip!" onClick={this.joinRoom}>join room</button>
-        {/*<div onClick={this.joinRoom}>join room</div>*/}
+        <Button type='primary' onClick={this.joinRoom}>Partner found! Click here to chat.</Button>
       </div>
-    )
+    );
+
+    const buttonDisplay = this.state.loading ? 'Looking for a pair!' : 'Click here to find a partner';
 
     const RoomNotFoundComponent = (
       <div>
-        <button className="btn tippy tippy-tooltip light-theme room-not-found" title="Pair not found, try again!" onClick={this.joinHandler}>search for room</button>
-        {/*<div onClick={this.joinHandler}>search for room</div> */}
+        <Button type='primary' loading={this.state.loading} onClick={() => {
+          this.joinHandler(); 
+          this.enterLoading();
+        }}>{buttonDisplay}</Button>
       </div>
-    )
+    );
 
     const VideoComponent = (
       <div>
