@@ -217,13 +217,15 @@ class Video extends React.Component {
   }
 
   getQOTD() {
-    instance.goInstance.get('/api/qotd')
+    instance.goInstance.get('/api/qotd?q=qotd')
     .then((response) => {
+      console.log("qotd response is", response)
       this.setState({
-        qotdID: response.data.QId,
-        qotdText: response.data.QText,
+        qotdID: response.data.ID,
+        qotdText: response.data.Text,
         qotdType: response.data.QType,
-        qotdOptions: response.data.Options
+        qotdOptions: response.data.Options,
+        qotdCategory: response.data.Category
       });
     });
   }
@@ -404,11 +406,6 @@ class Video extends React.Component {
           }
         });
 
-        // this.joinRoom();
-        // this.postToQueue();
-        // this.getVideoQueue();
-        // this.createRoom();
-
       });
     });
   }
@@ -485,12 +482,12 @@ class Video extends React.Component {
     const QOTDComponent = (
       <div>
        <h3>{this.state.qotdText}</h3>
-       {/*<form>
+       <form>
         {this.state.qotdOptions.map((option, idx) => {
           return (<div key={idx}><input key={idx} type="radio" name="answer" value={option} required />{option}</div>);
         })}
         <input type="submit" onClick={this.submitQOTDAnswer} value="Submit Answer"/>
-        </form>*/}
+        </form>
       </div>
     );
 
@@ -527,7 +524,7 @@ class Video extends React.Component {
         </div>
         
 
-        {this.state.component === 'qotd' ? VideoComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
+        {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
 
         <div id="remote-media" ref="video"></div>
    

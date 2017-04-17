@@ -29,7 +29,7 @@ func worker(db *gorm.DB, conn *redis.Client, qotdCounter *int) {
 		conn.Cmd("HMSET", "qotd", "category", qotd.Category, "qtype", qotd.QuestionType, "text", qotd.Text, "id", qotd.ID)
 		*qotdCounter++
 		// repeat function at time specified
-		t = time.AfterFunc(time.Duration(24)*time.Hour, f)
+		t = time.AfterFunc(time.Duration(15)*time.Second, f)
 	}
 	f()
 }

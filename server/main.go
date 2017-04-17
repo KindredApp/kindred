@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	defer conn.Close()
+	// defer conn.Close()
 
 	//db
 	var db *gorm.DB

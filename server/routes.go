@@ -482,7 +482,7 @@ func wsHandler(conn *redis.Client) http.Handler {
 			log.Fatal(err)
 		}
 
-		defer conn.Close()
+		// defer conn.Close()
 
 		clients[conn] = true
 
