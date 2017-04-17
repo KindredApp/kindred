@@ -19,6 +19,8 @@ func worker(db *gorm.DB, conn *redis.Client, qotdCounter *int) {
 	var qotdOptions []QotdAnswerOption
 
 	f = func() {
+		conn.Cmd("DEL", "options")
+		conn.Cmd("DEL", "qotd")
 		db.Table("qotds").Count(&qotdLen)
 		qotdID := *qotdCounter%*qotdLen + 1
 		db.Raw("SELECT * FROM qotds WHERE id = ?", qotdID).Scan(&qotd)
@@ -29,7 +31,7 @@ func worker(db *gorm.DB, conn *redis.Client, qotdCounter *int) {
 		conn.Cmd("HMSET", "qotd", "category", qotd.Category, "qtype", qotd.QuestionType, "text", qotd.Text, "id", qotd.ID)
 		*qotdCounter++
 		// repeat function at time specified
-		t = time.AfterFunc(time.Duration(15)*time.Second, f)
+		t = time.AfterFunc(time.Duration(5)*time.Second, f)
 	}
 	f()
 }
