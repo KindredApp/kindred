@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 import Faux from 'react-faux-dom';
+// import axios from 'axios';
 import * as topojson from 'topojson';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -16,6 +17,10 @@ class DataMap extends React.Component {
     super(props);
     this.state = {};
     console.log('this.props.questionChoice', this.props.questionChoice);
+    // axios.get('/api/qotd?q=data').then(response => {
+    //   console.log('data response: ', response);
+    //   this.setState({stateData: response });
+    // });
   }
 
   sizeChange() {
@@ -29,6 +34,7 @@ class DataMap extends React.Component {
 
   render() {
     console.log("props in map component: ", this.props.stateData);
+    console.log("this.props.mockStateData.objects.usStates: ", this.props.mockStateData.objects.usStates);
     d3.select(window).on('resize', this.sizeChange);
     
     var datamapContainer = Faux.createElement('div');   
