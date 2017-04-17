@@ -17,7 +17,7 @@ class Video extends React.Component {
     super(props);
 
     this.state = {
-      roomFound: false,
+      roomFound: null,
       inQueue: false,
       rawQueueItem: '',
       queueItem: {}, 
@@ -80,6 +80,7 @@ class Video extends React.Component {
     this.getRooms = this.getRooms.bind(this);
     this.createRoom = this.createRoom.bind(this);
     this._formatQueueResponse = this._formatQueueResponse.bind(this);
+    this.bindTippy = this.bindTippy.bind(this);
   }
 
   componentDidMount() {
@@ -342,6 +343,16 @@ class Video extends React.Component {
     })
   }
 
+  bindTippy() {
+    new Tippy(document.querySelector('.room-not-found'), {
+      wait(show) {
+        if (this.state.roomFound === false) {
+          show()
+        }
+      }
+    })
+  }
+
   joinHandler() {
     //uncomment for production build
     // var req = `/api/twilio?q=${this.state.cookie.Username}`;
@@ -383,6 +394,10 @@ class Video extends React.Component {
                   });
                 });
               } else {
+                this.setState({
+                  roomFound: false
+                })
+
                 //add currently popped person back to queue
                 if (this.state.queueItem) {
                   instance.goInstance.post('api/queue', {
@@ -401,6 +416,10 @@ class Video extends React.Component {
                     inQueue: true
                   });
                 }
+
+                setTimeout(() => {
+                  this.joinHandler()
+                }, 5000)
               }
             });
           }
@@ -493,13 +512,15 @@ class Video extends React.Component {
 
     const RoomFoundComponent = (
       <div>
-        <div onClick={this.joinRoom}>join room</div>
+        <button className="btn tippy room-found" title="I'm a tooltip!" onClick={this.joinRoom}>join room</button>
+        {/*<div onClick={this.joinRoom}>join room</div>*/}
       </div>
     )
 
     const RoomNotFoundComponent = (
       <div>
-        <div onClick={this.joinHandler}>search for room</div> 
+        <button className="btn tippy tippy-tooltip light-theme room-not-found" title="Pair not found, try again!" onClick={this.joinHandler}>search for room</button>
+        {/*<div onClick={this.joinHandler}>search for room</div> */}
       </div>
     )
 
