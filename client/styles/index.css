@@ -59,6 +59,38 @@
   margin-top: 30px;
 }
 
+/* ------ navLoggedIn ------- */
+
+.general-header {
+  display: flex;
+  justify-content: space-around;
+  height: 15%;
+  align-items: center;
+  border-width: 0px 0px 15px 0px;
+  border-color: #6288c5; /* fallback for old browsers */
+  border-color: -webkit-linear-gradient(to right, #1e3c72, #6288c5); /* Chrome 10-25, Safari 5.1-6 */
+  border-color: linear-gradient(to right, #1e3c72, #6288c5); 
+
+}
+
+.general-header-nav {
+  width: 40%;
+  display: flex;
+  align-items: center;
+}
+
+.general-header-links {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ------ Stats: Map Data ------- */
+
+.mapdata-header {
+  height: 50px;
+}
+
 /*TODO: Find a way to do this without !important*/
 .states:hover {
   fill: darkslateblue !important;

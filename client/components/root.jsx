@@ -8,6 +8,7 @@ import SignUp from '../containers/login-signup/signup.jsx';
 import Login from '../containers/login-signup/login.jsx';
 import Video from '../containers/video/video.jsx';
 import Survey from '../containers/account/survey.jsx';
+import Account from '../containers/account/account.jsx';
 import DataView from '../containers/data/dataView.jsx';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -111,6 +112,7 @@ class Root extends Component {
             <Route path="/video" component={Video} />
             {/*<PrivateRoute path="/video" component={Video} user={this.props.user} />*/}
             <Route path="/survey" component={Survey} />
+            <Route path="/account" component={Account} />
             <Route path="/data" component={DataView} />
             <Route path="/aboutus" component={AboutPage} />
           </div>
