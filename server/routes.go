@@ -367,7 +367,6 @@ func queueHandler(conn *redis.Client) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 			w.Write(j)
 
-
 			// var s string
 			// ql, err := conn.Cmd("LLEN", "queue").Int()
 			// qr, err := conn.Cmd("L`RA`NGE", "queue", 0, ql).Array()
@@ -411,7 +410,6 @@ func queueHandler(conn *redis.Client) http.Handler {
 	})
 }
 
-
 // ----- Room ------ //
 
 func roomHandler(conn *redis.Client) http.Handler {
@@ -437,7 +435,7 @@ func roomHandler(conn *redis.Client) http.Handler {
 
 			w.Header().Set("Content-Type", "application/json")
 			w.Write(j)
-		} 
+		}
 
 		if req.Method == http.MethodPost {
 			var r Room
@@ -467,7 +465,6 @@ func roomHandler(conn *redis.Client) http.Handler {
 		}
 	})
 }
-
 
 //----- MESSAGING -----//
 
@@ -520,13 +517,6 @@ func wsMessages() {
 // get all feedback answers to a particular question
 // get all feedback answers to a particular question on particular day
 // post feedback questions
-
-type QuestionWOptions struct {
-	QId     uint
-	QType   string
-	QText   string
-	Options []string
-}
 
 type UserAnswer struct {
 	Question string
@@ -599,9 +589,24 @@ func qotdHandler(db *gorm.DB, conn *redis.Client, qotdCounter *int) http.Handler
 			} else if req.URL.Query().Get("q") == "qotd" {
 				// if query string requests the current qotd
 				// api/qotd?q=qotd
+				type QuestionWOptions struct {
+					ID       string
+					Qtype    string
+					Category string
+					Text     string
+					Options  []string
+				}
+				var qotdWOptions QuestionWOptions
 				qotd, err := conn.Cmd("HGETALL", "qotd").Map()
-				defer conn.Close()
-				data, err := json.Marshal(qotd)
+				options, err := conn.Cmd("HGETALL", "options").List()
+				qotdWOptions.ID = qotd["id"]
+				qotdWOptions.Qtype = qotd["qtype"]
+				qotdWOptions.Text = qotd["text"]
+				qotdWOptions.Category = qotd["category"]
+				for i := 1; i < len(options); i += 2 {
+					qotdWOptions.Options = append(qotdWOptions.Options, options[i])
+				}
+				data, err := json.Marshal(qotdWOptions)
 				if err != nil {
 					panic(err)
 				}
