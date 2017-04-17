@@ -9,7 +9,7 @@
     "startMock": "nodemon server/mockServer.js",
     "build": "webpack",
     "build:watch": "webpack --watch",
-     "stop": "pkill --signal SIGINT goServer"
+    "stop": "pkill --signal SIGINT goServer"
   },
   "repository": {
     "type": "git",
@@ -41,6 +41,7 @@
     "react-router": "^4.0.0",
     "react-router-dom": "^4.0.0",
     "redux": "^3.6.0",
+    "tippy.js": "^0.4.1",
     "topojson": "^3.0.0",
     "twilio": "^2.11.1",
     "twilio-video": "^1.0.0-beta5"
