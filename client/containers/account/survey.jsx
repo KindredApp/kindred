@@ -9,7 +9,7 @@ import { Select, Steps, Button} from 'antd';
 import Helper from './surveyHelper.jsx';
 const Option = Select.Option;
 const Step = Steps.Step;
-import instance from '../../config.js'
+import instance from '../../config.js';
 
 const welcome = (
   <div>
@@ -27,7 +27,7 @@ const requiredInformation = (
       <div>Please fill out all of the following fields before proceeding.</div>
     </div>*/}
     <div className="survey-input">
-      What is your age? : {Helper.Age}
+      Whatn is your age? : {Helper.Age}
     </div>
     <div className="survey-input"> 
       What is your current zip code? : {Helper.Zip}
