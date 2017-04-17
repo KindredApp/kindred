@@ -17,6 +17,7 @@ class Video extends React.Component {
     super(props);
 
     this.state = {
+      roomFound: false,
       inQueue: false,
       rawQueueItem: '',
       queueItem: {}, 
@@ -284,15 +285,28 @@ class Video extends React.Component {
 
   getVideoQueue() {
     return instance.goInstance.get('/api/queue').then((response) => {
-      console.log("new queue retrieve is", response.data);
-      var currentQueueItem = this._formatQueueResponse(response.data);
-      delete currentQueueItem.userProfile;
-      this.setState({
-        queueItem: currentQueueItem,
-        rawQueueItem: response.data
-      })
-      return currentQueueItem;
+      if (response.data === "empty") {
+        console.log("no one in queue")
+        return response.data
+      } else {
+        console.log("new queue retrieve is", response.data);
+        var currentQueueItem = this._formatQueueResponse(response.data);
+        delete currentQueueItem.userProfile;
+        this.setState({
+          queueItem: currentQueueItem,
+          rawQueueItem: response.data
+        })
+        return currentQueueItem;
+      }
     }).then((queueItem) => {
+      if (queueItem === "empty") {
+        this.setState({
+          queueItem: null
+        })
+        return {
+          result: false
+        }
+      }
       console.log('person in queue: ', queueItem)
       let diffCount = 0;
       for (let key in queueItem) {
@@ -339,34 +353,40 @@ class Video extends React.Component {
       }, () => {
         this.getRooms().then((r) => {
           if (this.state.activeRoom) {
-            this.joinRoom();
+            this.setState({
+              roomFound: true
+            })
+            // this.joinRoom();
           } else {
             this.getVideoQueue()
             .then((response) => {
               console.log("result of algorithm is: ", response.result);
               if (response.result) {
                 //delete yourself from queue 
-                var rawIdentity = {
-                  RawUser: this.props.user.rawUser
-                }
-                instance.goInstance.post('api/queueRemove', rawIdentity).then((response) => {
-                  console.log("in successful pair", response.data)
-                });
+                instance.goInstance.post('api/queueRemove', {
+                  userProfile: this.props.user.userObj
+                }).then((response) => {
+                  console.log("removed from queue");
+                })
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
                   console.log("Room has been posted: ", response);
                   console.log("you have been paired with", response.pairedPerson)
                   this.setState({
                     activeRoom: response.RoomNumber
                   }, () => {
-                    this.joinRoom();
+                    this.setState({
+                      roomFound: true
+                    })
+                    // this.joinRoom();
                   });
                 });
               } else {
-                console.log("this.state.queueItem is: ", this.state.queueItem)
                 //add currently popped person back to queue
-                instance.goInstance.post('api/queue', {
-                  userProfile: this.state.queueItem
-                });
+                if (this.state.queueItem) {
+                  instance.goInstance.post('api/queue', {
+                    userProfile: this.state.queueItem
+                  });
+                }
                 //add yourself to queue only if inQueue state is false // set state to true
                 if (!this.state.inQueue) {
                   console.log("this.props.user.userObj is", this.props.user.userObj);
@@ -465,19 +485,32 @@ class Video extends React.Component {
     const QOTDComponent = (
       <div>
        <h3>{this.state.qotdText}</h3>
-       <form>
+       {/*<form>
         {this.state.qotdOptions.map((option, idx) => {
           return (<div key={idx}><input key={idx} type="radio" name="answer" value={option} required />{option}</div>);
         })}
         <input type="submit" onClick={this.submitQOTDAnswer} value="Submit Answer"/>
-        </form>
+        </form>*/}
       </div>
     );
+
+    const RoomFoundComponent = (
+      <div>
+        <div onClick={this.joinRoom}>join room</div>
+      </div>
+    )
+
+    const RoomNotFoundComponent = (
+      <div>
+        <div onClick={this.joinHandler}>search for room</div> 
+      </div>
+    )
 
     const VideoComponent = (
       <div>
         <div className="room-controls"></div>
-        <div className="button-join" onClick={this.joinHandler}>Join!</div>
+        {/*<div className="button-join" onClick={this.joinHandler}>Join!</div>*/}
+        {this.state.roomFound ? RoomFoundComponent : RoomNotFoundComponent}
       </div>
     );
 
@@ -494,7 +527,7 @@ class Video extends React.Component {
         </div>
         
 
-        {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
+        {this.state.component === 'qotd' ? VideoComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
 
         <div id="remote-media" ref="video"></div>
    
