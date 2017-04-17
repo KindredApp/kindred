@@ -349,23 +349,28 @@ func queueHandler(conn *redis.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		if req.Method == http.MethodGet {
 
-			qr, err := conn.Cmd("LPOP", "queue").Str()
+			qr, _ := conn.Cmd("LPOP", "queue").Str()
 			log.Printf("qr is: v - %v, t - %T", qr, qr)
-			if err != nil {
-				panic(err)
-			}
-
 			if qr == "" {
-				//handle
-			}
+				log.Println("handling empty queue")
+				j, err := json.Marshal("empty")
+				if err != nil {
+					panic(err)
+				}
+				w.Write(j)
+			} else {
+				j, err := json.Marshal(qr)
+				if err != nil {
+					panic(err)
+				}
 
-			j, err := json.Marshal(qr)
-			if err != nil {
-				panic(err)
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(j)
 			}
+			// if err != nil {
+			// 	panic(err)
+			// }
 
-			w.Header().Set("Content-Type", "application/json")
-			w.Write(j)
 
 			// var s string
 			// ql, err := conn.Cmd("LLEN", "queue").Int()
@@ -477,7 +482,7 @@ func wsHandler(conn *redis.Client) http.Handler {
 			log.Fatal(err)
 		}
 
-		defer conn.Close()
+		// defer conn.Close()
 
 		clients[conn] = true
 
