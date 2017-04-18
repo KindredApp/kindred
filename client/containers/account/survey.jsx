@@ -85,8 +85,6 @@ const optionalInformation = (
 
 const overview = (
   <div className="input-container">
-    {/*<div>You're almost done! Please take a moment to review your answers below.</div>
-    <div>If you notice anything wrong, please feel free to go back and change it.</div>*/}
     <div className="review-input-container">
       <div className="review-input">
         <div className="review-input-header">Age</div>
@@ -125,7 +123,6 @@ const overview = (
         <div className="review-input-result">{Helper.userData.Party || "empty"}</div>
       </div>
     </div>
-    {/*<div>Click the done button when you are ready for a fresh perspective!</div>*/}
   </div>
 );
 
@@ -138,10 +135,12 @@ const steps = [{
 }, {
   title: 'Optional Information',
   content: optionalInformation,
-}, {
-  title: 'Account Overview',
-  content: overview,
 }];
+
+// , {
+//   title: 'Account Overview',
+//   content: overview,
+// }
 
 class Survey extends React.Component {
   constructor (props) {
@@ -283,7 +282,7 @@ class Survey extends React.Component {
             {
               this.state.current === steps.length - 1
               &&
-              <Button className="survey-btn" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>done</Button>
+              <Button className="survey-btn" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>submit</Button>
             }
           </div>
         <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>

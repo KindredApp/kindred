@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select, Steps, Button, Input, InputNumber } from 'antd';
+import Survey from './survey.jsx'
 
 let userData = {
   Age: 25
