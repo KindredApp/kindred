@@ -5,10 +5,16 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/mediocregopher/radix.v2/redis"
+	"github.com/mediocregopher/radix.v2/pool"
 )
 
-func worker(db *gorm.DB, conn *redis.Client, qotdCounter *int) {
+func worker(db *gorm.DB, p *pool.Pool, qotdCounter *int) {
+	conn, err := p.Get()
+	defer p.Put(conn)
+	if err != nil {
+		panic(err)
+	}
+	
 	type QotdOptions struct {
 		text string
 	}

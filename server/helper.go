@@ -59,6 +59,10 @@ type QueueRemove struct {
 	RawUser string
 }
 
+type RoomRemove struct {
+	RawRoom string
+}
+
 // type ReqObj struct {
 // Username string
 // }

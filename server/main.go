@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/mediocregopher/radix.v2/redis"
+	"github.com/mediocregopher/radix.v2/pool"
 )
 
 //eventually get rid of these global variables
@@ -22,11 +22,10 @@ func main() {
 	qotdCounter = 0
 
 	//redis
-	conn, err := redis.Dial("tcp", "localhost:6379")
+	p, err := pool.New("tcp", "localhost:6379", 10)
 	if err != nil {
 		log.Panic(err)
 	}
-	// defer conn.Close()
 
 	//db
 	var db *gorm.DB
@@ -39,35 +38,36 @@ func main() {
 	db.AutoMigrate(&UserAuth{}, &UserProfile{}, &QotdAnswer{}, &FeedbackQuestion{}, &FeedbackAnswer{}, &Kinship{}, &Chat{})
 
 	seedQotds(db)
-	seedUsers(db, conn, 20) // mock data for presentation
+	seedUsers(db, p, 20) // mock data for presentation
 
 	defer db.Close()
 
 	//websockets
-	go wsMessages()
+	// go wsMessages()
 
 	//routes
 	http.Handle("/", http.FileServer(http.Dir("../public/")))
 	http.Handle("/public/assets/", http.StripPrefix("/public/assets/", http.FileServer(http.Dir("../public/assets/"))))
 	http.Handle("/bundles/", http.StripPrefix("/bundles/", http.FileServer(http.Dir("../bundles/"))))
 	http.Handle("/favicon.ico", http.NotFoundHandler())
-	http.Handle("/api/profile", profileHandler(db, conn))
-	http.Handle("/api/signup", signupHandler(db, conn))
-	http.Handle("/api/login", loginHandler(db, conn))
-	http.Handle("/api/logout", logoutHandler(conn))
-	http.Handle("/api/tokenCheck", tokenHandler(conn))
+	http.Handle("/api/profile", profileHandler(db, p))
+	http.Handle("/api/signup", signupHandler(db, p))
+	http.Handle("/api/login", loginHandler(db, p))
+	http.Handle("/api/logout", logoutHandler(p))
+	http.Handle("/api/tokenCheck", tokenHandler(p))
 	http.Handle("/api/twilio", http.HandlerFunc(twilioProxy))
 	http.Handle("/api/feedback", feedbackHandler(db))
-	http.Handle("/api/visitCheck", visitHandler(conn))
-	http.Handle("/api/queue", queueHandler(conn))
-	http.Handle("/api/queueRemove", queueRemoveHandler(conn))
-	http.Handle("/api/room", roomHandler(conn))
-	http.Handle("/api/ws", wsHandler(conn))
-	http.Handle("/api/qotd", qotdHandler(db, conn, &qotdCounter))
+	http.Handle("/api/visitCheck", visitHandler(p))
+	http.Handle("/api/queue", queueHandler(p))
+	http.Handle("/api/queueRemove", queueRemoveHandler(p))
+	http.Handle("/api/room", roomHandler(p))
+	http.Handle("/api/roomRemove", roomRemoveHandler(p))
+	// http.Handle("/api/ws", wsHandler(p))
+	http.Handle("/api/qotd", qotdHandler(db, p, &qotdCounter))
 
 	// http.Handle("/api/kinships", kinships)
 
-	go worker(db, conn, &qotdCounter)
+	go worker(db, p, &qotdCounter)
 
 	//Initialize
 	//if on localhost, use ListenAndServe, if on deployment server, use ListenAndServeTLS.
