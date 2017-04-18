@@ -12,81 +12,117 @@ const Step = Steps.Step;
 import instance from '../../config.js';
 
 const welcome = (
-  <div>
-    <div>We're excited to pair you off with people from around the world, but before we begin we'll need your help!</div>
-    <div>The information ahead helps us accurately pair you with others from a different demographic. </div>
-    <div>While only the required information is ... well required, the optional information will help us pair you accurately.</div>
-    <div>When you are ready to begin, click the 'next' button.</div>
+  <div className="welcome-message">
+    <div>
+      <div>
+        We're excited to pair you off with people from around the world, but before we begin we'll need your help! 
+      </div>
+      <br/>
+      <div>
+        The information ahead helps us accurately pair you with others from a different demographic. While only the required information is, well required, the optional information will help us with the pairing process. 
+      </div>
+      <br/>
+      <div>
+        When you are ready to begin, click 'next'. Thanks for joining us and we hope you enjoy your stay!
+      </div>
+    </div>
   </div>
 );
 
 const requiredInformation = (
-  <div>
+  <div className="input-container"> 
     {/*<div>
       <div>To provide you with the experience of pairing with someone from a different demographic, the information below will give us some basic information to start with.</div>
       <div>Please fill out all of the following fields before proceeding.</div>
     </div>*/}
     <div className="survey-input">
-      Whatn is your age? : {Helper.Age}
+      <div className="survey-input-header">Age</div>
+      <div className="survey-input-entry">{Helper.Age}</div>
     </div>
     <div className="survey-input"> 
-      What is your current zip code? : {Helper.Zip}
+      <div className="survey-input-header">Zipcode</div>
+      <div className="survey-input-entry">{Helper.Zip}</div>
     </div>
     <div className="survey-input">
-      What is your gender? : {Helper.Gender}
+      <div className="survey-input-header">Gender</div>
+      <div className="survey-input-entry">{Helper.Gender}</div>
     </div>
   </div>
 );
 
 const optionalInformation = (
-  <div>
-    {/*<div>
-      <div>The information requested here is not necessary for a basic experience with Kindred.</div>
-      <div>However, the better we know you, the better we can pair you appropriately!</div>
-      <div>Please fill out any fields that you wish to provide to us. If you do not fill in a specific field, we will take it upon ourselves to complete it for you!</div>
-      <div>To do this, we simply look at what the average demographic of your zip code says for an answer, and apply that answer to your account.</div>
-    </div>*/}
+  <div className="input-container">
     <div className="survey-input">
-      What is your Ethnicity? : {Helper.Ethnicity}
+      <div className="survey-input-header">Ethnicity</div>
+      <div className="survey-input-entry">{Helper.Ethnicity}</div>
     </div>
     <div className="survey-input">
-      What is your Income Bracket? : {Helper.Income}
+      <div className="survey-input-header">Income</div>
+      <div className="survey-input-entry">{Helper.Income}</div>
     </div>
     <div className="survey-input">
-      What is your current level of education? : {Helper.Education}
+      <div className="survey-input-header">Education</div>
+      <div className="survey-input-entry">{Helper.Education}</div>
     </div>
     <div className="survey-input">
-      How spiritual are you? : {Helper.Religiousity}
+      <div className="survey-input-header">Religiousity</div>
+      <div className="survey-input-entry">{Helper.Religiousity}</div>
     </div>
     <div className="survey-input">
-      What religion do you follow? : {Helper.Religion}
+      <div className="survey-input-header">Religion</div>
+      <div className="survey-input-entry">{Helper.Religion}</div>
     </div>
     <div className="survey-input">
-      What state do you live in? : {Helper.State}
+      <div className="survey-input-header">State</div>
+      <div className="survey-input-entry">{Helper.State}</div>
     </div>
     <div className="survey-input">
-      What political party do you align with? : {Helper.Party}
+      <div className="survey-input-header">Party</div>
+      <div className="survey-input-entry">{Helper.Party}</div>
     </div>
   </div>
 );
 
 const overview = (
-  <div>
-    {/*<div>You're almost done! Please take a moment to review your answers below.</div>
-    <div>If you notice anything wrong, please feel free to go back and change it.</div>*/}
-    <div>
-      <div className="review-input">Your Gender: {Helper.userData.Gender}</div>
-      <div className="review-input">Your Age: {Helper.userData.Age}</div>
-      <div className="review-input">Your Zip Code: {Helper.userData.Zip}</div>
-      <div className="review-input">Your Ethnicity: {Helper.userData.Ethnicity}</div>
-      <div className="review-input">Your Income Bracket: {Helper.userData.Income}</div>
-      <div className="review-input">Your Education: {Helper.userData.Education}</div>
-      <div className="review-input">Your Spirituality: {Helper.userData.Religiousity}</div>
-      <div className="review-input">Your Religion: {Helper.userData.Religion}</div>
-      <div className="review-input">Your State: {Helper.userData.State}</div>
-      <div className="review-input">Your Political Party: {Helper.userData.Party}</div>
+  <div className="input-container">
+    <div className="review-input-container">
+      <div className="review-input">
+        <div className="review-input-header">Age</div>
+        <div className="review-input-result">{Helper.userData.Age || "empty"}</div>
+      </div>
+      <div className="review-input">
+        <div className="review-input-header">Gender</div>
+        <div className="review-input-result">{Helper.userData.Gender || "empty"}</div>
+      </div>
+      <div className="review-input">
+        <div className="review-input-header">Ethnicity</div>
+        <div className="review-input-result">{Helper.userData.Ethnicity || "empty"}</div>
+      </div>
+      <div className="review-input">
+        <div className="review-input-header">Income</div>
+        <div className="review-input-result">{Helper.userData.Income || "empty"}</div>
+      </div>
+      <div className="review-input">
+        <div className="review-input-header">Education</div>
+        <div className="review-input-result">{Helper.userData.Education || "empty"}</div>
+      </div>
+      <div className="review-input">
+        <div className="review-input-header">Religiousity</div>
+        <div className="review-input-result">{Helper.userData.Religiousity || "empty"}</div>
+      </div>
+      <div className="review-input">
+        <div className="review-input-header">Religion</div>
+        <div className="review-input-result">{Helper.userData.Religion || "empty"}</div>
+      </div>
+      <div className="review-input">
+        <div className="review-input-header">State</div>
+        <div className="review-input-result">{Helper.userData.State || "empty"}</div>
+      </div>
+      <div className="review-input">
+        <div className="review-input-header">Party</div>
+        <div className="review-input-result">{Helper.userData.Party || "empty"}</div>
+      </div>
     </div>
-    {/*<div>Click the done button when you are ready for a fresh perspective!</div>*/}
   </div>
 );
 
@@ -99,10 +135,12 @@ const steps = [{
 }, {
   title: 'Optional Information',
   content: optionalInformation,
-}, {
-  title: 'New Account Overview',
-  content: overview,
 }];
+
+// , {
+//   title: 'Account Overview',
+//   content: overview,
+// }
 
 class Survey extends React.Component {
   constructor (props) {
@@ -211,34 +249,43 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div className="survey-container">
-        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
         <div className="steps-section">
-          <Steps current={current}>
-            {steps.map(item => <Step key={item.title} title={item.title} />)}
-          </Steps>
+          {steps[this.state.current].title}
         </div>
-        <div className="survey-section">
-          {this.state.answered === true ? <Redirect to="/video"/> : null}
-          <div className="steps-content">{steps[this.state.current].content}</div>
-        </div>
-        <div className="steps-action">
-          {
-            this.state.current > 0
-            &&
-            <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
-              previous
-            </Button>
-          }
-          {
-            this.state.current < steps.length - 1
-            &&
-            <Button type="primary" onClick={() => this.next()}>next</Button>
-          }
-          {
-            this.state.current === steps.length - 1
-            &&
-            <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>done</Button>
-          }
+        <div className="survey-card">
+          <div className="steps-action">
+            {
+              this.state.current === 0
+              &&
+              <Button className="survey-btn" onClick={() => this.prev()} disabled>
+                previous
+              </Button>
+            }
+            {
+              this.state.current > 0 
+              &&
+              <Button className="survey-btn" onClick={() => this.prev()}>
+                previous
+              </Button>
+            }
+          </div>
+          <div className="survey-section">
+            {this.state.answered === true ? <Redirect to="/video"/> : null}
+            <div className="steps-content">{steps[this.state.current].content}</div>
+          </div>
+          <div className="steps-action">
+            {
+              this.state.current < steps.length - 1
+              &&
+              <Button className="survey-btn" onClick={() => this.next()}>next</Button>
+            }
+            {
+              this.state.current === steps.length - 1
+              &&
+              <Button className="survey-btn" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>submit</Button>
+            }
+          </div>
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
         </div>
       </div>
     );
