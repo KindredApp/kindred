@@ -26,6 +26,12 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+	conn, err := p.Get()
+	if err != nil {
+		panic(err)
+	}
+	conn.Cmd("INCR", "roomCount")
+	p.Put(conn)
 
 	//db
 	var db *gorm.DB
