@@ -5,6 +5,7 @@ import userReducer from './userReducer.js';
 import stateData from './stateDataReducer.js';
 import stateDefaults from './stateDefaultsReducer.js';
 import mockStates from './us.js';
+// import geoStates from './stateArcs.js';
 import dataChoice from './chosenDataReducer';
 
 const allReducers = combineReducers({
@@ -14,7 +15,8 @@ const allReducers = combineReducers({
   stateDataReducer: stateData,
   stateDefaults: stateDefaults,
   mockStateData: mockStates,
-  dataChoice: dataChoice
+  dataChoice: dataChoice,
+  // geoStates: geoStates
 });
 
 export default allReducers;

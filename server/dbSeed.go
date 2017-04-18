@@ -612,7 +612,7 @@ func seedUserProfiles(db *gorm.DB, p *pool.Pool, numUsers int) {
 		profile.Income = rand.Intn(8) + 1
 		// Not real zips, just the right format
 		profile.Zip = randomdata.PostalCode("SE")
-		profile.State = randomdata.State(randomdata.Small)
+		profile.State = pickRandomState()
 		profile.Education = rand.Intn(10) + 1
 		profile.Religiousity = rand.Intn(10) + 1
 		profile.Religion = rand.Intn(9) + 1

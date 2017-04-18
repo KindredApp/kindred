@@ -8,6 +8,8 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import '../../styles/index.css';
 
+  // in dataMap merge the object associated qith requested question with geo data
+    // for each in geometry, if prop.stateabbrev === state abbreviation, set data and continue
 
 // Resources for responsive map:
 // http://bl.ocks.org/jczaplew/4444770
@@ -16,11 +18,9 @@ class DataMap extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    console.log('stateData from axios call: ', this.props.stateData);
     console.log('this.props.questionChoice', this.props.questionChoice);
-    // axios.get('/api/qotd?q=data').then(response => {
-    //   console.log('data response: ', response);
-    //   this.setState({stateData: response });
-    // });
+    console.log('geoStates', this.props.geoStates);
   }
 
   sizeChange() {
@@ -64,7 +64,7 @@ class DataMap extends React.Component {
       .enter()
       .append('path')
       .style('opacity', function(d){
-        return d.properties.unemployment * 0.075;
+        return d.properties.data.total * 0.075;
       })
       .style('fill', 'orange')
       .attr('class', 'states')
@@ -73,7 +73,7 @@ class DataMap extends React.Component {
         // console.log('d', d);
         // console.log('this', this);
         var name = d.properties.STATE_ABBR;
-        var rate = d.properties.unemployment;
+        var rate = d.properties.data.total;
         return d3.select(hoverinfo)
           .classed('hide', false)
           .text(name + ' : ' + rate);
@@ -97,6 +97,7 @@ function mapStateToProps (state) {
     stateData: state.stateDataReducer,
     stateDefaults: state.stateDefaults,
     mockStateData: state.mockStateData,
+    geoStates: state.geoStates,
     questionChoice: state.dataChoice.questionData
   };
 }
