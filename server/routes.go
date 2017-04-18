@@ -17,20 +17,25 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/mediocregopher/radix.v2/redis"
+	"github.com/mediocregopher/radix.v2/pool"
 	"golang.org/x/crypto/bcrypt"
 )
 
 //----- SIGNUP -----//
 
-func signupHandler(db *gorm.DB, conn *redis.Client) http.Handler {
+func signupHandler(db *gorm.DB, p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
 		var u User
 		var un UserAuth
 
 		decoder := json.NewDecoder(req.Body)
 		defer req.Body.Close()
-		err := decoder.Decode(&u)
+		err = decoder.Decode(&u)
 		if err != nil {
 			panic(err)
 		}
@@ -73,8 +78,13 @@ func signupHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 
 //----- LOGIN -----//
 
-func loginHandler(db *gorm.DB, conn *redis.Client) http.Handler {
+func loginHandler(db *gorm.DB, p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
 
 		if req.Method == http.MethodPost {
 			var u User
@@ -137,8 +147,14 @@ func loginHandler(db *gorm.DB, conn *redis.Client) http.Handler {
 
 //----- LOGOUT -----//
 
-func logoutHandler(conn *redis.Client) http.Handler {
+func logoutHandler(p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
 		if req.Method == http.MethodPost {
 			var c Cookie
 
@@ -158,14 +174,20 @@ func logoutHandler(conn *redis.Client) http.Handler {
 }
 
 //----- CHECK TOKEN -----//
-func tokenHandler(conn *redis.Client) http.Handler {
+func tokenHandler(p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
 		var c Cookie
 		var b bool
 
 		decoder := json.NewDecoder(req.Body)
 		defer req.Body.Close()
-		err := decoder.Decode(&c)
+		err = decoder.Decode(&c)
 		if err != nil {
 			panic(err)
 		}
@@ -186,8 +208,14 @@ func tokenHandler(conn *redis.Client) http.Handler {
 
 // ----- CHECK VISITS (first time users) -----//
 
-func visitHandler(conn *redis.Client) http.Handler {
+func visitHandler(p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
 		if req.Method == http.MethodGet {
 			u := req.URL.Query()
 			log.Println("uri is", u["q"])
@@ -205,8 +233,14 @@ func visitHandler(conn *redis.Client) http.Handler {
 
 //----- PROFILE -----//
 
-func profileHandler(db *gorm.DB, conn *redis.Client) http.Handler {
+func profileHandler(db *gorm.DB, p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
 		//handle post
 		if req.Method == http.MethodPost {
 			var us UserSurvey
@@ -321,8 +355,14 @@ func feedbackHandler(db *gorm.DB) http.Handler {
 
 // ----- QUEUE ------ //
 
-func queueRemoveHandler(conn *redis.Client) http.Handler {
+func queueRemoveHandler(p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
 		if req.Method == http.MethodPost {
 			var p UserQueue
 			decoder := json.NewDecoder(req.Body)
@@ -345,8 +385,14 @@ func queueRemoveHandler(conn *redis.Client) http.Handler {
 	})
 }
 
-func queueHandler(conn *redis.Client) http.Handler {
+func queueHandler(p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
 		if req.Method == http.MethodGet {
 
 			qr, _ := conn.Cmd("LPOP", "queue").Str()
@@ -417,8 +463,46 @@ func queueHandler(conn *redis.Client) http.Handler {
 
 // ----- Room ------ //
 
-func roomHandler(conn *redis.Client) http.Handler {
+func roomRemoveHandler(p *pool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
+		if req.Method == http.MethodPost {
+			var r Room
+			decoder := json.NewDecoder(req.Body)
+			defer req.Body.Close()
+			err := decoder.Decode(&r)
+			if err != nil {
+				panic(err)
+			}
+
+			log.Println("room remove is", r)
+
+			out, err := json.Marshal(r)
+			if err != nil {
+				panic(err)
+			}
+
+			log.Println("remove remove out is", string(out))
+
+			conn.Cmd("LREM", "rooms", "-1", string(out))
+			w.Write(out)
+		}
+	})
+}
+
+func roomHandler(p *pool.Pool) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
 		if req.Method == http.MethodGet {
 			var s string
 			rl, err := conn.Cmd("LLEN", "rooms").Int()
@@ -473,49 +557,55 @@ func roomHandler(conn *redis.Client) http.Handler {
 
 //----- MESSAGING -----//
 
-func wsHandler(conn *redis.Client) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//upgrades get request to a websocket connection
+// func wsHandler(p *pool.Pool) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		conn, err := p.Get()
+// 		defer p.Put(conn)
+// 		if err != nil {
+// 			panic(err)
+// 		}
 
-		conn, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			log.Fatal(err)
-		}
+// 		//upgrades get request to a websocket connection
 
-		// defer conn.Close()
+// 		conn, err = upgrader.Upgrade(w, r, nil)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
 
-		clients[conn] = true
+// 		// defer conn.Close()
 
-		for {
-			var msg Message
+// 		clients[conn] = true
 
-			err := conn.ReadJSON(&msg)
+// 		for {
+// 			var msg Message
 
-			if err != nil {
-				fmt.Println(err)
-				delete(clients, conn)
-				break
-			}
+// 			err := conn.ReadJSON(&msg)
 
-			broadcast <- msg
-		}
-	})
-}
+// 			if err != nil {
+// 				fmt.Println(err)
+// 				delete(clients, conn)
+// 				break
+// 			}
 
-func wsMessages() {
-	for {
-		msg := <-broadcast
+// 			broadcast <- msg
+// 		}
+// 	})
+// }
 
-		for client := range clients {
-			err := client.WriteJSON(msg)
-			if err != nil {
-				fmt.Println(err)
-				client.Close()
-				delete(clients, client)
-			}
-		}
-	}
-}
+// func wsMessages() {
+// 	for {
+// 		msg := <-broadcast
+
+// 		for client := range clients {
+// 			err := client.WriteJSON(msg)
+// 			if err != nil {
+// 				fmt.Println(err)
+// 				client.Close()
+// 				delete(clients, client)
+// 			}
+// 		}
+// 	}
+// }
 
 // Other potential 'feedback' routes:
 // get all feedback questions
@@ -530,8 +620,14 @@ type UserAnswer struct {
 
 //----- QUESTION OF THE DAY -----//
 
-func qotdHandler(db *gorm.DB, conn *redis.Client, qotdCounter *int) http.Handler {
+func qotdHandler(db *gorm.DB, p *pool.Pool, qotdCounter *int) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		conn, err := p.Get()
+		defer p.Put(conn)
+		if err != nil {
+			panic(err)
+		}
+
 		param := req.URL.Query().Get("user")
 		if req.Method == http.MethodGet {
 			// if query string specifies a user

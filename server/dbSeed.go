@@ -8,7 +8,7 @@ import (
 
 	"github.com/Pallinder/go-randomdata"
 	"github.com/jinzhu/gorm"
-	"github.com/mediocregopher/radix.v2/redis"
+	"github.com/mediocregopher/radix.v2/pool"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -562,9 +562,9 @@ func seedQotds(db *gorm.DB) {
 }
 
 //meta function to seed database with fake user profile, and answers to questions
-func seedUsers(db *gorm.DB, conn *redis.Client, numFakeUsers int) {
+func seedUsers(db *gorm.DB, p *pool.Pool, numFakeUsers int) {
 	seedUserAuth(db, numFakeUsers)
-	seedUserProfiles(db, conn, numFakeUsers)
+	seedUserProfiles(db, p, numFakeUsers)
 	seedUserAnswers(db, numFakeUsers)
 }
 
@@ -593,7 +593,13 @@ func seedUserAuth(db *gorm.DB, numUsers int) {
 }
 
 //creates demographic data for dummy users
-func seedUserProfiles(db *gorm.DB, conn *redis.Client, numUsers int) {
+func seedUserProfiles(db *gorm.DB, p *pool.Pool, numUsers int) {
+	conn, err := p.Get()
+	defer p.Put(conn)
+	if err != nil {
+		panic(err)
+	}
+	
 	if db.HasTable(&UserProfile{}) {
 		db.DropTable(&UserProfile{})
 	}

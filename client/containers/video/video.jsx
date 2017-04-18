@@ -18,6 +18,11 @@ class Video extends React.Component {
     super(props);
 
     this.state = {
+      pairedIdentity: '',
+      roomData: {},
+      roomRemove: "",
+      roomInstance: null,
+      roomCount: 0,
       roomFound: null,
       inQueue: false,
       rawQueueItem: '',
@@ -82,6 +87,7 @@ class Video extends React.Component {
     this.getRooms = this.getRooms.bind(this);
     this.createRoom = this.createRoom.bind(this);
     this._formatQueueResponse = this._formatQueueResponse.bind(this);
+    this.leaveRoom = this.leaveRoom.bind(this);
     // this.bindTippy = this.bindTippy.bind(this);
   }
 
@@ -108,6 +114,15 @@ class Video extends React.Component {
       }).then((res) => {
         console.log('removed from queue');
       });
+      if (this.state.roomInstance) {
+        this.state.roomInstance.disconnect();
+        instance.goInstance.post('api/roomRemove', this.state.roomData).then((r) => {
+          console.log("room removed from rooms queue");
+        });
+        this.setState({
+          roomInstance: false
+        });
+      }
       e.preventDefault();
       console.log('hey from window listener');
       return e.returnValue = 'are u sure you wanna close';
@@ -277,10 +292,15 @@ class Video extends React.Component {
     var tracks = Array.from(participant.tracks.values());
     this.detachTracks(tracks);
   }
-
   leaveRoom() {
-    if (this.state.activeRoom) {
-      this.state.activeRoom.disconnect();
+    if (this.state.roomInstance) {
+      this.state.roomInstance.disconnect();
+      instance.goInstance.post('api/roomRemove', this.state.roomData).then((r) => {
+        console.log("room removed from rooms queue");
+      });
+      this.setState({
+        roomInstance: false
+      });
     }
   }
 
@@ -388,6 +408,9 @@ class Video extends React.Component {
                 }).then((response) => {
                   console.log('removed from queue');
                 });
+                this.setState({
+                  pairedIdentity: response.pairedPerson
+                })
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
                   console.log('Room has been posted: ', response);
                   console.log('you have been paired with', response.pairedPerson);
@@ -395,7 +418,12 @@ class Video extends React.Component {
                     activeRoom: response.RoomNumber
                   }, () => {
                     this.setState({
-                      roomFound: true
+                      roomFound: true,
+                      roomData: {
+                        RoomNumber: response.RoomNumber,
+                        ParticipantOne: this.state.identity,
+                        ParticipantTwo: this.state.pairedIdentity
+                      }
                     });
                     // this.joinRoom();
                   });
@@ -426,7 +454,7 @@ class Video extends React.Component {
 
                 setTimeout(() => {
                   this.joinHandler();
-                }, 5000);
+                }, 1000);
               }
             });
           }
@@ -439,6 +467,9 @@ class Video extends React.Component {
 
   getRooms() {
     return instance.goInstance.get('/api/room').then((response) => {
+      this.setState({
+        roomRemove: response.data
+      });
       let arr = this._formatResponse(response.data);
       console.log('returned array: ', arr);
       return arr;
@@ -447,7 +478,7 @@ class Video extends React.Component {
         if (room.ParticipantOne === this.state.identity || room.ParticipantTwo === this.state.identity) {
           console.log('room found inside getRooms', room);
           this.setState({
-            activeRoom: room
+            activeRoom: parseInt(room.RoomNumber)
           });
         }
       });
@@ -463,10 +494,22 @@ class Video extends React.Component {
       console.log('token is', this.state.twilioToken);
       console.log('room name is', this.state.activeRoom);
       return TwilioVideo.connect(this.state.twilioToken, {
-        name: parseInt(this.state.activeRoom.RoomNumber),
+        name: this.state.activeRoom,
         tracks: localTracks
       }).then((room) => {
-        console.log('room is', room);
+        this.setState({
+          roomInstance: room,
+          roomCount: room.participants.size
+        })
+
+        if (room.participants.size === 0) {
+          var handle = setInterval(() => {
+            if (room.participants.size === 1) {
+              this.joinRoom()
+              clearInterval(handle);
+            }
+          }, 100);
+        }
 
         room.participants.forEach((participant) => {
           console.log('in for each, participant', participant);
@@ -520,6 +563,8 @@ class Video extends React.Component {
     const RoomFoundComponent = (
       <div>
         <Button type='primary' onClick={this.joinRoom}>Partner found! Click here to chat.</Button>
+        {this.state.roomCount ? <Button type='primary' onClick={this.leaveRoom}>Leave room</Button> : null}
+        {this.state.roomInstance === false ? <Redirect to="/video"/> : null}
       </div>
     );
 
