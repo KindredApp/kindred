@@ -18,9 +18,10 @@ class Video extends React.Component {
     super(props);
 
     this.state = {
+      leaveQueue: false,
       pairedIdentity: '',
       roomData: {},
-      roomRemove: "",
+      roomRemove: '',
       roomInstance: null,
       roomCount: 0,
       roomFound: null,
@@ -88,13 +89,13 @@ class Video extends React.Component {
     this.createRoom = this.createRoom.bind(this);
     this._formatQueueResponse = this._formatQueueResponse.bind(this);
     this.leaveRoom = this.leaveRoom.bind(this);
-    // this.bindTippy = this.bindTippy.bind(this);
+    this.leaveLoading = this.leaveLoading.bind(this);
   }
 
   componentDidMount() {
     let cookies = Cookies.getJSON();
     for (var key in cookies) {
-      if (key != 'pnctest') {
+      if (key !== 'pnctest') {
         this.setState({
           cookie: {
             Username: cookies[key].Username,
@@ -117,7 +118,7 @@ class Video extends React.Component {
       if (this.state.roomInstance) {
         this.state.roomInstance.disconnect();
         instance.goInstance.post('api/roomRemove', this.state.roomData).then((r) => {
-          console.log("room removed from rooms queue");
+          console.log('room removed from rooms queue');
         });
         this.setState({
           roomInstance: false
@@ -239,6 +240,11 @@ class Video extends React.Component {
     this.setState({ loading: true });
   }
 
+  leaveLoading () {
+    console.log('leave loading triggered');
+    this.setState({ loading: false });
+  }
+
   getQOTD() {
     instance.goInstance.get('/api/qotd?q=qotd')
     .then((response) => {
@@ -296,7 +302,7 @@ class Video extends React.Component {
     if (this.state.roomInstance) {
       this.state.roomInstance.disconnect();
       instance.goInstance.post('api/roomRemove', this.state.roomData).then((r) => {
-        console.log("room removed from rooms queue");
+        console.log('room removed from rooms queue');
       });
       this.setState({
         roomInstance: false
@@ -370,20 +376,18 @@ class Video extends React.Component {
     });
   }
 
-  // bindTippy() {
-  //   new Tippy(document.querySelector('.room-not-found'), {
-  //     wait(show) {
-  //       if (this.state.roomFound === false) {
-  //         show();
-  //       }
-  //     }
-  //   });
-  // }
-
   joinHandler() {
-    //uncomment for production build
-    // var req = `/api/twilio?q=${this.state.cookie.Username}`;
-
+    // console.log('in handler');
+    // //uncomment for production build
+    // // var req = `/api/twilio?q=${this.state.cookie.Username}`;
+    // if (this.state.leaveQueue) {
+    //   console.log('leaving queue from joinHandler');
+    //   this.setState({
+    //     leaveQueue: false
+    //   });
+    //   return;
+    // }
+    // console.log('passed if');
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     instance.nodeInstance.get(req).then((response) => {
       console.log(response.data);
@@ -396,13 +400,11 @@ class Video extends React.Component {
             this.setState({
               roomFound: true
             });
-            // this.joinRoom();
           } else {
             this.getVideoQueue()
             .then((response) => {
               console.log('result of algorithm is: ', response.result);
               if (response.result) {
-                //delete yourself from queue 
                 instance.goInstance.post('api/queueRemove', {
                   userProfile: this.props.user.userObj
                 }).then((response) => {
@@ -410,7 +412,7 @@ class Video extends React.Component {
                 });
                 this.setState({
                   pairedIdentity: response.pairedPerson
-                })
+                });
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
                   console.log('Room has been posted: ', response);
                   console.log('you have been paired with', response.pairedPerson);
@@ -425,7 +427,6 @@ class Video extends React.Component {
                         ParticipantTwo: this.state.pairedIdentity
                       }
                     });
-                    // this.joinRoom();
                   });
                 });
               } else {
@@ -464,7 +465,6 @@ class Video extends React.Component {
     });
   }
 
-
   getRooms() {
     return instance.goInstance.get('/api/room').then((response) => {
       this.setState({
@@ -500,12 +500,12 @@ class Video extends React.Component {
         this.setState({
           roomInstance: room,
           roomCount: room.participants.size
-        })
+        });
 
         if (room.participants.size === 0) {
           var handle = setInterval(() => {
             if (room.participants.size === 1) {
-              this.joinRoom()
+              this.joinRoom();
               clearInterval(handle);
             }
           }, 100);
@@ -568,14 +568,37 @@ class Video extends React.Component {
       </div>
     );
 
-    const buttonDisplay = this.state.loading ? 'Looking for a pair!' : 'Click here to find a partner';
+    const leaveQueueButton = (
+      <div>
+        <Button type='primary' onClick={() => {
+          console.log('clicked leave');
+          this.setState({
+            leaveQueue: true
+          });
+          instance.goInstance.post('api/queueRemove', {
+            userProfile: this.props.user.userObj
+          }).then((response) => {
+            console.log('removed from queue');
+          });
+          this.leaveLoading();
+        }}>Searching for kin! Click here to cancel</Button>
+        <div className="load-10">
+          <div className="bar"></div>
+        </div>
+      </div>
+    );
+
+    const joinQueueButton = (
+      <Button type='primary' onClick={() => {
+        this.joinHandler(); 
+        this.enterLoading();
+      }}>Click here to find a partner!</Button>    
+    );
+
 
     const RoomNotFoundComponent = (
       <div>
-        <Button type='primary' loading={this.state.loading} onClick={() => {
-          this.joinHandler(); 
-          this.enterLoading();
-        }}>{buttonDisplay}</Button>
+        {this.state.loading ? leaveQueueButton : joinQueueButton }
       </div>
     );
 
@@ -598,7 +621,6 @@ class Video extends React.Component {
             <a href="#/">Logout</a>
           </div>
         </div>
-        
 
         {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
 
