@@ -54,8 +54,8 @@ const Age = (<InputNumber className="input-bar" onChange={e => handleAgeChange(e
 const Gender = (
     <Select
       showSearch
-      className="input-bar"
-      placeholder="Choose your gender"
+      className="input-bar input-select"
+      placeholder="What is your gender?"
       optionFilterProp="children"
       onChange={handleGenderChange}
       filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -70,7 +70,7 @@ const Ethnicity = (
     <Select
       showSearch
       className="input-bar"
-      placeholder="What is your Ethnicity?"
+      placeholder="What is your ethnicity?"
       optionFilterProp="children"
       onChange={handleEthnicityChange}
       filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -109,7 +109,7 @@ const Education = (
   <Select
     showSearch
     className="input-bar"
-    placeholder="What is your highest level of education?"
+    placeholder="What is your level of education?"
     optionFilterProp="children"
     onChange={handleEducationChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -131,7 +131,7 @@ const Religiousity = (
   <Select
     showSearch
     className="input-bar"
-    placeholder="How spiritual are you as a person?"
+    placeholder="How spiritual are you?"
     optionFilterProp="children"
     onChange={handleReligiousityChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
