@@ -5,18 +5,16 @@ import { Menu, Dropdown, Icon, message } from 'antd';
 import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 
 class QotdList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      // stub data, questions will later come from reducer.
-      questions: [
-        "Question number 1",
-        "Question number 2",
-        "Question number 3",
-        "Question number 4",
-      ]
+      questions: []
     };
     this.onClick = this.onClick.bind(this);
+  }
+
+  componentWillReceiveProps(nextprops) {
+    this.setState({'questions': Object.keys(nextprops.stateData)});
   }
 
   onClick ({ key }) {

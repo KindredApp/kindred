@@ -37,7 +37,8 @@ func worker(db *gorm.DB, p *pool.Pool, qotdCounter *int) {
 		conn.Cmd("HMSET", "qotd", "category", qotd.Category, "qtype", qotd.QuestionType, "text", qotd.Text, "id", qotd.ID)
 		*qotdCounter++
 		// repeat function at time specified
-		t = time.AfterFunc(time.Duration(5)*time.Second, f)
+		// t = time.AfterFunc(time.Duration(10)*time.Second, f)
+		t = time.AfterFunc(time.Duration(24)*time.Hour, f)
 	}
 	f()
 }
