@@ -310,6 +310,27 @@ func profileHandler(db *gorm.DB, p *pool.Pool) http.Handler {
 			j, _ := json.Marshal(res)
 			w.Write(j)
 		}
+
+		// delete user profile
+		if req.Method == http.MethodDelete {
+			///api/profile?user=555
+			var userProfile UserProfile
+			var userAuth UserAuth
+			var userKinship Kinship
+			userID := req.URL.Query().Get("user")
+			db.Raw("SELECT * FROM user_profiles WHERE user_auth_id = ?", userID).Scan(&userProfile)
+			db.Raw("SELECT * FROM user_auths WHERE id = ?", userID).Scan(&userAuth)
+			db.Raw("SELECT * FROM kinships WHERE user_auth_id = ?", userID).Scan(&userKinship)
+			db.Delete(&userProfile)
+			db.Delete(&userAuth)
+			db.Delete(&userKinship)
+			res, err := json.Marshal("Profile deleted")
+			if err != nil {
+				panic(err)
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(res)
+		}
 	})
 }
 
@@ -416,7 +437,6 @@ func queueHandler(p *pool.Pool) http.Handler {
 			// if err != nil {
 			// 	panic(err)
 			// }
-
 
 			// var s string
 			// ql, err := conn.Cmd("LLEN", "queue").Int()
