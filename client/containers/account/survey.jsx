@@ -21,13 +21,13 @@ const welcome = (
 );
 
 const requiredInformation = (
-  <div>
+  <div className="input-container"> 
     {/*<div>
       <div>To provide you with the experience of pairing with someone from a different demographic, the information below will give us some basic information to start with.</div>
       <div>Please fill out all of the following fields before proceeding.</div>
     </div>*/}
     <div className="survey-input">
-      Whatn is your age? : {Helper.Age}
+      What is your age? : {Helper.Age}
     </div>
     <div className="survey-input"> 
       What is your current zip code? : {Helper.Zip}
@@ -39,7 +39,7 @@ const requiredInformation = (
 );
 
 const optionalInformation = (
-  <div>
+  <div className="input-container">
     {/*<div>
       <div>The information requested here is not necessary for a basic experience with Kindred.</div>
       <div>However, the better we know you, the better we can pair you appropriately!</div>
@@ -71,7 +71,7 @@ const optionalInformation = (
 );
 
 const overview = (
-  <div>
+  <div className="input-container">
     {/*<div>You're almost done! Please take a moment to review your answers below.</div>
     <div>If you notice anything wrong, please feel free to go back and change it.</div>*/}
     <div>
@@ -211,34 +211,36 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div className="survey-container">
-        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
         <div className="steps-section">
           <Steps current={current}>
             {steps.map(item => <Step key={item.title} title={item.title} />)}
           </Steps>
         </div>
-        <div className="survey-section">
-          {this.state.answered === true ? <Redirect to="/video"/> : null}
-          <div className="steps-content">{steps[this.state.current].content}</div>
-        </div>
-        <div className="steps-action">
-          {
-            this.state.current > 0
-            &&
-            <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
-              previous
-            </Button>
-          }
-          {
-            this.state.current < steps.length - 1
-            &&
-            <Button type="primary" onClick={() => this.next()}>next</Button>
-          }
-          {
-            this.state.current === steps.length - 1
-            &&
-            <Button type="primary" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>done</Button>
-          }
+        <div className="survey-card">
+          <div className="steps-action">
+            {
+              <Button onClick={() => this.prev()}>
+                previous
+              </Button>
+            }
+          </div>
+          <div className="survey-section">
+            {this.state.answered === true ? <Redirect to="/video"/> : null}
+            <div className="steps-content">{steps[this.state.current].content}</div>
+          </div>
+          <div className="steps-action">
+            {
+              this.state.current < steps.length - 1
+              &&
+              <Button onClick={() => this.next()}>next</Button>
+            }
+            {
+              this.state.current === steps.length - 1
+              &&
+              <Button onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>done</Button>
+            }
+          </div>
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
         </div>
       </div>
     );

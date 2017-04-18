@@ -47,14 +47,14 @@ const handleZipChange = (value) => {
 
 const Option = Select.Option;
 
-const Zip = (<Input onChange={e => handleZipChange(e.target.value)} style={{ width: 400 }} placeholder="What is your zip code?" />);
+const Zip = (<Input onChange={e => handleZipChange(e.target.value)} className="input-bar" placeholder="What is your zip code?" />);
 
-const Age = (<InputNumber style={{ width: 400 }} onChange={e => handleAgeChange(e)} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
+const Age = (<InputNumber className="input-bar" onChange={e => handleAgeChange(e)} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
 
 const Gender = (
     <Select
       showSearch
-      style={{ width: 400}}
+      className="input-bar"
       placeholder="Choose your gender"
       optionFilterProp="children"
       onChange={handleGenderChange}
@@ -69,7 +69,7 @@ const Gender = (
 const Ethnicity = (
     <Select
       showSearch
-      style={{ width: 400}}
+      className="input-bar"
       placeholder="What is your Ethnicity?"
       optionFilterProp="children"
       onChange={handleEthnicityChange}
@@ -88,7 +88,7 @@ const Ethnicity = (
 const Income = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What is your annual income?"
     optionFilterProp="children"
     onChange={handleIncomeChange}
@@ -108,7 +108,7 @@ const Income = (
 const Education = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What is your highest level of education?"
     optionFilterProp="children"
     onChange={handleEducationChange}
@@ -130,7 +130,7 @@ const Education = (
 const Religiousity = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="How spiritual are you as a person?"
     optionFilterProp="children"
     onChange={handleReligiousityChange}
@@ -152,7 +152,7 @@ const Religiousity = (
 const Religion = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What are your religious beliefs?"
     optionFilterProp="children"
     onChange={handleReligionChange}
@@ -173,7 +173,7 @@ const Religion = (
 const State = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What state do you live in?"
     optionFilterProp="children"
     onChange={handleStateChange}
@@ -235,7 +235,7 @@ const State = (
 const Party = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What political party do you align with?"
     optionFilterProp="children"
     onChange={handlePartyChange}
