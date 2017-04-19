@@ -11,7 +11,7 @@ export default class NavLoggedIn extends React.Component {
     return (       
       <div className="general-header">
         <div>
-          <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
+          <img className="header-logo" src={'../public/assets/kindred-icon.png'} width="100px"/>
         </div>
         <div className="general-header-nav">
           <nav className="general-header-links perspective">
@@ -19,7 +19,10 @@ export default class NavLoggedIn extends React.Component {
               <Link to="/account">Account</Link>
             </div>
             <div className="shift">
-              <Link to="/video">Chat</Link>
+              <Link to="/video">Video</Link>
+            </div>
+            <div className="shift">
+              <Link to="/kin">Kin</Link>
             </div>
             <div className="shift">
               <Link to="/data">Peruse Stats</Link>

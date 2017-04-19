@@ -10,6 +10,7 @@ import {actionUser} from '../../actions/actionUser.js';
 import TwilioVideo, { createLocalTracks, createLocalVideoTrack } from 'twilio-video';
 import instance from '../../config.js';
 import {Button, message} from 'antd';
+import * as firebase from 'firebase';
 
 var localTracks;
 
@@ -90,10 +91,12 @@ class Video extends React.Component {
     this._formatQueueResponse = this._formatQueueResponse.bind(this);
     this.leaveRoom = this.leaveRoom.bind(this);
     this.leaveLoading = this.leaveLoading.bind(this);
+    this.connectUsers = this.connectUsers.bind(this);
   }
 
   componentDidMount() {
     let cookies = Cookies.getJSON();
+    console.log('FIREBASE INSTANCE', this.props.firebaseInstance);
     for (var key in cookies) {
       if (key !== 'pnctest') {
         this.setState({
@@ -144,6 +147,17 @@ class Video extends React.Component {
     this.setState({
       user: nextProps.user.userObj
     });
+  }
+
+  connectUsers () {
+    let db = this.props.firebaseInstance;
+    console.log(this.state.activeRoom);
+    console.log(this.state.pairedIdentity);
+    // db.ref('users/' + this.state.identity).set()
+    db.ref('users/' + this.state.identity + '/' + this.state.activeRoom).set( this.state.pairedIdentity );
+    //set active room then add paired person to it
+    // db.ref('users/' + this.state.identity + '/' + this.state.activeRoom).set(this.state.pairedPerson);
+    message.success(`You have kinnected *TM with: ${this.state.pairedIdentity}`, 2);
   }
   
   checkToken() {
@@ -474,10 +488,18 @@ class Video extends React.Component {
     }).then((response) => {
       response.forEach((room) => {
         if (room.ParticipantOne === this.state.identity || room.ParticipantTwo === this.state.identity) {
+          if (room.ParticipantOne === this.state.identity) {
+            this.setState({
+              pairedIdentity: room.ParticipantTwo,
+              activeRoom: parseInt(room.RoomNumber), 
+            });
+          } else {
+            this.setState({
+              pairedIdentity: room.ParticipantOne,
+              activeRoom: parseInt(room.RoomNumber), 
+            });
+          }
           console.log('room found inside getRooms', room);
-          this.setState({
-            activeRoom: parseInt(room.RoomNumber)
-          });
         }
       });
       return true;
@@ -562,8 +584,9 @@ class Video extends React.Component {
 
     const RoomFoundComponent = (
       <div>
-        <Button type='primary' onClick={this.joinRoom}>Partner found! Click here to chat.</Button>
+        {!this.state.roomCount ? <Button type='primary' onClick={this.joinRoom}>Partner found! Click here to chat.</Button> : null}
         {this.state.roomCount ? <Button type='primary' onClick={this.leaveRoom}>Leave room</Button> : null}
+        {this.state.roomCount ? <Button type='primary' onClick={this.connectUsers}>Kinnect *TM</Button> : null}
         {this.state.roomInstance === false ? <Redirect to="/video"/> : null}
       </div>
     );
@@ -614,7 +637,7 @@ class Video extends React.Component {
       <div className="video-page-container">
         <div className="header-links perspective logout-button">
           <div className="shift" onClick={this.handleLogout}>
-            <a href="#/">{"<--"} Logout</a>
+            <a href="#/">{'<--'} Logout</a>
           </div>
         </div>
         <div className="video-container">
@@ -630,7 +653,8 @@ class Video extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    user: state.userReducer
+    user: state.userReducer,
+    firebaseInstance: state.firebaseReducer
   };
 }
 

@@ -17,6 +17,7 @@ bundles/
 
 pubnubConfig.js
 .DS_Store
+client/firebaseConfig.js
 server/config.go
 server/server
 server/seedData

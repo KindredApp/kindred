@@ -10,6 +10,7 @@ import Helper from './surveyHelper.jsx';
 const Option = Select.Option;
 const Step = Steps.Step;
 import instance from '../../config.js';
+import * as firebase from 'firebase';
 
 const welcome = (
   <div className="welcome-message">
@@ -84,39 +85,39 @@ const overview = (
     <div className="review-input-container">
       <div className="review-input">
         <div className="review-input-header">Age</div>
-        <div className="review-input-result">{Helper.userData.Age || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.Age || 'empty'}</div>
       </div>
       <div className="review-input">
         <div className="review-input-header">Gender</div>
-        <div className="review-input-result">{Helper.userData.Gender || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.Gender || 'empty'}</div>
       </div>
       <div className="review-input">
         <div className="review-input-header">Ethnicity</div>
-        <div className="review-input-result">{Helper.userData.Ethnicity || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.Ethnicity || 'empty'}</div>
       </div>
       <div className="review-input">
         <div className="review-input-header">Income</div>
-        <div className="review-input-result">{Helper.userData.Income || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.Income || 'empty'}</div>
       </div>
       <div className="review-input">
         <div className="review-input-header">Education</div>
-        <div className="review-input-result">{Helper.userData.Education || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.Education || 'empty'}</div>
       </div>
       <div className="review-input">
         <div className="review-input-header">Religiousity</div>
-        <div className="review-input-result">{Helper.userData.Religiousity || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.Religiousity || 'empty'}</div>
       </div>
       <div className="review-input">
         <div className="review-input-header">Religion</div>
-        <div className="review-input-result">{Helper.userData.Religion || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.Religion || 'empty'}</div>
       </div>
       <div className="review-input">
         <div className="review-input-header">State</div>
-        <div className="review-input-result">{Helper.userData.State || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.State || 'empty'}</div>
       </div>
       <div className="review-input">
         <div className="review-input-header">Party</div>
-        <div className="review-input-result">{Helper.userData.Party || "empty"}</div>
+        <div className="review-input-result">{Helper.userData.Party || 'empty'}</div>
       </div>
     </div>
   </div>
@@ -201,14 +202,25 @@ class Survey extends React.Component {
   onClickDone(data) {
     let cookie = Cookies.getJSON();
     let token;
+    let username;
     Helper.userData.Username;
 
     for (var key in cookie) {
-      if (key != 'pnctest') {
+      if (key !== 'pnctest') {
         Helper.userData.Username = key;
+        username = key;
         token = cookie[key].Token;
       }
     }
+
+    this.props.firebaseInstance.ref('users/' + username).once('value').then((snapshot) => {
+      console.log('in snapshot', snapshot);
+      if (snapshot.val() === null) {
+        console.log('null triggered');
+        this.props.firebaseInstance.ref('users/' + username).set(true);
+      }
+    });
+
 
     instance.goInstance({
       method: 'post',
@@ -290,7 +302,8 @@ class Survey extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    user: state.userReducer
+    user: state.userReducer,
+    firebaseInstance: state.firebaseReducer
   };
 }
 
