@@ -207,6 +207,9 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  background: #6288c5; 
+  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
+  background: linear-gradient(to right, #1e3c72, #6288c5); 
 }
 
 .logout-button {
@@ -231,24 +234,18 @@ div#remote-media video {
 }
 
 .video-container {
-  width: 50%;
+  border-radius: 5px;
+  width: 40%;
   height: 50%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  border: 1px solid #eee;
+  background-color: white;
 }
 
 .qotd-container {
-  width: 100%;
-  height: 30%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.qotd-form {
   width: 100%;
   height: 100%;
   display: flex;
@@ -257,19 +254,42 @@ div#remote-media video {
   align-items: center;
 }
 
+.question-of-the-day {
+  width: 100%;
+  height: 33%;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qotd-form {
+  width: 100%;
+  height: 66%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .qotd-options {
   width: 100%;
+  height: 50%;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin: 0 0 5px 0;
+  align-items: center;
+  box-shadow: 0px 1px 8px 0px rgba(0,0,0,0.2);
 }
 
-.question-of-the-day {
-  font-family: 'Lato', sans-serif;
-  font-size: 20px;
+input.qotd-submit-button {
+  width: 100%;
+  height: 50%;
+  background-color: transparent;
+  border: 1px solid white;
+  font-family: 'Open Sans', sans-serif;
 }
-
 
 /*.queue-button {
 
@@ -455,3 +475,4 @@ input.input-bar.input-select,
   flex-direction: column;
   /*justify-content: center;*/
 }
+

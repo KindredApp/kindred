@@ -555,7 +555,7 @@ class Video extends React.Component {
             return (<div key={idx}><input key={idx} type="radio" name="answer" value={option} required />{option}</div>);
           })}
          </div>
-        <input type="submit" onClick={this.submitQOTDAnswer} value=" Submit "/>
+        <input className="qotd-submit-button" type="submit" onClick={this.submitQOTDAnswer} value=" Submit "/>
         </form>
       </div>
     );
@@ -620,7 +620,7 @@ class Video extends React.Component {
         <div className="video-container">
           {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
           {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
-          <div id="remote-media" ref="video"></div>
+          {this.state.component === 'loading' ? <div id="remote-media" ref="video"></div> : null}
         </div>
         <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
       </div>
