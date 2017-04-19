@@ -16,10 +16,13 @@ import Survey from '../containers/account/survey.jsx';
 import Account from '../containers/account/account.jsx';
 import DataView from '../containers/data/dataView.jsx';
 import {actionUser} from '../actions/actionUser.js';
+import {actionFirebase} from '../actions/actionFirebase';
 import instance from '../config.js';
 import '../styles/index.css';
 import * as firebase from 'firebase';
 import firebaseConfig from '../firebaseConfig.js';
+import Promise from 'bluebird';
+import KinList from '../containers/messaging/kinList.jsx';
 
 const SignUpForm = Form.create()(SignUp);
 const LoginForm = Form.create()(Login);
@@ -30,9 +33,18 @@ class Root extends Component {
 
     this._formatResponse = this._formatResponse.bind(this);
     this.getUserDetails = this.getUserDetails.bind(this);
+    this.initializeFirebase = this.initializeFirebase.bind(this);
     this.getUserDetails();
-    firebase.initializeApp(firebaseConfig);
+    this.initializeFirebase();
   }
+
+  initializeFirebase () {
+    firebase.initializeApp(firebaseConfig);
+    let database = firebase.database();
+    console.log('firebase in root', database);
+    this.props.actionFirebase(database);
+  }
+  
 
   _formatResponse (string) {
     let map = {};
@@ -85,6 +97,7 @@ class Root extends Component {
             <Route path="/account" component={Account} />
             <Route path="/data" component={DataView} />
             <Route path="/aboutus" component={AboutPage} />
+            <Route path="/kin" component={KinList} />
           </div>
         </Router>
     </div>
@@ -94,12 +107,16 @@ class Root extends Component {
 
 function mapStateToProps (state) {
   return {
-    user: state.userReducer
+    user: state.userReducer,
+    firebaseInstance: state.firebaseReducer
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({actionUser: actionUser}, dispatch);
+  return bindActionCreators({
+    actionUser: actionUser,
+    actionFirebase: actionFirebase
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Root);

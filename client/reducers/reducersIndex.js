@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 import userReducer from './userReducer.js';
+import firebaseReducer from './firebaseReducer.js';
 import stateData from './stateDataReducer.js';
 import stateDefaults from './stateDefaultsReducer.js';
 import topoData from './us.js';
@@ -9,6 +10,7 @@ import dataChoice from './chosenDataReducer';
 
 const allReducers = combineReducers({
   userReducer: userReducer,
+  firebaseReducer: firebaseReducer,
   stateDataReducer: stateData,
   stateDefaults: stateDefaults,
   topoData: topoData,
