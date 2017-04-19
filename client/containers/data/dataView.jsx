@@ -7,6 +7,7 @@ import QotdList from './pastQotdsList.jsx';
 import {actionQotdData} from '../../actions/actionQotdData.js';
 import DataMap from './dataMap.jsx';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
+import QotdAnswerOptions from './qotdAnswerOptions.jsx';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
@@ -33,6 +34,7 @@ class DataView extends React.Component {
           <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : this.state.question}</div>
           <QotdList />
           <DataMap />
+          <QotdAnswerOptions/>
         </div>
       </div>
     );

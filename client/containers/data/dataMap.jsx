@@ -15,14 +15,20 @@ class DataMap extends React.Component {
   }
 
   mergeTopoWithStateData(nextprops) {
-    let question = nextprops.questionChoice ? nextprops.questionChoice : Object.keys(nextprops.stateData)[0];
-    let stateData = nextprops.stateData;
-    let mergeData = nextprops.topoData;
-    mergeData.objects.usStates.geometries.forEach((topoState, i) => {
-      let state = topoState.properties.STATE_ABBR;
-      mergeData.objects.usStates.geometries[i].properties.data = stateData[question][state];
-    });
-    this.setState({mergeData: mergeData});
+    let question = nextprops.questionChoice ? nextprops.questionChoice : nextprops.stateData ? Object.keys(nextprops.stateData)[0] : '';
+    if (nextprops.stateData) {
+      let stateData = nextprops.stateData;
+      let mergeData = nextprops.topoData;
+      mergeData.objects.usStates.geometries.forEach((topoState, i) => {
+        let state = topoState.properties.STATE_ABBR;
+        mergeData.objects.usStates.geometries[i].properties.data = stateData[question][state];
+      });
+      this.setState({mergeData: mergeData});
+    }
+  }
+
+  componentWillReceiveProps(nextprops) {
+    this.mergeTopoWithStateData(nextprops);
   }
 
   sizeChange() {

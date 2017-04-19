@@ -716,6 +716,25 @@ func qotdHandler(db *gorm.DB, p *pool.Pool, qotdCounter *int) http.Handler {
 				}
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(data)
+			} else if req.URL.Query().Get("q") == "dataoptions" {
+				// get answer options for qotd data for map
+				// api/qotd?q=dataoptions
+				type QotdAnswers struct {
+					QotdID     int
+					QotdText   string
+					AnswerText string
+				}
+				var qotdAnswerOptions []QotdAnswers
+				// db.Raw("SELECT * FROM qotd_answer_options WHERE qotd_id <=? AND qotd_id >= ?", qotdCounter, *qotdCounter-9).Scan(&qotdAnswerOptions)
+
+				db.Raw("SELECT qotds.text AS qotd_text, qotds.ID AS qotd_id, qotd_answer_options.text AS answer_text FROM qotds, qotd_answer_options WHERE qotds.id = qotd_answer_options.qotd_id AND qotd_id <=? AND qotd_id >=?", qotdCounter, *qotdCounter-9).Scan(&qotdAnswerOptions)
+
+				data, err := json.Marshal(qotdAnswerOptions)
+				if err != nil {
+					panic(err)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(data)
 			} else if req.URL.Query().Get("q") == "qotd" {
 				// if query string requests the current qotd
 				// api/qotd?q=qotd

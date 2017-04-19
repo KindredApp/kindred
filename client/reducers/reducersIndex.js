@@ -6,6 +6,11 @@ import topoData from './topoDataReducer.js';
 import qotdList from './qotdListReducer.js';
 import dataChoice from './chosenDataReducer.js';
 import surveyFromAccountPage from './surveyFromAccountPage.js';
+import stateDefaults from './stateDefaultsReducer.js';
+import topoData from './us.js';
+import qotdList from './qotdList.js';
+import qotdAnswerOptionReducer from './qotdAnswerOptionReducer'
+import dataChoice from './chosenDataReducer';
 
 const allReducers = combineReducers({
   userReducer: userReducer,
@@ -15,6 +20,7 @@ const allReducers = combineReducers({
   dataChoice: dataChoice,
   qotdList: qotdList,
   surveyFromAccountPage: surveyFromAccountPage,
+  qotdAnswerOptionReducer: qotdAnswerOptionReducer
 });
 
 export default allReducers;
