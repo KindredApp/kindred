@@ -19,7 +19,7 @@ const welcome = (
       </div>
       <br/>
       <div>
-        The information ahead helps us accurately pair you with others from a different demographic. While only the required information is, well required, the optional information will help us with the pairing process. 
+        The information ahead helps us accurately pair you with others from different demographics. While only the required information is, well required, the optional information will help us with the pairing process. 
       </div>
       <br/>
       <div>
@@ -31,10 +31,6 @@ const welcome = (
 
 const requiredInformation = (
   <div className="input-container"> 
-    {/*<div>
-      <div>To provide you with the experience of pairing with someone from a different demographic, the information below will give us some basic information to start with.</div>
-      <div>Please fill out all of the following fields before proceeding.</div>
-    </div>*/}
     <div className="survey-input">
       <div className="survey-input-header">Age</div>
       <div className="survey-input-entry">{Helper.Age}</div>
@@ -285,8 +281,8 @@ class Survey extends React.Component {
               <Button className="survey-btn" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>submit</Button>
             }
           </div>
-        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
         </div>
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
       </div>
     );
   }

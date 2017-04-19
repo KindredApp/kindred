@@ -547,13 +547,15 @@ class Video extends React.Component {
     );
 
     const QOTDComponent = (
-      <div>
-       <h3>{this.state.qotdText}</h3>
-       <form>
-        {this.state.qotdOptions.map((option, idx) => {
-          return (<div key={idx}><input key={idx} type="radio" name="answer" value={option} required />{option}</div>);
-        })}
-        <input type="submit" onClick={this.submitQOTDAnswer} value="Submit Answer"/>
+      <div className="qotd-container">
+       <div className="question-of-the-day">{String.fromCharCode(0x2728) + this.state.qotdText + String.fromCharCode(0x2728)}</div>
+       <form className="qotd-form">
+         <div className="qotd-options">
+          {this.state.qotdOptions.map((option, idx) => {
+            return (<div key={idx}><input key={idx} type="radio" name="answer" value={option} required />{option}</div>);
+          })}
+         </div>
+        <input className="qotd-submit-button" type="submit" onClick={this.submitQOTDAnswer} value=" Submit "/>
         </form>
       </div>
     );
@@ -579,7 +581,7 @@ class Video extends React.Component {
             console.log('removed from queue');
           });
           this.leaveLoading();
-        }}>Searching for kin! Click here to cancel</Button>
+        }}>Searching - click to cancel</Button>
         <div className="load-10">
           <div className="bar"></div>
         </div>
@@ -590,18 +592,18 @@ class Video extends React.Component {
       <Button type='primary' onClick={() => {
         this.joinHandler(); 
         this.enterLoading();
-      }}>Click here to find a partner!</Button>    
+      }}>Find a partner</Button>    
     );
 
 
     const RoomNotFoundComponent = (
-      <div>
+      <div className="queue-button">
         {this.state.loading ? leaveQueueButton : joinQueueButton }
       </div>
     );
 
     const VideoComponent = (
-      <div>
+      <div className="video-component">
         <div className="room-controls"></div>
         {/*<div className="button-join" onClick={this.joinHandler}>Join!</div>*/}
         {this.state.roomFound ? RoomFoundComponent : RoomNotFoundComponent}
@@ -609,21 +611,18 @@ class Video extends React.Component {
     );
 
     return (
-      <div className="video-container">
-        {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
-
-        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
-        
-        <div className="header-links perspective">
+      <div className="video-page-container">
+        <div className="header-links perspective logout-button">
           <div className="shift" onClick={this.handleLogout}>
-            <a href="#/">Logout</a>
+            <a href="#/">{"<--"} Logout</a>
           </div>
         </div>
-
-        {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
-
-        <div id="remote-media" ref="video"></div>
-   
+        <div className="video-container">
+          {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
+          {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
+          {this.state.component === 'loading' ? <div id="remote-media" ref="video"></div> : null}
+        </div>
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
       </div>
     );
   }
