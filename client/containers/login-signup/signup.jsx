@@ -1,9 +1,8 @@
 import React from 'react';
 import {Form, Input, Button} from 'antd';
 import { Link, hashHistory } from 'react-router-dom';
-import ExampleClicked from '../exampleClicked.js';
 import axios from 'axios';
-import instance from '../../config.js'
+import instance from '../../config.js';
 
 const FormItem = Form.Item;
 
@@ -13,7 +12,7 @@ class SignUp extends React.Component {
 
     this.state = {
       taken: null
-    }
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -26,12 +25,12 @@ class SignUp extends React.Component {
           console.log(response);
           this.setState({
             taken: false
-          })
+          });
           // window.location = 'http://localhost:8080/'; //HARD CODED FOR LOCAL HOST, CORRECT LATER
         }).catch((error) => {
           this.setState({
             taken: true
-          })
+          });
         });
       }
     });
@@ -44,7 +43,7 @@ class SignUp extends React.Component {
     return (
       <div className="signup-container">
         <div className="signup-icon">
-          <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
+          <img className="header-logo" src={'../public/assets/kindred-icon.png'} width="100px"/>
         </div>
         <div className="signup-form-container">
           <Form onSubmit={this.handleSubmit}>
@@ -72,7 +71,6 @@ class SignUp extends React.Component {
               <Button type='primary' htmlType='submit' size='large' className="signup-form-button">Sign Up</Button>
             </div>
           </Form>
-          {/*<ExampleClicked />*/}
         </div>
         {this.state.taken === true ? <div className="signup-error">Username already exists</div> : this.state.taken === false ? <div className="signup-success">Success, login with link below.</div> : null}
         <div className="signup-form-reroute">
