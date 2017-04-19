@@ -30,37 +30,40 @@ app.all('/', function(req, res, next) {
   next();
 });
 
+let genKey;
+keyGenerate({friendlyName: 'KindredApp'}).then((key, err) => {
+  genKey = key;
+  console.log(genKey);
+});
+
 
 app.get('/api/twilio', (req, res) => {
   //api/token?q=s
   var identity = req.query.q;
   console.log(identity);
-  
-  keyGenerate({ friendlyName: 'Kindred Chat'}).then((key, err) => {
-    console.log('key is', key);
-    var token = new AccessToken(
-      config.accountSid,
-      key.sid,
-      key.secret
-    );
+  console.log('key is', genKey);
+  var token = new AccessToken(
+    config.accountSid,
+    genKey.sid,
+    genKey.secret
+  );
 
-    token.identity = identity;
+  token.identity = identity;
 
-    var grant = new VideoGrant();
-    grant.configurationProfileSid = config.rtcProfileSid;
-    token.addGrant(grant);
+  var grant = new VideoGrant();
+  grant.configurationProfileSid = config.rtcProfileSid;
+  token.addGrant(grant);
 
-    res.send({
-      identity: identity,
-      token: token.toJwt()
-    });
+  res.send({
+    identity: identity,
+    token: token.toJwt()
   });
 });
 
 //development server
 app.listen(config.PORT, () => {
-  console.log(`I'm listening at ${config.PORT}.`)
-})
+  console.log(`I'm listening at ${config.PORT}.`);
+});
 
 //production server
 // https.createServer(httpsOptions, app)
