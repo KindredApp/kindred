@@ -11,7 +11,9 @@ export default class NavLoggedIn extends React.Component {
     return (       
       <div className="general-header">
         <div>
-          <img className="header-logo" src={'../public/assets/kindred-icon.png'} width="100px"/>
+          <Link to="/video">
+            <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
+          </Link>
         </div>
         <div className="general-header-nav">
           <nav className="general-header-links perspective">
