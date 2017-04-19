@@ -2,6 +2,7 @@ import React from 'react';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
 import AccountMenu from './accountMenu.jsx';
 import KinMap from './kinMap.jsx';
+import AccountInfo from './accountInfo.jsx';
 import '../../styles/index.css';
 
 class Account extends React.Component {
@@ -25,6 +26,7 @@ class Account extends React.Component {
         <NavLoggedIn/>
         <AccountMenu handleViewSelection={this.handleViewSelection}/>
         { this.state.currentView === "history" && <KinMap/> }
+        { this.state.currentView === "account" && <AccountInfo/> }
       </div>
     );
   }

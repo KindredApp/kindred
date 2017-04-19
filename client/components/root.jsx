@@ -83,6 +83,7 @@ class Root extends Component {
 
   getUserDetails() {
     let cookie = Cookies.getJSON();
+    let username;
     for (var key in cookie) {
       if (key !== 'pnctest') {
         let userUpdate = {
@@ -90,9 +91,12 @@ class Root extends Component {
           userObj: ''
         }
 
+        let username = key;
+
         instance.goInstance.get(`/api/profile?q=${cookie[key].Username}`).then((response) => {
           let profileData = this._formatResponse(response.data);
           userUpdate.userObj = profileData;
+          userUpdate.userObj.Username = username;
           this.props.actionUser(userUpdate);
         })
       }

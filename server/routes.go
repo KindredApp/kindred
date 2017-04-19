@@ -138,7 +138,6 @@ func loginHandler(db *gorm.DB, p *pool.Pool) http.Handler {
 			}
 
 			conn.Cmd("HMSET", u.Username, "Token", rj, "Name", un.Name, "Profile", string(out))
-
 			//send token back as response
 			w.Write(j)
 		}
@@ -265,7 +264,6 @@ func profileHandler(db *gorm.DB, p *pool.Pool) http.Handler {
 				//create new database record
 				db.NewRecord(f)
 				db.Create(&f)
-
 				//add profile to cache
 				out, err := json.Marshal(f)
 				if err != nil {
@@ -313,18 +311,29 @@ func profileHandler(db *gorm.DB, p *pool.Pool) http.Handler {
 
 		// delete user profile
 		if req.Method == http.MethodDelete {
-			///api/profile?user=555
+			///api/profile?user=username
+			type UserID struct {
+				ID int
+			}
+			var userID UserID
 			var userProfile UserProfile
 			var userAuth UserAuth
 			var userKinship Kinship
-			userID := req.URL.Query().Get("user")
-			db.Raw("SELECT * FROM user_profiles WHERE user_auth_id = ?", userID).Scan(&userProfile)
-			db.Raw("SELECT * FROM user_auths WHERE id = ?", userID).Scan(&userAuth)
-			db.Raw("SELECT * FROM kinships WHERE user_auth_id = ?", userID).Scan(&userKinship)
-			db.Delete(&userProfile)
-			db.Delete(&userAuth)
-			db.Delete(&userKinship)
-			res, err := json.Marshal("Profile deleted")
+			var r string
+			username := req.URL.Query().Get("user")
+			db.Table("user_auths").Select("id").Where("username = ?", username).Scan(&userID)
+			db.Raw("SELECT * FROM user_auths WHERE id = ?", userID.ID).Scan(&userAuth)
+			db.Raw("SELECT * FROM user_profiles WHERE user_auth_id = ?", userID.ID).Scan(&userProfile)
+			db.Raw("SELECT * FROM kinships WHERE user_auth_id = ?", userID.ID).Scan(&userKinship)
+			if userProfile.UserAuthID != 0 {
+				db.Delete(&userProfile)
+				db.Delete(&userAuth)
+				db.Delete(&userKinship)
+				r = "Profile deleted"
+			} else {
+				r = "User does not exist"
+			}
+			res, err := json.Marshal(r)
 			if err != nil {
 				panic(err)
 			}
@@ -699,7 +708,7 @@ func qotdHandler(db *gorm.DB, p *pool.Pool, qotdCounter *int) http.Handler {
 
 				var qotdData []QotdData
 
-				db.Raw("SELECT qotds.id as qotd_id, qotds.question_type AS qotd_type, qotds.category AS qotd_category, qotds.text AS qotd_text, qotd_answers.user_auth_id, qotd_answers.text AS answer_text, user_profiles.zip, user_profiles.age, user_profiles.gender, user_profiles.income, user_profiles.education, user_profiles.religiousity, user_profiles.religion, user_profiles.ethnicity, user_profiles.state, user_profiles.party FROM qotds, qotd_answer_options, qotd_answers, user_profiles WHERE qotds.id = qotd_answer_options.qotd_id AND qotds.id = qotd_answer_options.qotd_id AND qotd_answer_options.text = qotd_answers.text AND qotd_answers.user_auth_id = user_profiles.user_auth_id AND qotds.id <=? AND qotds.id >=?", qotdCounter, *qotdCounter-9).Scan(&qotdData)
+				db.Raw("SELECT qotds.id as qotd_id, qotds.question_type AS qotd_type, qotds.category AS qotd_category, qotds.text AS qotd_text, qotd_answers.user_auth_id, qotd_answers.text AS answer_text, user_profiles.zip, user_profiles.age, user_profiles.gender, user_profiles.income, user_profiles.education, user_profiles.religiousity, user_profiles.religion, user_profiles.ethnicity, user_profiles.state, user_profiles.party FROM qotds, qotd_answer_options, qotd_answers, user_profiles WHERE qotds.id = qotd_answer_options.qotd_id AND qotds.id = qotd_answers.qotd_id AND qotd_answer_options.text = qotd_answers.text AND qotd_answers.user_auth_id = user_profiles.user_auth_id AND qotds.id <=? AND qotds.id >=?", qotdCounter, *qotdCounter-9).Scan(&qotdData)
 
 				data, err := json.Marshal(qotdData)
 				if err != nil {
