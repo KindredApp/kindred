@@ -29,7 +29,7 @@ class DataView extends React.Component {
     return (
       <div className="landing-container">
         <NavLoggedIn/>
-        <div className='mapdata-header'>
+        <div className="dataPageContainer">
           <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : this.state.question}</div>
           <QotdList />
           <DataMap />
