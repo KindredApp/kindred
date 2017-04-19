@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
+import instance from '../../config.js'
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import QotdList from './pastQotdsList.jsx';
@@ -15,7 +15,8 @@ class DataView extends React.Component {
     this.state = {
       question: '',
     };
-    axios.get('/api/qotd?q=data').then((response) => {
+    instance.goInstance.get('/api/qotd?q=data')
+    .then((response) => {
       this.props.actionQotdData(response);
     });
   }

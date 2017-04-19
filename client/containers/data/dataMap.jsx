@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 import Faux from 'react-faux-dom';
-// import axios from 'axios';
 import * as topojson from 'topojson';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -21,7 +20,7 @@ class DataMap extends React.Component {
   }
 
   mergeTopoWithStateData(nextprops) {
-    let question = this.props.questionChoice ? this.props.questionChoice : Object.keys(nextprops.stateData)[0];
+    let question = nextprops.questionChoice ? nextprops.questionChoice : Object.keys(nextprops.stateData)[0];
     let stateData = nextprops.stateData;
     let mergeData = nextprops.topoData;
     mergeData.objects.usStates.geometries.forEach((topoState, i) => {
@@ -46,7 +45,6 @@ class DataMap extends React.Component {
 
   render() {
     if (this.state.mergeData) {
-      console.log('merged data in render: ', this.state.mergeData);
       d3.select(window).on('resize', this.sizeChange);
       
       var datamapContainer = Faux.createElement('div');   
@@ -84,7 +82,6 @@ class DataMap extends React.Component {
         for (let answer in d.properties.data.answers) {
           text += `${answer}: ${d.properties.data.answers[answer]}\n`;
         }
-        console.log('this is d: ', d);
         return d3.select(hoverinfo)
           .classed('hide', false)
           .text(`${name}\n${text}`);
@@ -102,7 +99,6 @@ class DataMap extends React.Component {
     } else {
       return null;
     }
-    
   }
 }
 
@@ -111,7 +107,6 @@ function mapStateToProps (state) {
     stateData: state.stateDataReducer,
     stateDefaults: state.stateDefaults,
     topoData: state.topoData,
-    geoStates: state.geoStates,
     questionChoice: state.dataChoice.questionData
   };
 }

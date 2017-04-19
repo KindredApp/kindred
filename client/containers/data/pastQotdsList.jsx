@@ -14,21 +14,11 @@ class QotdList extends React.Component {
     this.onClick = this.onClick.bind(this);
   }
 
-  componentWillReceiveProps(nextprops) {
-    // this.setState({'questions': Object.keys(nextprops.stateData)}, () => {
-    //   if (!this.props.questionChoice) {
-    //     this.props.actionQuestionSelect(this.state.questions[0]);
-    //   }
-    // });
-    // console.log('props from pastqotdslist: ', this.props);
-  }
-
   onClick ({ key }) {
     this.props.actionQuestionSelect(Object.keys(this.props.stateData)[key]);
   }
 
   render () {
-
     const menu = (
       <Menu onClick={this.onClick}>
         { this.props.stateData ? Object.keys(this.props.stateData).map((question, i) => {
