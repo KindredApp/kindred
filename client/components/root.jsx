@@ -2,6 +2,11 @@ import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import { HashRouter as Router, Route, Link, Redirect } from 'react-router-dom'; 
 import { Form } from 'antd';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+
 import App from './app.jsx';
 import AboutPage from './aboutpage.jsx';
 import SignUp from '../containers/login-signup/signup.jsx';
@@ -10,54 +15,12 @@ import Video from '../containers/video/video.jsx';
 import Survey from '../containers/account/survey.jsx';
 import Account from '../containers/account/account.jsx';
 import DataView from '../containers/data/dataView.jsx';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
 import {actionUser} from '../actions/actionUser.js';
-import Cookies from 'js-cookie';
-import axios from 'axios';
 import instance from '../config.js';
 import '../styles/index.css';
 
 const SignUpForm = Form.create()(SignUp);
 const LoginForm = Form.create()(Login);
-
-/*let PrivateRoute = ({component, user}) => (
-  <Route {...user} render={(user) => (
-    authenticate(user) ? 
-    React.createElement(component, user) : 
-    <Redirect to='/login'/>
-  )}/>
-);
-
-
-const checkToken = () => {
-  let cookie = Cookies.getJSON();
-  for (let key in cookie) {
-    if (key !== 'pnctest') {
-      return (axios.post('/api/tokenCheck', {
-        Username: cookie[key].Username,
-        Token: cookie[key].Token
-      }).then((response) => {
-        return response.data;
-      }));
-    } else {
-      return false;
-    }
-  }
-};
-
-const authenticate = (props) => {
-  if (!props.user) {
-    console.log("check token is", checkToken())
-    if (!checkToken()) {
-      return false;
-    } else {
-      return true;
-    }
-  } else {
-    return true;
-  }
-};*/
 
 class Root extends Component {
   constructor (props) {
@@ -69,15 +32,18 @@ class Root extends Component {
   }
 
   _formatResponse (string) {
-    let map = {}, o = string.replace(/(["\\{}])/g, "").split(',');
+    let map = {};
+    let o = string.replace(/(["\\{}])/g, '').split(',');
+
     o.forEach((v) => {
       var tuple = v.split(':');
-      if (tuple[0] !== "Zip" && tuple[0] !== "Username" && tuple[0] !== "State") {
+      if (tuple[0] !== 'Zip' && tuple[0] !== 'Username' && tuple[0] !== 'State') {
         map[tuple[0]] = parseInt(tuple[1]);
       } else {
         map[tuple[0]] = tuple[1];
       }
     }); 
+
     return map;
   }
 
@@ -88,16 +54,15 @@ class Root extends Component {
         let userUpdate = {
           token: cookie,
           userObj: ''
-        }
+        };
 
         instance.goInstance.get(`/api/profile?q=${cookie[key].Username}`).then((response) => {
           let profileData = this._formatResponse(response.data);
           userUpdate.userObj = profileData;
           this.props.actionUser(userUpdate);
-        })
+        });
       }
     }
-
   }
 
   render () {
@@ -110,7 +75,6 @@ class Root extends Component {
             <Route path="/signup" component={SignUpForm} />
             <Route path="/login" component={LoginForm} />
             <Route path="/video" component={Video} />
-            {/*<PrivateRoute path="/video" component={Video} user={this.props.user} />*/}
             <Route path="/survey" component={Survey} />
             <Route path="/account" component={Account} />
             <Route path="/data" component={DataView} />

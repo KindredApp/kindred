@@ -1,13 +1,13 @@
 import React from 'react';
 import {Form, Input, Button} from 'antd';
 import axios from 'axios';
-// import querystring from 'querystring';
-import { Link, hashHistory, Redirect } from 'react-router-dom';
-import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import instance from '../../config.js'
+import { Link, hashHistory, Redirect } from 'react-router-dom';
+
+import {actionUser} from '../../actions/actionUser.js';
+import instance from '../../config.js';
 
 const FormItem = Form.Item;
 
@@ -18,7 +18,7 @@ class Login extends React.Component {
     this.state = {
       unauthorized: null,
       redirect: null
-    }
+    };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.checkVisits = this.checkVisits.bind(this);
@@ -28,16 +28,16 @@ class Login extends React.Component {
 
 
   _formatResponse (string) {
-    let map = {}, o = string.replace(/(["\\{}])/g, "").split(',');
+    let map = {}, o = string.replace(/(["\\{}])/g, '').split(',');
     o.forEach((v) => {
       var tuple = v.split(':');
-      if (tuple[0] !== "Zip" && tuple[0] !== "Username" && tuple[0] !== "State") {
+      if (tuple[0] !== 'Zip' && tuple[0] !== 'Username' && tuple[0] !== 'State') {
         map[tuple[0]] = parseInt(tuple[1]);
       } else {
         map[tuple[0]] = tuple[1];
       }
     }); 
-    console.log("map is", map);
+    console.log('map is', map);
     return map;
   }
 
@@ -50,9 +50,9 @@ class Login extends React.Component {
           Token: cookie[key].Token
         }).then((response) => {
           if (response.data === true) {
-            this.setState({unauthorized: false}, () => {this.checkVisits()})
+            this.setState({unauthorized: false}, () => { this.checkVisits(); });
           }
-        }).catch((error) => {console.log("Check token error", error)});
+        }).catch((error) => { console.log('Check token error', error); });
       }
     }
   }
@@ -63,17 +63,17 @@ class Login extends React.Component {
       if (key !== 'pnctest') {
         instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
-          if (response.data === "true") {
+          if (response.data === 'true') {
             this.setState({
               redirect: true
-            })
-          } else if (response.data === "false") {
+            });
+          } else if (response.data === 'false') {
             this.setState({
               redirect: false
             });
           }
         }).catch((error) => {
-          console.log("Check visits error", error);
+          console.log('Check visits error', error);
         });
       }
     }
@@ -98,7 +98,7 @@ class Login extends React.Component {
           }
           
           this.setState({ unauthorized: false }, () => { 
-            this.checkVisits() 
+            this.checkVisits(); 
           });
                     
           return new Promise((resolve, reject) => {
@@ -127,7 +127,7 @@ class Login extends React.Component {
             delete profileData.Password;
             delete profileData.Token;
             newStore.userObj = profileData;
-            console.log("saving in redux upon login: ", newStore);
+            console.log('saving in redux upon login: ', newStore);
             this.props.actionUser(newStore);
           });
         }).catch((error) => {
@@ -135,7 +135,7 @@ class Login extends React.Component {
             this.setState({
               unauthorized: true
             });
-            console.log("error data is", error.response.data);
+            console.log('error data is', error.response.data);
           }
         });
       }
@@ -147,7 +147,7 @@ class Login extends React.Component {
     return (
       <div className="login-container">
         <div className="login-icon">
-          <img className="header-logo" src={"../public/assets/kindred-icon.png"} width="100px"/>
+          <img className="header-logo" src={'../public/assets/kindred-icon.png'} width="100px"/>
         </div>
         <div className="login-form-container">
           <Form onSubmit={this.handleSubmit} className="login-form">
