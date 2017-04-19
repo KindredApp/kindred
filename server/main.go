@@ -19,7 +19,7 @@ var upgrader = websocket.Upgrader{}
 func main() {
 	//qotdCounter for 24hr worker
 	var qotdCounter int
-	qotdCounter = 0
+	qotdCounter = 10
 
 	//redis
 	p, err := pool.New("tcp", "localhost:6379", 10)

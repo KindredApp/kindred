@@ -456,7 +456,7 @@ var answerOptions = [105]QotdAnswerOption{
 	},
 	QotdAnswerOption{
 		QotdID: 18,
-		Text:   "Social Media(Facebook, twitter, etc)",
+		Text:   "Social Media (Facebook, Twitter, etc.)",
 	},
 	QotdAnswerOption{
 		QotdID: 18,
@@ -520,7 +520,7 @@ var answerOptions = [105]QotdAnswerOption{
 	},
 	QotdAnswerOption{
 		QotdID: 20,
-		Text:   "Reduce international debt",
+		Text:   "Reduce national debt",
 	},
 	QotdAnswerOption{
 		QotdID: 20,
@@ -540,7 +540,6 @@ var answerOptions = [105]QotdAnswerOption{
 	},
 }
 
-//first drops all old tables for a clean slate, then inputs all questions and answers to tables
 func seedQotds(db *gorm.DB) {
 	if db.HasTable(&Qotd{}) {
 		db.DropTable(&Qotd{})
@@ -599,7 +598,7 @@ func seedUserProfiles(db *gorm.DB, p *pool.Pool, numUsers int) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	if db.HasTable(&UserProfile{}) {
 		db.DropTable(&UserProfile{})
 	}

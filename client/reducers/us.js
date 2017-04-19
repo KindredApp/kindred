@@ -459,12 +459,12 @@ export default function () {
               'data': {total: 0}
             }
           },
-          {
-            'properties': {
-              'STATE_ABBR': 'DC',
-              'data': {total: 0}
-            }
-          },
+          // {
+          //   'properties': {
+          //     'STATE_ABBR': 'DC',
+          //     'data': {total: 0}
+          //   }
+          // },
           {
             'type': 'Polygon',
             'arcs': [
