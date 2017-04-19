@@ -204,30 +204,29 @@ const emptyStatesObj = {
 export default function(state = null, action) {
   switch (action.type) {
   case 'RESPONSE_RECEIVED':
-    console.log('action.payload: ', action.payload);
-    let data = {}; 
-    action.payload.data.forEach((answer) => {
+    let stuff = {};
+    for (let i = 0; i < action.payload.data.length; i++) {
+      let answer = action.payload.data[i];
       let question = answer.QotdText;
       let answerText = answer.AnswerText;
       let answerState = answer.State;
-      // if a state object for this questions has already been created
-      if (question in data) {
-        data[question][answerState].total++;  
-        if (answerText in data[question][answerState].answers) {
 
-          data[question][answerState].answers[answerText]++;
+      // if a state object for this questions has already been created
+      if (stuff[question]) {
+        stuff[question][answerState].total++;  
+        if (answerText in stuff[question][answerState].answers) {
+          stuff[question][answerState].answers[answerText]++;
         } else {
-          data[question][answerState].answers[answerText] = 1;
+          stuff[question][answerState].answers[answerText] = 1;
         }
       } else {
-      // else create a state object and fill in this answer
-        data[question] = emptyStatesObj;
-        data[question][answerState].total = 1;
-        data[question][answerState].answers[answerText] = 1;
+        stuff[question] = JSON.parse(JSON.stringify(emptyStatesObj));
+        stuff[question][answerState].total = 1;
+        stuff[question][answerState].answers[answerText] = 1;
       }
-    }); 
-  console.log('data: ', data);     
-  return data;
+    }
+  console.log('data returned from stateDataReducer: ', stuff);     
+  return stuff;
   break;
   }
   return state;

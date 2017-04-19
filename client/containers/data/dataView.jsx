@@ -28,8 +28,8 @@ class DataView extends React.Component {
         <div className='mapdata-header'>
           <div className="selectedDataTopic">{this.props.questionChoice}</div>
           <QotdList />
+          <DataMap />
         </div>
-        <DataMap />
       </div>
     );
   }

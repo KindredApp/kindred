@@ -3,6 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { Menu, Dropdown, Icon, message } from 'antd';
 import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
+import {actionQotdList} from '../../actions/actionQotdList.js';
 
 class QotdList extends React.Component {
   constructor(props) {
@@ -14,27 +15,32 @@ class QotdList extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
-    this.setState({'questions': Object.keys(nextprops.stateData)});
+    // this.setState({'questions': Object.keys(nextprops.stateData)}, () => {
+    //   if (!this.props.questionChoice) {
+    //     this.props.actionQuestionSelect(this.state.questions[0]);
+    //   }
+    // });
+    // console.log('props from pastqotdslist: ', this.props);
   }
 
   onClick ({ key }) {
-    this.props.actionQuestionSelect(this.state.questions[key]);
+    this.props.actionQuestionSelect(Object.keys(this.props.stateData)[key]);
   }
 
   render () {
 
     const menu = (
       <Menu onClick={this.onClick}>
-        { this.state.questions.map((question, i) => {
+        { this.props.stateData ? Object.keys(this.props.stateData).map((question, i) => {
           return <Menu.Item key={i}>{question}</Menu.Item>;
-        })}
+        }) : null}
       </Menu>
     );
 
     return (
       <div>
         <Dropdown overlay={menu}>
-          <a className="ant-dropdown-link" href="#">
+          <a className="ant-dropdown-link">
         Choose a question to see stats <Icon type="down" />
           </a>
         </Dropdown>
@@ -47,11 +53,13 @@ function mapStateToProps (state) {
   return {
     stateData: state.stateDataReducer,
     stateDefaults: state.stateDefaults,
+    questionChoice: state.questionChoice,
+    qotdList: state.qotdList
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionQuestionSelect: actionQotdDataSelect}, dispatch);
+  return bindActionCreators({ actionQuestionSelect: actionQotdDataSelect, actionQotdList: actionQotdList}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(QotdList);
