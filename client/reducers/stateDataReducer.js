@@ -225,7 +225,6 @@ export default function(state = null, action) {
         stuff[question][answerState].answers[answerText] = 1;
       }
     }
-  console.log('data returned from stateDataReducer: ', stuff);     
   return stuff;
   break;
   }
