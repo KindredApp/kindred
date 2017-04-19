@@ -71,7 +71,10 @@ class DataMap extends React.Component {
       .data(topojson.feature(this.state.mergeData, this.state.mergeData.objects.usStates).features)
       .enter()
       .append('path')
-      .style('fill', 'orange')
+      .style('fill', 'lavender')
+      .style('stroke', 'white')
+      // .style('stroke', 'cornflowerblue')
+      .style('stroke-width', '2px')
       .attr('class', 'states')
       .attr('d', path)
       .on('mouseover', (d) => {
