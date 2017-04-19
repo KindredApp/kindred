@@ -68,38 +68,37 @@ class DataMap extends React.Component {
       
       var path = d3.geoPath()
         .projection(projection);
-    
-      svg.selectAll('.states')
-        .data(topojson.feature(this.state.mergeData, this.state.mergeData.objects.usStates).features)
-        .enter()
-        .append('path')
-        .style('fill', 'orange')
-        .attr('class', 'states')
-        .attr('d', path)
-        .on('mouseover', (d) => {
-          console.log('d', d.properties);
-          var name = d.properties.STATE_ABBR;
-          var total = d.properties.data.total;
-          console.log("d.properties.data.answers", d.properties.data.answers);
-          // console.log('this.state.mergeData ', this.state.mergeData.objects.usStates.geometries);
-          // for (let answer in this.state.mergeData[name].answers) {
-          //   data[answer] = this.state.mergeData[name].answers[answer];
-          // }
-          console.log('this is d: ', d);
-          return d3.select(hoverinfo)
-            .classed('hide', false)
-            .text(name + ' : ' + total);
-        }) 
-        .on("mousemove", () => {
-          d3.select(hoverinfo)
-            .style("top", (d3.event.pageY-10)+"px")
-            .style("left",(d3.event.pageX+10)+"px");
-        })
-        .on('mouseout', () => {
-          d3.select(hoverinfo)
-            .classed('hide', true);
-        });
-      return datamapContainer.toReact();
+
+    svg.selectAll('.states')
+      .data(topojson.feature(this.state.mergeData, this.state.mergeData.objects.usStates).features)
+      .enter()
+      .append('path')
+      .style('fill', 'orange')
+      .attr('class', 'states')
+      .attr('d', path)
+      .on('mouseover', (d) => {
+        var name = d.properties.STATE_ABBR;
+        var data = {total: d.properties.data.total};
+        let total = d.properties.data.total;   
+        let text = `Total: ${d.properties.data.total}\n`;     
+        for (let answer in d.properties.data.answers) {
+          text += `${answer}: ${d.properties.data.answers[answer]}\n`;
+        }
+        console.log('this is d: ', d);
+        return d3.select(hoverinfo)
+          .classed('hide', false)
+          .text(`${name}\n${text}`);
+      }) 
+      .on("mousemove", () => {
+        d3.select(hoverinfo)
+          .style("top", (d3.event.pageY-10)+"px")
+          .style("left",(d3.event.pageX+10)+"px");
+      })
+      .on('mouseout', () => {
+        d3.select(hoverinfo)
+          .classed('hide', true);
+      });
+    return datamapContainer.toReact();
     } else {
       return null;
     }
