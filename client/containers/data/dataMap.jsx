@@ -20,7 +20,23 @@ class DataMap extends React.Component {
     this.state = {};
     console.log('stateData from axios call: ', this.props.stateData);
     console.log('this.props.questionChoice', this.props.questionChoice);
-    console.log('geoStates', this.props.geoStates);
+    console.log('geoStates', this.props.geoStates);    
+  }
+
+  mergeTopoWithStateData(nextprops) {
+    let question = this.props.questionChoice ? this.props.questionChoice : Object.keys(nextprops.stateData)[0];
+    let stateData = nextprops.stateData;
+    console.log('stateData to merge with topo: ', stateData);
+    let mergeData = nextprops.topoData;
+    mergeData.objects.usStates.geometries.forEach((topoState, i) => {
+      let state = topoState.properties.STATE_ABBR;
+      mergeData.objects.usStates.geometries[i].properties.data = stateData[question][state];
+    });
+    this.setState({mergeData: mergeData});
+  }
+
+  componentWillReceiveProps(nextprops) {
+    this.mergeTopoWithStateData(nextprops);
   }
 
   sizeChange() {
@@ -34,7 +50,9 @@ class DataMap extends React.Component {
 
   render() {
     console.log("props in map component: ", this.props.stateData);
-    console.log("this.props.mockStateData.objects.usStates: ", this.props.mockStateData.objects.usStates);
+    console.log("this.props.topoData.objects.usStates: ", this.props.topoData.objects.usStates);
+    if (this.state.mergeData) {
+      console.log('merged data in render: ', this.state.mergeData);
     d3.select(window).on('resize', this.sizeChange);
     
     var datamapContainer = Faux.createElement('div');   
@@ -56,27 +74,28 @@ class DataMap extends React.Component {
     
     var path = d3.geoPath()
       .projection(projection);
-    // d3.json('/api/data/q=topojson', function(error, us) {
-    //   console.log(us);
-    // });
+  
     svg.selectAll('.states')
-      .data(topojson.feature(this.props.mockStateData, this.props.mockStateData.objects.usStates).features)
+      .data(topojson.feature(this.state.mergeData, this.state.mergeData.objects.usStates).features)
       .enter()
       .append('path')
-      .style('opacity', function(d){
-        return d.properties.data.total * 0.075;
-      })
       .style('fill', 'orange')
       .attr('class', 'states')
       .attr('d', path)
-      .on('mouseover', function(d){
-        // console.log('d', d);
+      .on('mouseover', (d) => {
+        console.log('d', d.properties);
         // console.log('this', this);
         var name = d.properties.STATE_ABBR;
-        var rate = d.properties.data.total;
+        var data = {total: d.properties.data.total};
+
+        console.log('this.state.mergeData ', this.state.mergeData.objects.usStates);
+        for (let answer in this.state.mergeData[name].answers) {
+          data[answer] = this.state.mergeData[name].answers[answer];
+        }
+        console.log('this is d: ', d);
         return d3.select(hoverinfo)
           .classed('hide', false)
-          .text(name + ' : ' + rate);
+          .text(name + ' : ' + data);
       }) 
       .on("mousemove", () => {
         d3.select(hoverinfo)
@@ -85,10 +104,13 @@ class DataMap extends React.Component {
       })
       .on('mouseout', () => {
         d3.select(hoverinfo)
-          .classed('hide', true)
+          .classed('hide', true);
       });
-    
     return datamapContainer.toReact();
+    } else {
+      return null;
+    }
+    
   }
 }
 
@@ -96,7 +118,7 @@ function mapStateToProps (state) {
   return {
     stateData: state.stateDataReducer,
     stateDefaults: state.stateDefaults,
-    mockStateData: state.mockStateData,
+    topoData: state.topoData,
     geoStates: state.geoStates,
     questionChoice: state.dataChoice.questionData
   };
