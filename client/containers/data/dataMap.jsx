@@ -18,15 +18,11 @@ class DataMap extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    console.log('stateData from axios call: ', this.props.stateData);
-    console.log('this.props.questionChoice', this.props.questionChoice);
-    console.log('geoStates', this.props.geoStates);    
   }
 
   mergeTopoWithStateData(nextprops) {
     let question = this.props.questionChoice ? this.props.questionChoice : Object.keys(nextprops.stateData)[0];
     let stateData = nextprops.stateData;
-    console.log('stateData to merge with topo: ', stateData);
     let mergeData = nextprops.topoData;
     mergeData.objects.usStates.geometries.forEach((topoState, i) => {
       let state = topoState.properties.STATE_ABBR;
@@ -49,64 +45,61 @@ class DataMap extends React.Component {
   }
 
   render() {
-    console.log("props in map component: ", this.props.stateData);
-    console.log("this.props.topoData.objects.usStates: ", this.props.topoData.objects.usStates);
     if (this.state.mergeData) {
       console.log('merged data in render: ', this.state.mergeData);
-    d3.select(window).on('resize', this.sizeChange);
-    
-    var datamapContainer = Faux.createElement('div');   
-    
-    d3.select(datamapContainer)
-      .attr('id', "mapcontainer");
+      d3.select(window).on('resize', this.sizeChange);
+      
+      var datamapContainer = Faux.createElement('div');   
+      
+      d3.select(datamapContainer)
+        .attr('id', "mapcontainer");
 
-    var hoverInfo = d3.select(datamapContainer)
-      .append('div')
-      .attr('id', 'hoverinfo')
-      .classed('hide', true);
+      var hoverInfo = d3.select(datamapContainer)
+        .append('div')
+        .attr('id', 'hoverinfo')
+        .classed('hide', true);
+      
+      var svg = d3.select(datamapContainer).append('svg')
+        .attr("width", "100%")
+          .append("g");
+      
+      var projection = d3.geoAlbersUsa()
+        .scale(900);
+      
+      var path = d3.geoPath()
+        .projection(projection);
     
-    var svg = d3.select(datamapContainer).append('svg')
-      .attr("width", "100%")
-        .append("g");
-    
-    var projection = d3.geoAlbersUsa()
-      .scale(900);
-    
-    var path = d3.geoPath()
-      .projection(projection);
-  
-    svg.selectAll('.states')
-      .data(topojson.feature(this.state.mergeData, this.state.mergeData.objects.usStates).features)
-      .enter()
-      .append('path')
-      .style('fill', 'orange')
-      .attr('class', 'states')
-      .attr('d', path)
-      .on('mouseover', (d) => {
-        console.log('d', d.properties);
-        // console.log('this', this);
-        var name = d.properties.STATE_ABBR;
-        var data = {total: d.properties.data.total};
-
-        console.log('this.state.mergeData ', this.state.mergeData.objects.usStates);
-        for (let answer in this.state.mergeData[name].answers) {
-          data[answer] = this.state.mergeData[name].answers[answer];
-        }
-        console.log('this is d: ', d);
-        return d3.select(hoverinfo)
-          .classed('hide', false)
-          .text(name + ' : ' + data);
-      }) 
-      .on("mousemove", () => {
-        d3.select(hoverinfo)
-          .style("top", (d3.event.pageY-10)+"px")
-          .style("left",(d3.event.pageX+10)+"px");
-      })
-      .on('mouseout', () => {
-        d3.select(hoverinfo)
-          .classed('hide', true);
-      });
-    return datamapContainer.toReact();
+      svg.selectAll('.states')
+        .data(topojson.feature(this.state.mergeData, this.state.mergeData.objects.usStates).features)
+        .enter()
+        .append('path')
+        .style('fill', 'orange')
+        .attr('class', 'states')
+        .attr('d', path)
+        .on('mouseover', (d) => {
+          console.log('d', d.properties);
+          var name = d.properties.STATE_ABBR;
+          var total = d.properties.data.total;
+          console.log("d.properties.data.answers", d.properties.data.answers);
+          // console.log('this.state.mergeData ', this.state.mergeData.objects.usStates.geometries);
+          // for (let answer in this.state.mergeData[name].answers) {
+          //   data[answer] = this.state.mergeData[name].answers[answer];
+          // }
+          console.log('this is d: ', d);
+          return d3.select(hoverinfo)
+            .classed('hide', false)
+            .text(name + ' : ' + total);
+        }) 
+        .on("mousemove", () => {
+          d3.select(hoverinfo)
+            .style("top", (d3.event.pageY-10)+"px")
+            .style("left",(d3.event.pageX+10)+"px");
+        })
+        .on('mouseout', () => {
+          d3.select(hoverinfo)
+            .classed('hide', true);
+        });
+      return datamapContainer.toReact();
     } else {
       return null;
     }

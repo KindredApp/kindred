@@ -13,12 +13,15 @@ class DataView extends React.Component {
   constructor() {
     super();
     this.state = {
-      question: 'Questions to look up',
+      question: '',
     };
-    console.log('props in dataView: ', this.props);
     axios.get('/api/qotd?q=data').then((response) => {
       this.props.actionQotdData(response);
     });
+  }
+
+  componentWillReceiveProps(nextprops) {
+    this.setState({question: Object.keys(nextprops.stateData)[0]});
   }
 
   render() {
@@ -26,7 +29,7 @@ class DataView extends React.Component {
       <div className="landing-container">
         <NavLoggedIn/>
         <div className='mapdata-header'>
-          <div className="selectedDataTopic">{this.props.questionChoice}</div>
+          <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : this.state.question}</div>
           <QotdList />
           <DataMap />
         </div>
