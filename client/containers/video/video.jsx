@@ -9,7 +9,7 @@ import Promise from 'bluebird';
 import {actionUser} from '../../actions/actionUser.js';
 import TwilioVideo, { createLocalTracks, createLocalVideoTrack } from 'twilio-video';
 import instance from '../../config.js';
-import {Button} from 'antd';
+import {Button, message} from 'antd';
 
 var localTracks;
 
@@ -241,8 +241,9 @@ class Video extends React.Component {
   }
 
   leaveLoading () {
-    console.log('leave loading triggered');
+    console.log('enter loading triggered');
     this.setState({ loading: false });
+    message.success('You were successfully removed from the queue!', 2);
   }
 
   getQOTD() {
@@ -377,17 +378,14 @@ class Video extends React.Component {
   }
 
   joinHandler() {
-    // console.log('in handler');
     // //uncomment for production build
     // // var req = `/api/twilio?q=${this.state.cookie.Username}`;
-    // if (this.state.leaveQueue) {
-    //   console.log('leaving queue from joinHandler');
-    //   this.setState({
-    //     leaveQueue: false
-    //   });
-    //   return;
-    // }
-    // console.log('passed if');
+    if (this.state.leaveQueue) {
+      this.setState({
+        leaveQueue: false
+      });
+      return;
+    }
     var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     instance.nodeInstance.get(req).then((response) => {
       console.log(response.data);
