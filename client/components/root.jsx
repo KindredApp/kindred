@@ -18,6 +18,8 @@ import DataView from '../containers/data/dataView.jsx';
 import {actionUser} from '../actions/actionUser.js';
 import instance from '../config.js';
 import '../styles/index.css';
+import * as firebase from 'firebase';
+import firebaseConfig from '../firebaseConfig.js';
 
 const SignUpForm = Form.create()(SignUp);
 const LoginForm = Form.create()(Login);
@@ -29,6 +31,7 @@ class Root extends Component {
     this._formatResponse = this._formatResponse.bind(this);
     this.getUserDetails = this.getUserDetails.bind(this);
     this.getUserDetails();
+    firebase.initializeApp(firebaseConfig);
   }
 
   _formatResponse (string) {
