@@ -12,7 +12,6 @@ class QotdAnswerOptions extends React.Component {
 
     instance.goInstance.get('/api/qotd?q=dataoptions')
     .then((response) => {
-      // console.log('Answer options', response);
       this.props.actionQotdAnswerOption(response.data);
     });
   }
