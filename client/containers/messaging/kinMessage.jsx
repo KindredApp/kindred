@@ -17,11 +17,24 @@ class KinMessage extends Component {
     
     this.postMessage = this.postMessage.bind(this);
     this.getMessages = this.getMessages.bind(this);
+    this.dynamicScrolling = this.dynamicScrolling.bind(this);
     this.getMessages(this.props.room);
+  }
+
+  componentDidMount() {
+    this.dynamicScrolling();
   }
 
   componentWillReceiveProps(nextProps) {
     this.getMessages(nextProps.room);
+  }
+
+  dynamicScrolling() {
+
+    let scroll = setInterval(function() {
+      let chat = document.getElementById("chat-box-message-scroll");
+      chat.scrollTop = chat.scrollHeight;
+    }, 200);
   }
 
   getMessages(room) {
@@ -61,9 +74,9 @@ class KinMessage extends Component {
 
   render() {
     return (
-      <div>
-        <div>{this.state.messages.map((message) => <div key={new Date().getTime() * Math.random()}>{`${message[0]}: ${message[1]}`}</div>)}</div>
-        <div>
+      <div className="chat-box-container">
+        <div id="chat-box-message-scroll">{this.state.messages.map((message) => <div key={new Date().getTime() * Math.random()}>{`${message[0]}: ${message[1]}`}</div>)}</div>
+        <div className="chat-box-input">
           <Input onPressEnter={this.postMessage} value={this.state.postMessage} onChange={(e) => {this.setState({postMessage: e.target.value})}}/>
         </div>
       </div>
