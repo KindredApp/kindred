@@ -1,10 +1,30 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
 import '../styles/index.css';
+import Cookies from 'js-cookie';
+import instance from '../config.js';
 
 export default class NavLoggedIn extends React.Component {
   constructor (props) {
     super (props);
+    this.handleLogout = this.handleLogout.bind(this); 
+  }
+
+  handleLogout() {
+    let cookie = Cookies.getJSON();
+    let username;
+    let token;
+
+    for (var key in cookie) {
+      if (key !== 'pnctest') {
+        username = key;
+        token = cookie[key].Token;
+      }
+    }
+
+    instance.goInstance.post('/api/logout', {Username: username, Token: token}).then((response) => {
+      Cookies.remove(username);
+    });
   }
 
   render() {
@@ -32,8 +52,8 @@ export default class NavLoggedIn extends React.Component {
             <div className="shift">
               <Link to="/aboutus">About Us</Link>
             </div>
-            <div className="shift">
-              <Link to="/logout">Logout</Link>
+            <div className="shift" onClick={this.handleLogout}>
+              <Link to="/">Logout</Link>
             </div>
           </nav>
         </div>
