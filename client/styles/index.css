@@ -81,16 +81,38 @@
   justify-content: space-between;
 }
 
-/* ------ Stats: Map Data ------- */
+/* ------ Stats: Account  ------- */
 
-.account-container {
+.account-top-container {
   height: 100%;
   width: 100%;
   background: #6288c5; 
   background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
   background: linear-gradient(to right, #1e3c72, #6288c5);
 }
-  
+
+.account-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  background: #6288c5; 
+  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
+  background: linear-gradient(to right, #1e3c72, #6288c5);
+}
+
+.account-content-container {
+  display: flex;
+}
+
+#deleteAccount {
+  background: white;
+  color: red;
+}
+
+#editAccount {
+  background: white;
+}
 
 /* ------ Stats: Map Data ------- */
 

@@ -101,7 +101,6 @@ class DataMap extends React.Component {
 function mapStateToProps (state) {
   return {
     stateData: state.stateDataReducer,
-    stateDefaults: state.stateDefaults,
     topoData: state.topoData,
     questionChoice: state.dataChoice.questionData
   };
