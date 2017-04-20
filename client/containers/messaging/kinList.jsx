@@ -53,6 +53,7 @@ class KinList extends Component {
     this.setState({
       currentMessageRoom: kin[0]
     }, () => {
+      console.log("state of current message room is", this.state.currentMessageRoom)
     });
   }
 

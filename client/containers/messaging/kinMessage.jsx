@@ -11,25 +11,41 @@ class KinMessage extends Component {
 
     this.state = {
       messagesFound: false,
-      messages: []
+      messages: [],
+      postMessage: ''
     }
     
     this.postMessage = this.postMessage.bind(this);
     this.getMessages = this.getMessages.bind(this);
-    this.getMessages();
+    this.getMessages(this.props.room);
   }
 
-  getMessages() {
-    this.props.firebaseInstance.ref('chats/' + this.props.room).once('value')
+  componentWillReceiveProps(nextProps) {
+    this.getMessages(nextProps.room);
+  }
+
+  getMessages(room) {
+    this.props.firebaseInstance.ref('chats/' + room).once('value')
     .then((snapshot) => {
       let messages = snapshot.val();
+      let messagesArr = [];
       for (let key in messages) {
-        console.log("this is from once", messages[key]);
+        messagesArr.push(messages[key]);
       }
+      this.setState({
+        messages: messagesArr
+      })
     });
 
-    this.props.firebaseInstance.ref('chats/' + this.props.room).on('value', (snapshot) => {
-      console.log("this is a new messages", snapshot.val());
+    this.props.firebaseInstance.ref('chats/' + room).on('value', (snapshot) => {
+      let messages = snapshot.val()
+      let messagesArr = [];
+      for (let key in messages) {
+        messagesArr.push(messages[key]);
+      }
+      this.setState({
+        messages: messagesArr
+      })
     });
   }
 
@@ -37,13 +53,19 @@ class KinMessage extends Component {
     var time = new Date().getTime();
     this.props.firebaseInstance.ref('chats/' + this.props.room).update({
       [time]: [this.props.user.userObj.Username, e.target.value]
-    })
+    });
+    this.setState({
+      postMessage: ''
+    });
   }
 
   render() {
     return (
       <div>
-        <Input onPressEnter={this.postMessage}/>
+        <div>{this.state.messages.map((message) => <div key={new Date().getTime() * Math.random()}>{`${message[0]}: ${message[1]}`}</div>)}</div>
+        <div>
+          <Input onPressEnter={this.postMessage} value={this.state.postMessage} onChange={(e) => {this.setState({postMessage: e.target.value})}}/>
+        </div>
       </div>
     )
   }
