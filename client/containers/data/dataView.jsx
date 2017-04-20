@@ -34,7 +34,7 @@ class DataView extends React.Component {
           <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : this.state.question}</div>
           <QotdList />
           <div id="mapAnswers">
-            <QotdAnswerOptions/>
+            <QotdAnswerOptions firstQotdAns={this.state.question}/>
             <DataMap/>
           </div>
         </div>

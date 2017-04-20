@@ -3,7 +3,6 @@ import instance from '../../config.js'
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {actionQotdAnswerOption} from '../../actions/actionQotdAnswerOption.js';
-import { Line } from 'react-chartjs-2';
 import Chart from 'chart.js';
 import '../../styles/index.css';
 
@@ -26,18 +25,27 @@ class QotdAnswerOptions extends React.Component {
   componentWillReceiveProps(nextprops) {
     var canvas = document.getElementById("myChart");
     var ctx = canvas.getContext("2d");
+    if (window.chart) {
+      window.chart.destroy();
+    }
     if (nextprops.qotdAnswerList && nextprops.questionChoice) {
-      var chart = new Chart(ctx, {
+      var labels = Object.keys(nextprops.qotdAnswerList[nextprops.questionChoice]);
+      var data = Object.values(nextprops.qotdAnswerList[nextprops.questionChoice]);
+    } else if (nextprops.qotdAnswerList && nextprops.firstQotdAns) {
+      var labels = Object.keys(nextprops.qotdAnswerList[nextprops.firstQotdAns]);
+      var data = Object.values(nextprops.qotdAnswerList[nextprops.firstQotdAns]);
+    }
+      window.chart = new Chart(ctx, {
         type: 'pie',
         options: {
           responsive: true,
           maintainAspectRatio: true
         },
         data: {
-          labels: Object.keys(nextprops.qotdAnswerList[nextprops.questionChoice]),
+          labels: labels,
           datasets: [
               {
-                  data: Object.values(nextprops.qotdAnswerList[nextprops.questionChoice]),
+                  data: data,
                   backgroundColor: [
                       "#004740",
                       "#6DD0C5",
@@ -71,7 +79,6 @@ class QotdAnswerOptions extends React.Component {
               }]
         }
       });
-    }
   }
 
   render() {
