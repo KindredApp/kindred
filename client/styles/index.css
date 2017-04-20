@@ -36,8 +36,11 @@
   align-items: center;
   flex-direction: column;
   background: #6288c5; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #1e3c72, #6288c5); 
+  background: -webkit-linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
+  background: linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
+  background-color: #1e3c72;
+  /*-webkit-filter: blur(1px);
+  filter: blur(1px);*/
 }
 
 .landing-qotd {
@@ -368,8 +371,8 @@ input.qotd-submit-button {
   align-items: center;
   flex-direction: column;
   background: #6288c5; 
-  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
-  background: linear-gradient(to right, #1e3c72, #6288c5); 
+  background: -webkit-linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
+  background: linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
 }
 
 
