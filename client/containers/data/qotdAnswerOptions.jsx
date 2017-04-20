@@ -31,9 +31,6 @@ class QotdAnswerOptions extends React.Component {
     if (nextprops.qotdAnswerList && nextprops.questionChoice) {
       var labels = Object.keys(nextprops.qotdAnswerList[nextprops.questionChoice]);
       var data = Object.values(nextprops.qotdAnswerList[nextprops.questionChoice]);
-    } else if (nextprops.qotdAnswerList && nextprops.firstQotdAns) {
-      var labels = Object.keys(nextprops.qotdAnswerList[nextprops.firstQotdAns]);
-      var data = Object.values(nextprops.qotdAnswerList[nextprops.firstQotdAns]);
     }
       window.chart = new Chart(ctx, {
         type: 'doughnut',

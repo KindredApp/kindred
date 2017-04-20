@@ -86,7 +86,7 @@ class DataMap extends React.Component {
           }
           return d3.select(hoverinfo)
             .classed('hide', false)
-            .html(`<strong>${name}<br/>${text}`);
+            .html(`<strong>${name}</strong><br/>${text}`);
         })
         .on("mousemove", () => {
           d3.select(hoverinfo)
