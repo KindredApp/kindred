@@ -10,4 +10,4 @@ export default function (state = null, action) {
     break;
   }
   return state;
-}
+} 

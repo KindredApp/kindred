@@ -8,14 +8,13 @@ import {actionQotdData} from '../../actions/actionQotdData.js';
 import DataMap from './dataMap.jsx';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
 import QotdAnswerOptions from './qotdAnswerOptions.jsx';
+import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
   constructor() {
     super();
-    this.state = {
-      question: '',
-    };
+    this.state = {};
     instance.goInstance.get('/api/qotd?q=data')
     .then((response) => {
       this.props.actionQotdData(response);
@@ -23,8 +22,8 @@ class DataView extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
-    if (nextprops.stateData) {
-      this.setState({question: Object.keys(nextprops.stateData)[0]});
+    if (nextprops.stateData && !nextprops.questionChoice) {
+      nextprops.actionQuestionSelect(Object.keys(nextprops.stateData)[0]);
     }
   }
 
@@ -33,10 +32,10 @@ class DataView extends React.Component {
       <div className="landing-container">
         <NavLoggedIn/>
         <div className="dataPageContainer">
-          <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : this.state.question}</div>
+          <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : null}</div>
           <QotdList />
           <div id="mapAnswers">
-            <QotdAnswerOptions firstQotdAns={this.state.question}/>
+            <QotdAnswerOptions />
             <DataMap/>
           </div>
         </div>
@@ -53,7 +52,7 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionQotdData: actionQotdData}, dispatch);
+  return bindActionCreators({ actionQotdData: actionQotdData, actionQuestionSelect: actionQotdDataSelect}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataView);
