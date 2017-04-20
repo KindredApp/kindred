@@ -6,9 +6,8 @@ import topoData from './topoDataReducer.js';
 import qotdList from './qotdListReducer.js';
 import dataChoice from './chosenDataReducer.js';
 import surveyFromAccountPage from './surveyFromAccountPage.js';
-import stateDefaults from './stateDefaultsReducer.js';
-import topoData from './us.js';
-import qotdList from './qotdList.js';
+import topoData from './topoDataReducer.js';
+import qotdList from './qotdListReducer.js';
 import qotdAnswerOptionReducer from './qotdAnswerOptionReducer'
 import dataChoice from './chosenDataReducer';
 
