@@ -153,6 +153,8 @@ class Survey extends React.Component {
     this.checkVisits = this.checkVisits.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this._formatResponse = this._formatResponse.bind(this);
+
+    document.addEventListener('mousemove', this.onMouseMove);
   }
 
   componentDidMount() {
@@ -161,6 +163,32 @@ class Survey extends React.Component {
 
   componentWillReceiveProps(nextprops) {
     console.log('coming from account page? ', nextprops.surveyFromAccountPage);
+  }
+
+  componentWillUnmount () {
+    document.removeEventListener('mousemove', this.onMouseMove);
+  }
+
+  onMouseMove (e) {
+    let newGradientX = e.clientX / 100;
+    let newGradientY = e.clientY / 100;
+    let element = document.getElementsByClassName('survey-container')[0];
+    let original = `rgba(0, 0, 0, 0) linear-gradient(to top right, 
+      rgb(${Math.floor(newGradientX + 25)}, 
+            ${Math.floor(newGradientX + 55)}, 
+            ${Math.floor(newGradientX + 109)}), 
+      rgb(${Math.floor(newGradientX + 45)}, 
+            ${Math.floor(newGradientX + 86)}, 
+            ${Math.floor(newGradientX + 192)}), 
+      rgb(${Math.floor(newGradientY + 76)}, 
+            ${Math.floor(newGradientY + 114)}, 
+            ${Math.floor(newGradientY + 197)}), 
+      rgb(${Math.floor(newGradientY + 93)}, 
+            ${Math.floor(newGradientY + 131)}, 
+            ${Math.floor(newGradientY + 195)})
+    ) repeat scroll 0% 0% / auto padding-box border-box`;
+    
+    element.style.background = original;
   }
 
   _formatResponse (string) {
