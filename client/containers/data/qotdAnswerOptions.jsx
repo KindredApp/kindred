@@ -23,7 +23,7 @@ class QotdAnswerOptions extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
-    var canvas = document.getElementById("myChart");
+    var canvas = document.getElementById("pieChart");
     var ctx = canvas.getContext("2d");
     if (window.chart) {
       window.chart.destroy();
@@ -84,7 +84,7 @@ class QotdAnswerOptions extends React.Component {
   render() {
     return (
       <div id="qotdAns" height="100" width="100">
-        <canvas height="100" width="100" id="myChart"></canvas>
+        <canvas height="100" width="100" id="pieChart"></canvas>
       </div>
     );
   }
