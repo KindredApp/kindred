@@ -15,14 +15,20 @@ class DataMap extends React.Component {
   }
 
   mergeTopoWithStateData(nextprops) {
-    let question = nextprops.questionChoice ? nextprops.questionChoice : Object.keys(nextprops.stateData)[0];
-    let stateData = nextprops.stateData;
-    let mergeData = nextprops.topoData;
-    mergeData.objects.usStates.geometries.forEach((topoState, i) => {
-      let state = topoState.properties.STATE_ABBR;
-      mergeData.objects.usStates.geometries[i].properties.data = stateData[question][state];
-    });
-    this.setState({mergeData: mergeData});
+    let question = nextprops.questionChoice ? nextprops.questionChoice : nextprops.stateData ? Object.keys(nextprops.stateData)[0] : '';
+    if (nextprops.stateData) {
+      let stateData = nextprops.stateData;
+      let mergeData = nextprops.topoData;
+      mergeData.objects.usStates.geometries.forEach((topoState, i) => {
+        let state = topoState.properties.STATE_ABBR;
+        mergeData.objects.usStates.geometries[i].properties.data = stateData[question][state];
+      });
+      this.setState({mergeData: mergeData});
+    }
+  }
+
+  componentWillReceiveProps(nextprops) {
+    this.mergeTopoWithStateData(nextprops);
   }
 
   sizeChange() {
@@ -74,14 +80,14 @@ class DataMap extends React.Component {
           var name = d.properties.STATE_ABBR;
           var data = {total: d.properties.data.total};
           let total = d.properties.data.total;   
-          let text = `Total: ${d.properties.data.total}\n`;     
+          let text = `Total: ${d.properties.data.total}<br>`;     
           for (let answer in d.properties.data.answers) {
-            text += `${answer}: ${d.properties.data.answers[answer]}\n`;
+            text += `${answer}: ${d.properties.data.answers[answer]}<br>`;
           }
           return d3.select(hoverinfo)
             .classed('hide', false)
-            .text(`${name}\n${text}`);
-        }) 
+            .html(`<strong>${name}<br/>${text}`);
+        })
         .on("mousemove", () => {
           d3.select(hoverinfo)
             .style("top", (d3.event.pageY-10)+"px")

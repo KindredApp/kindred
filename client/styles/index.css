@@ -132,18 +132,39 @@
   font-size: 20px;
 }
 
+#qotdAns {
+  /*display: flex;*/
+    /*display: flex;
+  flex-direction: row;  
+  justify-content: flex-start;*/
+  height: 25%;
+  width: 25%;
+}
+
 .states:hover {
-  fill: lavender !important;
+  fill: #CFD6FC !important;
 }
 
 #hoverinfo {
   position: absolute;
-  color: darkslateblue;
+  font-size: 18px;
+  text-shadow: 2px 2px 2px grey;
+  color: black;
 }
 
 .hide {
   visibility: hidden;
 }
+
+#mapAnswers {
+  /*display: flex;
+  flex-direction: row;  
+  justify-content: flex-start;*/
+  /*flex: 1; */
+  /*display: inline-block;*/
+}
+
+/* -------------------- */
 
 .persective {
   perspective: 15000px;

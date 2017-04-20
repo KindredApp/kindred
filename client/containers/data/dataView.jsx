@@ -7,6 +7,7 @@ import QotdList from './pastQotdsList.jsx';
 import {actionQotdData} from '../../actions/actionQotdData.js';
 import DataMap from './dataMap.jsx';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
+import QotdAnswerOptions from './qotdAnswerOptions.jsx';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
@@ -22,7 +23,9 @@ class DataView extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
-    this.setState({question: Object.keys(nextprops.stateData)[0]});
+    if (nextprops.stateData) {
+      this.setState({question: Object.keys(nextprops.stateData)[0]});
+    }
   }
 
   render() {
@@ -32,7 +35,10 @@ class DataView extends React.Component {
         <div className="dataPageContainer">
           <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : this.state.question}</div>
           <QotdList />
-          <DataMap />
+          <div id="mapAnswers">
+            <QotdAnswerOptions firstQotdAns={this.state.question}/>
+            <DataMap/>
+          </div>
         </div>
       </div>
     );
