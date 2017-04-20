@@ -11,6 +11,7 @@ import TwilioVideo, { createLocalTracks, createLocalVideoTrack } from 'twilio-vi
 import instance from '../../config.js';
 import {Button, message} from 'antd';
 import * as firebase from 'firebase';
+import NavLoggedIn from '../../components/navLoggedIn.jsx';
 
 var localTracks;
 
@@ -77,7 +78,6 @@ class Video extends React.Component {
     this.tokenHolder = this.tokenHolder.bind(this);
     this.checkToken = this.checkToken.bind(this);
     this.checkVisits = this.checkVisits.bind(this);
-    this.handleLogout = this.handleLogout.bind(this);
     this.getQOTD = this.getQOTD.bind(this);
     this.submitQOTDAnswer = this.submitQOTDAnswer.bind(this);
     this.joinHandler = this.joinHandler.bind(this);
@@ -191,23 +191,6 @@ class Video extends React.Component {
         }).catch((error) => { console.log('Check visits error', error); });
       }
     }
-  }
-
-  handleLogout() {
-    let cookie = Cookies.getJSON();
-    let username;
-    let token;
-
-    for (var key in cookie) {
-      if (key !== 'pnctest') {
-        username = key;
-        token = cookie[key].Token;
-      }
-    }
-
-    instance.goInstance.post('/api/logout', {Username: username, Token: token}).then((response) => {
-      Cookies.remove(username);
-    });
   }
 
   tokenHolder() {
@@ -585,8 +568,8 @@ class Video extends React.Component {
     const RoomFoundComponent = (
       <div>
         {!this.state.roomCount ? <Button type='primary' onClick={this.joinRoom}>Partner found! Click here to chat.</Button> : null}
-        {this.state.roomCount ? <Button type='primary' onClick={this.leaveRoom}>Leave room</Button> : null}
-        {this.state.roomCount ? <Button type='primary' onClick={this.connectUsers}>Kinnect *TM</Button> : null}
+        {this.state.roomCount ? <Button className="leave-room-button" type='primary' onClick={this.leaveRoom}>Leave room</Button> : null}
+        {this.state.roomCount ? <Button className="kinnect-button" type='primary' onClick={this.connectUsers}>Kinnect *TM</Button> : null}
         {this.state.roomInstance === false ? <Redirect to="/video"/> : null}
       </div>
     );
@@ -634,18 +617,17 @@ class Video extends React.Component {
     );
 
     return (
-      <div className="video-page-container">
-        <div className="header-links perspective logout-button">
-          <div className="shift" onClick={this.handleLogout}>
-            <a href="#/">{'<--'} Logout</a>
+      <div className="video-page">
+        <NavLoggedIn />
+        <div className="video-page-container">
+          <div className="video-header">{this.state.component === 'qotd' ? 'qotd' : 'video'}</div>
+          <div id="video-container" className="video-container">
+            {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
+            {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
+            {this.state.component === 'loading' ? <div id="remote-media" ref="video"></div> : null}
           </div>
+          <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
         </div>
-        <div className="video-container">
-          {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
-          {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
-          {this.state.component === 'loading' ? <div id="remote-media" ref="video"></div> : null}
-        </div>
-        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
       </div>
     );
   }

@@ -74,6 +74,7 @@
 
 .general-header-nav {
   width: 40%;
+  min-width: 350px;
   display: flex;
   align-items: center;
 }
@@ -260,24 +261,66 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
 
 /* ----- Video ----- */
 
+.video-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 .video-page-container {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   background: #6288c5; 
-  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
-  background: linear-gradient(to right, #1e3c72, #6288c5); 
+  /*background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
+  background: linear-gradient(to right, #1e3c72, #6288c5); */
+}
+
+.video-header {
+  font-family: 'Roboto', sans-serif;
+  font-size: 35px;
+  color: white;
 }
 
 .logout-button {
   align-self: flex-start;
 }
 
+.video-container {
+  border-radius: 5px;
+  min-width: 500px;
+  min-height: 160px;
+  width: 40%;
+  height: 50%;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-around;
+  align-items: center;
+  border: 1px solid #eee;
+  background-color: white;
+  padding: 15px 0;
+}
+
+.video-container-two {
+  border-radius: 5px;
+  min-width: 700px;
+  min-height: 400px;
+  width: 60%;
+  height: 80%;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-around;
+  align-items: center;
+  border: 1px solid #eee;
+  background-color: white;
+  padding: 15px 0;
+}
+
 div#remote-media {
-  height: 43%;
+  height: 90%;
   width: 100%;
   background-color: #fff;
   text-align: center;
@@ -287,22 +330,24 @@ div#remote-media {
 div#remote-media video {
   border: 1px solid #272726;
   margin: 3em 2em;
-  height: 100%;
-  max-width: 60% !important;
+  height: 90%;
+  max-width: 80% !important;
   background-color: #272726;
   background-repeat: no-repeat;
 }
 
-.video-container {
-  border-radius: 5px;
-  width: 40%;
-  height: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  border: 1px solid #eee;
-  background-color: white;
+.video-component {
+  height: 10%;
+  /*flex-direction: column-reverse;
+  justify-content: flex-start;*/
+}
+
+.leave-room-button {
+  margin: 0 4px 0 0;
+}
+
+.kinnect-button {
+  margin: 0 0 0 4px;
 }
 
 .qotd-container {
@@ -337,10 +382,12 @@ div#remote-media video {
   width: 100%;
   height: 50%;
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
   box-shadow: 0px 5px 4px 0px rgba(0,0,0,0.2);
+  padding: 0 0 10px 0;
 }
 
 input.qotd-submit-button {
@@ -349,15 +396,19 @@ input.qotd-submit-button {
   background-color: transparent;
   border: 1px solid white;
   font-family: 'Open Sans', sans-serif;
+  margin: 15px 0 0 0;
 }
 
-/*.queue-button {
-
+input.qotd-submit-button:hover {
+  transition: all 0.3s ease-in-out;
+  color: orangered;
+  font-weight: bold;
 }
 
-.video-component {
+/*queue-button {
 
 }*/
+
 
 /* ---- Survey ----- */
 
@@ -544,6 +595,12 @@ input.input-bar.input-select,
 
 
 /* ---- chat room ----- */
+.chat-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 .chat-component{ 
   width: 100%;

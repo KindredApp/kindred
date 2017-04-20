@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
 import KinMessage from './kinMessage.jsx';
+import NavLoggedIn from '../../components/navLoggedIn.jsx';
 
 
 
@@ -69,15 +70,18 @@ class KinList extends Component {
 
   render () {
     return (
-      <div className="chat-component">
-        <div className="chat-header">kinchat</div>
-        <div className="chat-container">
-          <div className="kin-list">
-            {this.state.kinList ? 
-            this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => {this.setCurrentRoom(kin)}}>{kin[1]}</div>) : 
-            null}
+      <div className="chat-page">
+        <NavLoggedIn />
+        <div className="chat-component">
+          <div className="chat-header">chat</div>
+          <div className="chat-container">
+            <div className="kin-list">
+              {this.state.kinList ? 
+              this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => {this.setCurrentRoom(kin)}}>{kin[1]}</div>) : 
+              null}
+            </div>
+            <div className="kin-current-chat">{this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}</div>
           </div>
-          <div className="kin-current-chat">{this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}</div>
         </div>
       </div>
     );
