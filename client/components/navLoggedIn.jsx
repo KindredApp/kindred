@@ -38,22 +38,22 @@ export default class NavLoggedIn extends React.Component {
         <div className="general-header-nav">
           <nav className="general-header-links perspective">
             <div className="shift">
-              <Link to="/account">Account</Link>
+              <Link to="/account">account</Link>
             </div>
             <div className="shift">
-              <Link to="/video">Video</Link>
+              <Link to="/video">video</Link>
             </div>
             <div className="shift">
-              <Link to="/kin">Kin</Link>
+              <Link to="/kin">kin</Link>
             </div>
             <div className="shift">
-              <Link to="/data">Peruse Stats</Link>
+              <Link to="/data">stats</Link>
             </div>
             <div className="shift">
-              <Link to="/aboutus">About Us</Link>
+              <Link to="/aboutus">about us</Link>
             </div>
             <div className="shift" onClick={this.handleLogout}>
-              <Link to="/">Logout</Link>
+              <Link to="/">logout</Link>
             </div>
           </nav>
         </div>

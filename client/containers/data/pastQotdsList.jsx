@@ -42,7 +42,6 @@ class QotdList extends React.Component {
 function mapStateToProps (state) {
   return {
     stateData: state.stateDataReducer,
-    stateDefaults: state.stateDefaults,
     questionChoice: state.questionChoice,
     qotdList: state.qotdList
   };

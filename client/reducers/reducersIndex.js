@@ -2,21 +2,19 @@ import {combineReducers} from 'redux';
 import userReducer from './userReducer.js';
 import firebaseReducer from './firebaseReducer.js';
 import stateData from './stateDataReducer.js';
-import stateDefaults from './stateDefaultsReducer.js';
-import topoData from './us.js';
-import qotdList from './qotdList.js';
-// import geoStates from './stateArcs.js';
-import dataChoice from './chosenDataReducer';
+import topoData from './topoDataReducer.js';
+import qotdList from './qotdListReducer.js';
+import dataChoice from './chosenDataReducer.js';
+import surveyFromAccountPage from './surveyFromAccountPage.js';
 
 const allReducers = combineReducers({
   userReducer: userReducer,
   firebaseReducer: firebaseReducer,
   stateDataReducer: stateData,
-  stateDefaults: stateDefaults,
   topoData: topoData,
   dataChoice: dataChoice,
-  qotdList: qotdList
-  // geoStates: geoStates
+  qotdList: qotdList,
+  surveyFromAccountPage: surveyFromAccountPage,
 });
 
 export default allReducers;

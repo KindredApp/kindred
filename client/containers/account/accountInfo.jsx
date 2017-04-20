@@ -1,29 +1,41 @@
 import React from 'react';
-import instance from '../../config.js'
+import instance from '../../config.js';
+import { Redirect } from 'react-router-dom'; 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {actionUser} from '../../actions/actionUser.js';
+import {actionSurveyFromAccountPage} from '../../actions/actionSurveyFromAccountPage.js';
 import '../../styles/index.css';
 
 class AccountInfo extends React.Component {
   constructor (props) {
     super (props);
-    this.state = {};
+    this.state = {
+      redirectToSurvey: false
+    };
     this.deleteAccount = this.deleteAccount.bind(this);
+    this.editAccount = this.editAccount.bind(this);
   }
 
-deleteAccount() {
-  instance.goInstance.delete(`/api/profile?user=${this.props.user.userObj.Username}`)
-    .then((response) => {
-      console.log("Response to delete:", response);
-    });
-}
+  deleteAccount() {
+    instance.goInstance.delete(`/api/profile?user=${this.props.user.userObj.Username}`)
+      .then((response) => {
+        console.log("Response to delete:", response);
+      });
+  }
+
+  editAccount() {
+    this.setState({redirectToSurvey: true});
+    this.props.actionSurveyFromAccountPage(true);
+  }
 
   render() {
     return (
       <div className="landing-container">
         Delete Account
-        <button onClick={this.deleteAccount}>Delete</button>
+        { this.props.surveyFromAccountPage ? <Redirect to="/survey" /> : null }
+        <button id="deleteAccount" onClick={this.deleteAccount}>Delete</button>
+        <button id="editAccount" onClick={this.editAccount}>Edit</button>
       </div>
     );
   }
@@ -31,12 +43,13 @@ deleteAccount() {
 
 function mapStateToProps (state) {
   return {
-    user: state.userReducer
+    user: state.userReducer,
+    surveyFromAccountPage: state.surveyFromAccountPage
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({actionSurveyFromAccountPage: actionSurveyFromAccountPage}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountInfo);

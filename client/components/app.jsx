@@ -26,6 +26,9 @@ class App extends React.Component {
                 <Link to="/signup">sign up </Link>
               </div>
               <div className="shift">
+                <Link to="/data">stats</Link>
+              </div>
+              <div className="shift">
                 <Link to="/aboutus">about us </Link>
               </div>
             </nav>

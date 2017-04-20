@@ -17,7 +17,7 @@
 }
 
 .header-nav {
-  width: 150px;
+  width: 180px;
   display: flex;
   align-items: center;
 }
@@ -66,11 +66,7 @@
   justify-content: space-around;
   height: 10%;
   align-items: center;
-  border-width: 0px 0px 15px 0px;
-  border-color: #6288c5; /* fallback for old browsers */
-  border-color: -webkit-linear-gradient(to right, #1e3c72, #6288c5); /* Chrome 10-25, Safari 5.1-6 */
-  border-color: linear-gradient(to right, #1e3c72, #6288c5); 
-
+  background: white;
 }
 
 .general-header-nav {
@@ -83,6 +79,39 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
+}
+
+/* ------ Stats: Account  ------- */
+
+.account-top-container {
+  height: 100%;
+  width: 100%;
+  background: #6288c5; 
+  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
+  background: linear-gradient(to right, #1e3c72, #6288c5);
+}
+
+.account-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  background: #6288c5; 
+  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
+  background: linear-gradient(to right, #1e3c72, #6288c5);
+}
+
+.account-content-container {
+  display: flex;
+}
+
+#deleteAccount {
+  background: white;
+  color: red;
+}
+
+#editAccount {
+  background: white;
 }
 
 /* ------ Stats: Map Data ------- */
