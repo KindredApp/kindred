@@ -59,13 +59,15 @@ class KinList extends Component {
 
   render () {
     return (
-      <div>
-        <div>
-          {this.state.kinList ? 
-          this.state.kinList.map(kin => <div key={kin} onClick={() => {this.setCurrentRoom(kin)}}>{kin[1]}</div>) : 
-          null}
+      <div className="chat-component">
+        <div className="chat-container">
+          <div className="kin-list">
+            {this.state.kinList ? 
+            this.state.kinList.map(kin => <div className="kin-list-item" key={kin} onClick={() => {this.setCurrentRoom(kin)}}>{kin[1]}</div>) : 
+            null}
+          </div>
+          <div className="kin-current-chat">{this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}</div>
         </div>
-        <div className="kindred-current-message">{this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}</div>
       </div>
     );
   }
