@@ -14,7 +14,9 @@ class KinList extends Component {
     this.state = {
       identity: '',
       kinList: false,
-      currentMessageRoom: false
+      currentMessageRoom: false,
+      currentChat: '',
+      previousChat: ''
     };
 
     this.getKin = this.getKin.bind(this);
@@ -50,9 +52,17 @@ class KinList extends Component {
   }
 
   setCurrentRoom(kin) {
+    let current = kin[0];
+    let previous = this.state.currentChat;
     this.setState({
-      currentMessageRoom: kin[0]
+      currentMessageRoom: kin[0],
+      currentChat: current,
+      previousChat: previous
     }, () => {
+      let currentSelectionClasses = document.getElementById(this.state.currentChat).classList;
+      currentSelectionClasses.add('chat-name-click');
+      let oldSelectionClasses = document.getElementById(this.state.previousChat).classList;
+      oldSelectionClasses.remove('chat-name-click');
       console.log("state of current message room is", this.state.currentMessageRoom)
     });
   }
@@ -60,10 +70,11 @@ class KinList extends Component {
   render () {
     return (
       <div className="chat-component">
+        <div className="chat-header">kinchat</div>
         <div className="chat-container">
           <div className="kin-list">
             {this.state.kinList ? 
-            this.state.kinList.map(kin => <div className="kin-list-item" key={kin} onClick={() => {this.setCurrentRoom(kin)}}>{kin[1]}</div>) : 
+            this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => {this.setCurrentRoom(kin)}}>{kin[1]}</div>) : 
             null}
           </div>
           <div className="kin-current-chat">{this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}</div>
