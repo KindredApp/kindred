@@ -21,7 +21,7 @@ class Account extends React.Component {
 
   render() {
     return (
-      <div className="landing-container">
+      <div className="account-container">
         <NavLoggedIn/>
         <AccountMenu handleViewSelection={this.handleViewSelection}/>
         { this.state.currentView === "account" && <AccountInfo/> }
