@@ -36,47 +36,41 @@ class QotdAnswerOptions extends React.Component {
       var data = Object.values(nextprops.qotdAnswerList[nextprops.firstQotdAns]);
     }
       window.chart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         options: {
           responsive: true,
           maintainAspectRatio: true
         },
         data: {
           labels: labels,
-          datasets: [
-              {
-                  data: data,
-                  backgroundColor: [
-                      "#004740",
-                      "#6DD0C5",
-                      "#00C7B1",
-                      "#009484",
-                      "#013B47",
-                      "#017B94",
-                      "#285761",
-                      "#017A94",
-                      "#02C0E0",
-                      "#004740",
-                      "#6DD0C5",
-                      "#00C7B1",
-                      "#009484"
-                  ],
-                  hoverBackgroundColor: [
-                      "#004740",
-                      "#6DD0C5",
-                      "#00C7B1",
-                      "#009484",
-                      "#013B47",
-                      "#017B94",
-                      "#285761",
-                      "#017A94",
-                      "#02C0E0",
-                      "#004740",
-                      "#6DD0C5",
-                      "#00C7B1",
-                      "#009484"
-                  ]
-              }]
+          datasets: [{
+            data: data,
+            backgroundColor: [
+              '#A5AFE5',          
+              '#636989',
+              '#42465C',
+              '#747BA0',
+              '#42465C',
+              '#C2CBFB',
+              '#535873',
+              '#C9D1FC',
+              '#848CB7',
+              '#959ECE'
+
+            ],
+            hoverBackgroundColor: [
+              '#A5AFE5',          
+              '#636989',
+              '#42465C',
+              '#747BA0',
+              '#42465C',
+              '#C2CBFB',
+              '#535873',
+              '#C9D1FC',
+              '#848CB7',
+              '#959ECE'
+            ]
+          }]
         }
       });
   }

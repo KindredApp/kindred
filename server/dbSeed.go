@@ -67,7 +67,7 @@ var questions = [20]Qotd{
 	Qotd{
 		QuestionType: "options",
 		Category:     "personal",
-		Text:         "where do you get the majority of your morals from?",
+		Text:         "Where do you get the majority of your morals from?",
 	},
 	Qotd{
 		QuestionType: "options",
