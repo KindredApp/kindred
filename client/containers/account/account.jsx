@@ -2,7 +2,6 @@ import React from 'react';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
 import AccountMenu from './accountMenu.jsx';
 import AccountInfo from './accountInfo.jsx';
-// import KinMap from './kinMap.jsx';
 import '../../styles/index.css';
 
 class Account extends React.Component {
