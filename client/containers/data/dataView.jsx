@@ -23,7 +23,9 @@ class DataView extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
-    this.setState({question: Object.keys(nextprops.stateData)[0]});
+    if (nextprops.stateData) {
+      this.setState({question: Object.keys(nextprops.stateData)[0]});
+    }
   }
 
   render() {
