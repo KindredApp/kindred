@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
+import KinMessage from './kinMessage.jsx';
 
 
 
@@ -11,37 +12,61 @@ class KinList extends Component {
     super(props);
 
     this.state = {
-      identity: ''
+      identity: '',
+      kinList: false,
+      currentMessageRoom: false
     };
 
     this.getKin = this.getKin.bind(this);
+    this.setCurrentRoom = this.setCurrentRoom.bind(this);
     if (this.props.user) {
       this.getKin();
     }
   }
 
   componentDidUpdate() {
-    this.getKin();
+    if (!this.state.kinList) {
+      this.getKin();
+    }
   }
  
-
   getKin () {
     if (this.props.user) {
       console.log('getKin triggered');
       let db = this.props.firebaseInstance;
       let userKin = db.ref('users/' + this.props.user.userObj.Username);
       userKin.once('value').then((snapshot) => {
-        console.log(snapshot.val());
+        let kinList = snapshot.val(), kinListArr = [];
+        for (let key in kinList) {
+          if (key) {
+            kinListArr.push([key, kinList[key]])
+          }
+        }
+        this.setState({
+          kinList: kinListArr
+        })
       });
-
-      
     }
   }
 
-
+  setCurrentRoom(kin) {
+    this.setState({
+      currentMessageRoom: kin[0]
+    }, () => {
+    });
+  }
 
   render () {
-    return (<div>kin hello</div>);
+    return (
+      <div>
+        <div>
+          {this.state.kinList ? 
+          this.state.kinList.map(kin => <div key={kin} onClick={() => {this.setCurrentRoom(kin)}}>{kin[1]}</div>) : 
+          null}
+        </div>
+        <div className="kindred-current-message">{this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}</div>
+      </div>
+    );
   }
 }
 
