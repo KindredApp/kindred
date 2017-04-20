@@ -159,6 +159,10 @@ class Survey extends React.Component {
     this.checkToken();
   }
 
+  componentWillReceiveProps(nextprops) {
+    console.log('coming from account page? ', nextprops.surveyFromAccountPage);
+  }
+
   _formatResponse (string) {
     let map = {}, o = string.replace(/(["\\{}])/g, '').split(',');
     o.forEach((v) => {
@@ -187,12 +191,14 @@ class Survey extends React.Component {
   }
 
   checkVisits() {
+    console.log('props available in checkVisits ', this.props);
     let cookie = Cookies.getJSON();
     for (let key in cookie) {
       if (key !== 'pnctest') {
         instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
-          response.data === 'true' ? this.setState({ redirect: true }) : this.setState({ redirect: false});
+          console.log('response from checkvisits: ', response.data);
+          response.data === 'true' && !this.props.surveyFromAccountPage ? this.setState({ redirect: true }) : this.setState({ redirect: false});
         }).catch((error) => { console.log('Check visits error', error); });
       }
     }
@@ -303,7 +309,8 @@ class Survey extends React.Component {
 function mapStateToProps (state) {
   return {
     user: state.userReducer,
-    firebaseInstance: state.firebaseReducer
+    firebaseInstance: state.firebaseReducer,
+    surveyFromAccountPage: state.surveyFromAccountPage
   };
 }
 

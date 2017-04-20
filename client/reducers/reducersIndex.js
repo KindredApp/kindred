@@ -13,7 +13,8 @@ const allReducers = combineReducers({
   stateDataReducer: stateData,
   topoData: topoData,
   dataChoice: dataChoice,
-  qotdList: qotdList
+  qotdList: qotdList,
+  surveyFromAccountPage: surveyFromAccountPage,
 });
 
 export default allReducers;
