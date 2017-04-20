@@ -37,9 +37,7 @@
   flex-direction: column;
   background: #6288c5; /* fallback for old browsers */
   background: -webkit-linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
-  background-image: -webkit-linear-gradient(to bottom right, #1e3c72, #325BC5, #5177CA, #6288C8); 
   background: linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
-  background-image: linear-gradient(to bottom right, #1e3c72, #325BC5, #5177CA, #6288C8); 
   background-color: #1e3c72;
   /*-webkit-filter: blur(1px);
   filter: blur(1px);*/
