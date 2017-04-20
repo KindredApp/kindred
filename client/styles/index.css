@@ -335,6 +335,10 @@ input.qotd-submit-button {
   width: 80%;
 }
 
+input#zip-input {
+  width: 80%;
+}
+
 .survey-card {
   height: 450px;
   width: 700px;
@@ -345,6 +349,8 @@ input.qotd-submit-button {
 }
 
 .survey-section {
+  min-width: 350px;
+  min-height: 450px;
   border-radius: 5px;
   height: 100%;
   width: 50%;
@@ -391,8 +397,8 @@ button.survey-btn.ant-btn:hover{
   justify-content: center;
   align-items: center;
   font-family: 'Lato', sans-serif;
-  font-style: bold;
-  font-size: 18px;
+  font-weight: bold;
+  font-size: 20px;
   color: white;
 }
 

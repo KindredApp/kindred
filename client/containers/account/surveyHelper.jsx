@@ -48,7 +48,7 @@ const handleZipChange = (value) => {
 
 const Option = Select.Option;
 
-const Zip = (<Input onChange={e => handleZipChange(e.target.value)} className="input-bar" placeholder="What is your zip code?" />);
+const Zip = (<Input onChange={e => handleZipChange(e.target.value)} id="zip-input" className="input-bar" placeholder="What is your zip code?" />);
 
 const Age = (<InputNumber className="input-bar" onChange={e => handleAgeChange(e)} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
 
