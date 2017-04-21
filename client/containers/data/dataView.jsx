@@ -11,6 +11,7 @@ import QotdAnswerOptions from './qotdAnswerOptions.jsx';
 import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 import {actionDataByAnswers} from '../../actions/actionDataByAnswers.js';
 import QotdFilter from './pastQotdsFilter.jsx';
+import {actionQuestionOrFilter} from '../../actions/actionQuestionOrFilter.js';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
@@ -30,6 +31,7 @@ class DataView extends React.Component {
     if (nextprops.stateData && !nextprops.questionChoice && this.state.setFirst) {
       this.setState({setFirst: false})
       nextprops.actionQuestionSelect(Object.keys(nextprops.stateData)[0]);
+      nextprops.actionQuestionOrFilter('question');
     }
   }
 
@@ -61,7 +63,12 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionQotdData: actionQotdData, actionQuestionSelect: actionQotdDataSelect, actionDataByAnswers: actionDataByAnswers}, dispatch);
+  return bindActionCreators({ 
+    actionQotdData: actionQotdData, 
+    actionQuestionSelect: actionQotdDataSelect, 
+    actionDataByAnswers: actionDataByAnswers,
+    actionQuestionOrFilter: actionQuestionOrFilter
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataView);
