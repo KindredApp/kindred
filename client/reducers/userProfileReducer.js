@@ -45,7 +45,11 @@ export default function (state = null, action) {
         }
       }
     }
-    return parsedProfile;
+    let profileArr = [];
+    for (let key in parsedProfile) {
+      profileArr.push([key, parsedProfile[key]]);
+    }
+    return profileArr;
     break;
   }
   return state;

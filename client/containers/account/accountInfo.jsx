@@ -13,15 +13,6 @@ class AccountInfo extends React.Component {
     this.state = {};
     this.deleteAccount = this.deleteAccount.bind(this);
     this.editAccount = this.editAccount.bind(this);  
-    this._profileToMappableArray = this._profileToMappableArray.bind(this);
-  }
-
-  _profileToMappableArray(profileObj) {
-    let profileArr = [];
-    for (let key in profileObj) {
-      profileArr.push([key, profileObj[key]]);
-    }
-    return profileArr;
   }
 
   deleteAccount() {
@@ -41,7 +32,7 @@ class AccountInfo extends React.Component {
         { this.props.surveyFromAccountPage ? <Redirect to="/survey" /> : null }
         <button id="deleteAccount" onClick={this.deleteAccount}>Delete Account</button>
         <button id="editAccount" onClick={this.editAccount}>Edit Profile</button>
-        {this._profileToMappableArray(this.props.userProfile).map((field, i) => {
+        {this.props.userProfile.map((field, i) => {
           return (
             <div className="review-field" key={field[0]}>
               <span className="review-field-name">{field[0]}</span>
