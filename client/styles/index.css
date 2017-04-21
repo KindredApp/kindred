@@ -540,8 +540,8 @@ input.input-bar.input-select,
 .review-input-container {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  /*justify-content: center;*/
+  /*flex-direction: column;*/
+  justify-content: center;
   align-items: center;
 }
 .review-input {
@@ -554,7 +554,7 @@ input.input-bar.input-select,
 }
 
 .review-input-header {
-  color: #6288c5;
+  color:orangered;
   font-style: bold;
   width: 40%;
   display: flex;
@@ -569,9 +569,9 @@ input.input-bar.input-select,
   align-items: center;
 }
 
-.review-input {
-  margin: 10px 0;
-}
+/*.review-input {
+  margin: 0 0 10px 0;
+}*/
 
 .welcome-message {
   font-size: 14px;

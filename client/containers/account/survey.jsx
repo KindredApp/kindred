@@ -2,6 +2,7 @@ import React from 'react';
 import {bindActionCreators} from 'redux';
 import {actionUser} from '../../actions/actionUser.js';
 import {actionSurveyFromAccountPage} from '../../actions/actionSurveyFromAccountPage.js';
+import {actionSetUserProfile} from '../../actions/actionSetUserProfile.js';
 import {connect} from 'react-redux';
 import { Redirect, Link } from 'react-router-dom'; 
 import Cookies from 'js-cookie';
@@ -80,50 +81,7 @@ const optionalInformation = (
     </div>
   </div>
 );
-
-const overview = (
-  <div className="input-container">
-    <div className="review-input-container">
-      <div className="review-input">
-        <div className="review-input-header">Age</div>
-        <div className="review-input-result">{Helper.userData.Age || 'empty'}</div>
-      </div>
-      <div className="review-input">
-        <div className="review-input-header">Gender</div>
-        <div className="review-input-result">{Helper.userData.Gender || 'empty'}</div>
-      </div>
-      <div className="review-input">
-        <div className="review-input-header">Ethnicity</div>
-        <div className="review-input-result">{Helper.userData.Ethnicity || 'empty'}</div>
-      </div>
-      <div className="review-input">
-        <div className="review-input-header">Income</div>
-        <div className="review-input-result">{Helper.userData.Income || 'empty'}</div>
-      </div>
-      <div className="review-input">
-        <div className="review-input-header">Education</div>
-        <div className="review-input-result">{Helper.userData.Education || 'empty'}</div>
-      </div>
-      <div className="review-input">
-        <div className="review-input-header">Religiousity</div>
-        <div className="review-input-result">{Helper.userData.Religiousity || 'empty'}</div>
-      </div>
-      <div className="review-input">
-        <div className="review-input-header">Religion</div>
-        <div className="review-input-result">{Helper.userData.Religion || 'empty'}</div>
-      </div>
-      <div className="review-input">
-        <div className="review-input-header">State</div>
-        <div className="review-input-result">{Helper.userData.State || 'empty'}</div>
-      </div>
-      <div className="review-input">
-        <div className="review-input-header">Party</div>
-        <div className="review-input-result">{Helper.userData.Party || 'empty'}</div>
-      </div>
-    </div>
-  </div>
-);
-
+     
 const steps = [{
   title: 'Account Creation',
   content: welcome,
@@ -162,6 +120,10 @@ class Survey extends React.Component {
 
   componentDidMount() {
     this.checkToken();
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    console.log("next props are", nextProps);
   }
 
   _formatResponse (string) {
@@ -258,6 +220,7 @@ class Survey extends React.Component {
   }
   
   next() {
+    console.log(this.state.current);
     const current = this.state.current + 1;
     let accountInfo = [];
 
@@ -270,6 +233,10 @@ class Survey extends React.Component {
       userData: accountInfo
      }, () => {
        console.log("user data in state is", this.state.userData);
+       if (this.state.current === 3) {
+         console.log('using action creator');
+         this.props.actionSetUserProfile(this.state.userData);
+       }
      });
   }
   prev() {
@@ -280,14 +247,18 @@ class Survey extends React.Component {
   render () {
     const accountOverview = (
       <div>
-      {this.state.userData.map((v) => {
-        return (
-          <div>
-            <div>{v[0]}</div>
-            <div>{v[1]}</div>
-          </div>
-        )
-      })}
+      {this.props.accountOverviewProfile ? this.props.accountOverviewProfile.map((v) => {
+        if (v[0] !== 'Username') {
+          return (
+            <div className="review-input-container">
+              <div className="review-input">
+                <div className="review-input-header">{v[0]}</div>
+                <div className="review-input-result">{v[1]}</div>
+              </div>
+            </div>
+          )
+        }
+      }) : null}
       </div>
     )
     const { current } = this.state;
@@ -340,12 +311,17 @@ function mapStateToProps (state) {
   return {
     user: state.userReducer,
     firebaseInstance: state.firebaseReducer,
-    surveyFromAccountPage: state.surveyFromAccountPage
+    surveyFromAccountPage: state.surveyFromAccountPage,
+    accountOverviewProfile: state.userProfileReducer
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionUser: actionUser, actionSurveyFromAccountPage: actionSurveyFromAccountPage}, dispatch);
+  return bindActionCreators({ 
+    actionUser: actionUser, 
+    actionSurveyFromAccountPage: actionSurveyFromAccountPage,
+    actionSetUserProfile: actionSetUserProfile
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Survey);
