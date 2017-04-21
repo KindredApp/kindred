@@ -110,11 +110,23 @@ class Video extends React.Component {
     this.checkToken();
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    if (this.state.component === 'loading') {
+      let videoContainerClasses = document.getElementById('video-container').classList;
+      if (videoContainerClasses.contains('video-container-two') && nextState.component === 'qotd') {
+        videoContainerClasses.remove('video-container-two');
+        videoContainerClasses.add('video-container');
+      }
+    }
+  }
+
   componentWillMount() {
 
     window.addEventListener('beforeunload', (e) => {
+      let tempObj = this.props.user.userObj;
+      tempObj.ID = 0;
       instance.goInstance.post('api/queueRemove', {
-        userProfile: this.props.user.userObj
+        userProfile: tempObj
       }).then((res) => {
         console.log('removed from queue');
       });
@@ -134,8 +146,10 @@ class Video extends React.Component {
   }
 
   componentWillUnmount() {
+    let tempObj = this.props.userObj;
+    tempObj.ID = 0;
     instance.goInstance.post('api/queueRemove', {
-      userProfile: this.props.user.userObj
+      userProfile: tempObj
     }).then((response) => {
       console.log('removed from queue');
     });
@@ -258,6 +272,9 @@ class Video extends React.Component {
   }
 
   submitQOTDAnswer(e) {
+    let videoContainerClasses = document.getElementById('video-container').classList;
+    videoContainerClasses.remove('video-container');
+    videoContainerClasses.add('video-container-two');
     e.preventDefault();
     // axios.post('/api/qotd', JSON.stringify
     //   ({
@@ -296,6 +313,7 @@ class Video extends React.Component {
     var tracks = Array.from(participant.tracks.values());
     this.detachTracks(tracks);
   }
+
   leaveRoom() {
     if (this.state.roomInstance) {
       this.state.roomInstance.disconnect();
@@ -303,8 +321,14 @@ class Video extends React.Component {
         console.log('room removed from rooms queue');
       });
       this.setState({
-        roomInstance: false
+        roomInstance: false,
+        component: 'qotd',
+        roomFound: null,
+        activeRoom: '',
+        roomCount: 0,
+        inQueue: false
       });
+      this.leaveLoading();
     }
   }
 
@@ -436,6 +460,7 @@ class Video extends React.Component {
                   });
                 }
                 //add yourself to queue only if inQueue state is false // set state to true
+                console.log('status of inqueue is', this.state.inQueue);
                 if (!this.state.inQueue) {
                   console.log('this.props.user.userObj is', this.props.user.userObj);
                   this.props.user.userObj.Username = this.state.identity;
@@ -519,7 +544,21 @@ class Video extends React.Component {
           let videoContainer = document.getElementById('remote-media');
           this.attachParticipantTracks(participant, videoContainer);
         });
-        
+
+        room.on('disconnected', room => {
+          // Detach the local media elements
+          room.localParticipant.tracks.forEach(track => {
+            var attachedElements = track.detach();
+            attachedElements.forEach(element => element.remove());
+          });
+          if (this.state.roomInstance) {
+            this.state.roomInstance.disconnect();
+            this.setState({
+              roomInstance: false,
+              inQueue: false
+            })
+          }
+        });
 
         room.on('participantConnected', (participant) => {
           let videoContainer = document.getElementById('remote-media');
@@ -575,14 +614,18 @@ class Video extends React.Component {
     );
 
     const leaveQueueButton = (
-      <div>
+      <div className="searching-button-container">
         <Button type='primary' onClick={() => {
           console.log('clicked leave');
           this.setState({
-            leaveQueue: true
+            leaveQueue: true,
+            inQueue: false
           });
+          console.log('person to leave queue is', this.props.user.userObj)
+          var tempObj = this.props.user.userObj;
+          tempObj.ID = 0;
           instance.goInstance.post('api/queueRemove', {
-            userProfile: this.props.user.userObj
+            userProfile: tempObj
           }).then((response) => {
             console.log('removed from queue');
           });
