@@ -37,6 +37,7 @@ class DataView extends React.Component {
         <div className="dataPageContainer">
           <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : null}</div>
           <QotdList />
+          <br/>
           <QotdFilter />
           <div id="mapAnswers">
             <QotdAnswerOptions />
