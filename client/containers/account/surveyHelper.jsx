@@ -1,6 +1,6 @@
 import React from 'react';
 import { Select, Steps, Button, Input, InputNumber } from 'antd';
-import Survey from './survey.jsx'
+import Survey from './survey.jsx';
 
 let userData = {
   Age: 25
@@ -110,20 +110,20 @@ const Education = (
   <Select
     showSearch
     className="input-bar"
-    placeholder="What is your level of education?"
+    placeholder="What is the highest level of education you completed?"
     optionFilterProp="children"
     onChange={handleEducationChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='1 Elementary'>Elementary</Option>
-    <Option value='2 Some secondary'>Some secondary (Middle or High school)</Option>
-    <Option value='3 Secondary'>Completed secondary</Option>
-    <Option value='4 Some college'>Some college</Option>
-    <Option value='5 Associate'>Associate degree (2 year college)</Option>
-    <Option value='6 Bachelor'>Bachelor's degree (4 year college)</Option>
-    <Option value='7 Master'>Master's degree</Option>
-    <Option value='8 Doctorate'>Doctorate or professional degree</Option>
-    <Option value='9 Home'>I was home schooled</Option>
+    <Option value='1 Elementary'>Elementary School</Option>
+    <Option value='2 Middle School'>Middle School</Option>
+    <Option value='3 High School'>High School</Option>
+    <Option value='4 College'>College (4 year degree)</Option>
+    <Option value='5 Associate'>Associate degree (2 year degree)</Option>
+    <Option value='6 Master'>Master's degree</Option>
+    <Option value='7 Doctorate'>Professional or doctorate degree</Option>
+    <Option value='8 Home School'>I was home schooled</Option>
+    <Option value='9 None'>None</Option>
     <Option value='10 Other'>Other</Option>
   </Select>
 );
@@ -166,7 +166,7 @@ const Religion = (
     <Option value='5 Hinduism'>Hindu</Option>
     <Option value='6 Islam'>Islamic</Option>
     <Option value='7 Jewish'>Jewish</Option>
-    <Option value='8 Other structured'>Other structured religion</Option>
+    <Option value='8 Other organized'>Other organized religion</Option>
     <Option value='9 Other'>Other</Option>
   </Select> 
 );
