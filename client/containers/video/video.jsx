@@ -146,7 +146,7 @@ class Video extends React.Component {
   }
 
   componentWillUnmount() {
-    let tempObj = this.props.userObj;
+    let tempObj = this.props.user.userObj;
     tempObj.ID = 0;
     instance.goInstance.post('api/queueRemove', {
       userProfile: tempObj
