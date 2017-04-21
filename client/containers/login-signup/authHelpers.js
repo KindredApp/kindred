@@ -1,8 +1,6 @@
 import Cookies from 'js-cookie';
 import instance from '../../config.js';
 
-// component in which this is used needs state variable "unauthorized: null"
-  // and bind this function to 'this' in constructor
 function checkVisits() {
   let cookie = Cookies.getJSON();
   for (let key in cookie) {
@@ -35,18 +33,3 @@ export default function checkToken() {
     this.setState({ unauthorized: true });
   }
 }
-
-// export default checkTokenOnMounting() {
-//   let cookies = Cookies.getJSON();
-//   for (var key in cookies) {
-//     if (key !== 'pnctest') {
-//       this.setState({
-//         cookie: {
-//           Username: cookies[key].Username,
-//           Token: cookies[key].Token
-//         }
-//       });
-//     }
-//   } 
-//   this.checkToken();
-// }
