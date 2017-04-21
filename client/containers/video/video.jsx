@@ -258,6 +258,9 @@ class Video extends React.Component {
   }
 
   submitQOTDAnswer(e) {
+    let videoContainerClasses = document.getElementById('video-container').classList;
+    videoContainerClasses.remove('video-container');
+    videoContainerClasses.add('video-container-two');
     e.preventDefault();
     // axios.post('/api/qotd', JSON.stringify
     //   ({

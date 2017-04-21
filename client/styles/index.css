@@ -290,8 +290,9 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
 }
 
 .video-container {
+  transition: all 0.3s ease-in-out;
   border-radius: 5px;
-  min-width: 500px;
+  min-width: 525px;
   min-height: 160px;
   width: 40%;
   height: 50%;
@@ -305,11 +306,12 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
 }
 
 .video-container-two {
+  transition: all 0.3s ease-in-out;
   border-radius: 5px;
-  min-width: 700px;
-  min-height: 400px;
-  width: 60%;
-  height: 80%;
+  min-width: 525px;
+  min-height: 160px;
+  width: 40%;
+  height: 70%;
   display: flex;
   flex-direction: column-reverse;
   justify-content: space-around;
@@ -357,6 +359,7 @@ div#remote-media video {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 0 5px;
 }
 
 .question-of-the-day {
@@ -386,7 +389,7 @@ div#remote-media video {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  box-shadow: 0px 5px 4px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 5px 2px 0px rgba(0,0,0,0.1);
   padding: 0 0 10px 0;
 }
 
@@ -422,8 +425,8 @@ input.qotd-submit-button:hover {
   align-items: center;
   flex-direction: column;
   background: #6288c5; 
-  background: -webkit-linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
-  background: linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
+  /*background: -webkit-linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
+  background: linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); */
 }
 
 
