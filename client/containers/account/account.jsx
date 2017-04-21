@@ -9,15 +9,16 @@ import {connect} from 'react-redux';
 import {actionSetUserProfile} from '../../actions/actionSetUserProfile.js';
 import '../../styles/index.css';
 
-// https://medium.com/@rajaraodv/securing-react-redux-apps-with-jwt-tokens-fcfe81356ea0
 class Account extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
       unauthorized: null,
     };
-    this.props.actionSetUserProfile(this.props.user.userObj);
     this.checkToken = checkToken.bind(this);
+    if (this.props.user) {
+      this.props.actionSetUserProfile(this.props.user.userObj);
+    }
   }
 
   componentDidMount() {
@@ -41,7 +42,7 @@ class Account extends React.Component {
         <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/survey"/> : null : null}</div>
         <NavLoggedIn/>
         <div className="survey-container">
-          <AccountInfo/>
+          {this.props.user ? <AccountInfo/> : null}
         </div>
       </div>
     );
@@ -50,9 +51,7 @@ class Account extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    user: state.userReducer,
-    surveyFromAccountPage: state.surveyFromAccountPage,
-    userProfileReducer: state.userProfileReducer
+    user: state.userReducer
   };
 }
 
