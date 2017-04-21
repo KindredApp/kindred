@@ -123,7 +123,7 @@ class Survey extends React.Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    console.log("next props are", nextProps);
+    console.log('next props are', nextProps);
   }
 
   _formatResponse (string) {
@@ -163,7 +163,7 @@ class Survey extends React.Component {
           console.log('response from checkvisits: ', response.data);
           if (response.data === 'true' && !this.props.surveyFromAccountPage) {
             this.props.actionSurveyFromAccountPage(false);
-            this.setState({ redirect: true }) ;
+            this.setState({ redirect: true });
           } else {
             this.props.actionSurveyFromAccountPage(false);
             this.setState({ redirect: false});     
@@ -225,19 +225,19 @@ class Survey extends React.Component {
     let accountInfo = [];
 
     for (let key in Helper.userData) {
-      accountInfo.push([[key], [Helper.userData[key]]])
+      accountInfo.push([[key], [Helper.userData[key]]]);
     }
 
     this.setState({ 
       current: current,
       userData: accountInfo
-     }, () => {
-       console.log("user data in state is", this.state.userData);
-       if (this.state.current === 3) {
-         console.log('using action creator');
-         this.props.actionSetUserProfile(this.state.userData);
-       }
-     });
+    }, () => {
+      console.log('user data in state is', this.state.userData);
+      if (this.state.current === 3) {
+        console.log('using action creator');
+        this.props.actionSetUserProfile(this.state.userData);
+      }
+    });
   }
   prev() {
     const current = this.state.current - 1;
@@ -250,17 +250,17 @@ class Survey extends React.Component {
       {this.props.accountOverviewProfile ? this.props.accountOverviewProfile.map((v) => {
         if (v[0] !== 'Username') {
           return (
-            <div className="review-input-container">
+            <div className="review-input-container" key = {v[0]}>
               <div className="review-input">
                 <div className="review-input-header">{v[0]}</div>
                 <div className="review-input-result">{v[1]}</div>
               </div>
             </div>
-          )
+          );
         }
       }) : null}
       </div>
-    )
+    );
     const { current } = this.state;
     return (
       <div className="survey-container">
