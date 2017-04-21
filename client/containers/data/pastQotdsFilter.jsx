@@ -1,11 +1,11 @@
 import React from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 import {actionQotdList} from '../../actions/actionQotdList.js';
 import { Menu, Dropdown, Icon, message } from 'antd';
 const SubMenu = Menu.SubMenu;
 import {actionFilterData} from '../../actions/actionFilterData.js';
+import {actionQuestionOrFilter} from '../../actions/actionQuestionOrFilter.js';
 
 class QotdFilter extends React.Component {
   constructor(props) {
@@ -29,6 +29,7 @@ class QotdFilter extends React.Component {
 
   onClick ({ key }) {
     this.filterData(this.props.dataByAnswers, this.props.questionChoice, key);
+    this.props.actionQuestionOrFilter('filter');
   }
 
   filterData (data, question, selected) {
@@ -44,7 +45,6 @@ class QotdFilter extends React.Component {
           res[ans.AnswerText] ? res[ans.AnswerText]++ : res[ans.AnswerText] = 1;
         }
       });
-      console.log('Data transformed: ', res);
       this.props.actionFilterData(res);
     }
   }
@@ -108,11 +108,11 @@ class QotdFilter extends React.Component {
 }
 
 function mapStateToProps (state) {
-  return {dataByAnswers: state.dataByAnswers, questionChoice: state.dataChoice.questionData};
+  return {dataByAnswers: state.dataByAnswers, questionChoice: state.dataChoice};
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({actionFilterData: actionFilterData}, dispatch);
+  return bindActionCreators({actionFilterData: actionFilterData, actionQuestionOrFilter: actionQuestionOrFilter}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(QotdFilter);

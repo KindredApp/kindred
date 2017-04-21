@@ -1,8 +1,8 @@
 export default function (state = null, action) {
   switch (action.type) {
-  case 'QOTD_SELECTED':
+  case 'QUESTION_OR_FILTER':
     return action.payload;
     break;
   }
   return state;
-} 
+}

@@ -23,13 +23,12 @@ class QotdAnswerOptions extends React.Component {
   }
   
   componentWillReceiveProps(nextprops) {
-    // console.log('this is it here', nextprops.filterData)
     var canvas = document.getElementById("pieChart");
     var ctx = canvas.getContext("2d");
     if (window.chart) {
       window.chart.destroy();
     }
-    if (nextprops.filterData) {
+    if (nextprops.questionOrFilter === 'filter') {
       var labels = Object.keys(nextprops.filterData);
       var data = Object.values(nextprops.filterData);
     } else if (nextprops.qotdAnswerList && nextprops.questionChoice) {
@@ -88,9 +87,10 @@ class QotdAnswerOptions extends React.Component {
 function mapStateToProps (state) {
   return {
     qotdAnswerList: state.qotdAnswerOptionReducer,
-    questionChoice: state.dataChoice.questionData,
+    questionChoice: state.dataChoice,
     stateData: state.stateDataReducer,
-    filterData: state.filterData
+    filterData: state.filterData,
+    questionOrFilter: state.questionOrFilter
   };
 }
 

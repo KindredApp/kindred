@@ -108,7 +108,7 @@ function mapStateToProps (state) {
   return {
     stateData: state.stateDataReducer,
     topoData: state.topoData,
-    questionChoice: state.dataChoice.questionData
+    questionChoice: state.dataChoice
   };
 }
 
