@@ -9,6 +9,8 @@ import DataMap from './dataMap.jsx';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
 import QotdAnswerOptions from './qotdAnswerOptions.jsx';
 import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
+import {actionDataByAnswers} from '../../actions/actionDataByAnswers.js';
+import QotdFilter from './pastQotdsFilter.jsx';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
@@ -18,6 +20,7 @@ class DataView extends React.Component {
     instance.goInstance.get('/api/qotd?q=data')
     .then((response) => {
       this.props.actionQotdData(response);
+      this.props.actionDataByAnswers(response);
     });
   }
 
@@ -34,6 +37,7 @@ class DataView extends React.Component {
         <div className="dataPageContainer">
           <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : null}</div>
           <QotdList />
+          <QotdFilter />
           <div id="mapAnswers">
             <QotdAnswerOptions />
             <DataMap/>
@@ -47,12 +51,13 @@ class DataView extends React.Component {
 function mapStateToProps (state) {
   return {
     questionChoice: state.dataChoice.questionData,
-    stateData: state.stateDataReducer
+    stateData: state.stateDataReducer,
+    dataByAnswers: state.dataByAnswersReducer
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionQotdData: actionQotdData, actionQuestionSelect: actionQotdDataSelect}, dispatch);
+  return bindActionCreators({ actionQotdData: actionQotdData, actionQuestionSelect: actionQotdDataSelect, actionDataByAnswers: actionDataByAnswers}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataView);
