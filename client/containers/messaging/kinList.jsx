@@ -42,12 +42,12 @@ class KinList extends Component {
         let kinList = snapshot.val(), kinListArr = [];
         for (let key in kinList) {
           if (key) {
-            kinListArr.push([key, kinList[key]])
+            kinListArr.push([key, kinList[key]]);
           }
         }
         this.setState({
           kinList: kinListArr
-        })
+        });
       });
     }
   }
@@ -64,7 +64,7 @@ class KinList extends Component {
       currentSelectionClasses.add('chat-name-click');
       let oldSelectionClasses = document.getElementById(this.state.previousChat).classList;
       oldSelectionClasses.remove('chat-name-click');
-      console.log("state of current message room is", this.state.currentMessageRoom)
+      console.log('state of current message room is', this.state.currentMessageRoom);
     });
   }
 
@@ -77,7 +77,7 @@ class KinList extends Component {
           <div className="chat-container">
             <div className="kin-list">
               {this.state.kinList ? 
-              this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => {this.setCurrentRoom(kin)}}>{kin[1]}</div>) : 
+              this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => { this.setCurrentRoom(kin); }}>{kin[1]}</div>) : 
               null}
             </div>
             <div className="kin-current-chat">{this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}</div>

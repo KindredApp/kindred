@@ -99,7 +99,6 @@ class Root extends Component {
             <Route path="/data" component={DataView} />
             <Route path="/aboutus" component={AboutPage} />
             <Route path="/kin" component={KinList} />
-            <Route path="*" component={NotFound} />
           </div>
         </Router>
     </div>
