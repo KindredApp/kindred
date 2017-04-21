@@ -765,6 +765,7 @@ func qotdHandler(db *gorm.DB, p *pool.Pool, qotdCounter *int) http.Handler {
 		} else {
 			// post user qotd answer to db
 			var newAnswer QotdAnswer
+			var oldAnswer QotdAnswer
 			var user UserAuth
 			var questionAnswered Qotd
 			var responseString string
@@ -777,9 +778,14 @@ func qotdHandler(db *gorm.DB, p *pool.Pool, qotdCounter *int) http.Handler {
 			db.Model(&newAnswer).Related(&questionAnswered)
 			db.Model(&newAnswer).Related(&user)
 			if questionAnswered.ID != 0 && user.ID != 0 {
-				db.NewRecord(newAnswer)
-				db.Create(&newAnswer)
-				responseString = "Answer successfully posted to db"
+				db.Where(&QotdAnswer{UserAuthID: user.ID, QotdID: questionAnswered.ID}).First(&oldAnswer)
+				if &oldAnswer == nil {
+					db.NewRecord(newAnswer)
+					db.Create(&newAnswer)
+				} else {
+					db.Model(&oldAnswer).Update("text", newAnswer.Text)
+				}
+				responseString = "Answer successfully posted or updated in db"
 			} else {
 				responseString = "Failed to post answer. Incorrect user or question id."
 			}
