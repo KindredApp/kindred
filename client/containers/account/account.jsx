@@ -2,38 +2,42 @@ import React from 'react';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
 import AccountMenu from './accountMenu.jsx';
 import AccountInfo from './accountInfo.jsx';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {actionSetUserProfile} from '../../actions/actionSetUserProfile.js';
 import '../../styles/index.css';
 
 class Account extends React.Component {
   constructor (props) {
     super (props);
-    this.state = {
-      currentView: "history"
-    };
+    this.state = {};
     this.handleViewSelection = this.handleViewSelection.bind(this);
+    this.props.actionSetUserProfile(this.props.user.userObj);
+      
   }
-
-  handleViewSelection ({ key }) {
-    console.log('click ', key);
-    this.setState({ currentView: key });
-  }
-
-
+  
   render() {
     return (
-      <div className="account-top-container">
+      <div className="account-container">
         <NavLoggedIn/>
-        <div className="account-container">
-          <div id="account-menu">
-            <AccountMenu handleViewSelection={this.handleViewSelection}/>
-          </div>
-          <div className="account-content-container"> 
-            { this.state.currentView === "account" && <AccountInfo/> }
-          </div>
+        <div className="survey-container">
+          <AccountInfo/>
         </div>
       </div>
     );
   }
 }
 
-export default Account;
+function mapStateToProps (state) {
+  return {
+    user: state.userReducer,
+    surveyFromAccountPage: state.surveyFromAccountPage,
+    userProfileReducer: state.userProfileReducer
+  };
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({actionSetUserProfile: actionSetUserProfile}, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Account);
