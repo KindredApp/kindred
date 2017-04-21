@@ -556,7 +556,7 @@ class Video extends React.Component {
             this.setState({
               roomInstance: false,
               inQueue: false
-            })
+            });
           }
         });
 
@@ -621,7 +621,7 @@ class Video extends React.Component {
             leaveQueue: true,
             inQueue: false
           });
-          console.log('person to leave queue is', this.props.user.userObj)
+          console.log('person to leave queue is', this.props.user.userObj);
           var tempObj = this.props.user.userObj;
           tempObj.ID = 0;
           instance.goInstance.post('api/queueRemove', {
