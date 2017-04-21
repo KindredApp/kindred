@@ -11,11 +11,10 @@ class Account extends React.Component {
   constructor (props) {
     super (props);
     this.state = {};
-    this.handleViewSelection = this.handleViewSelection.bind(this);
     this.props.actionSetUserProfile(this.props.user.userObj);
       
   }
-  
+
   render() {
     return (
       <div className="account-container">
