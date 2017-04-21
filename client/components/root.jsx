@@ -23,6 +23,7 @@ import * as firebase from 'firebase';
 import firebaseConfig from '../firebaseConfig.js';
 import Promise from 'bluebird';
 import KinList from '../containers/messaging/kinList.jsx';
+import NotFound from './404.jsx';
 
 const SignUpForm = Form.create()(SignUp);
 const LoginForm = Form.create()(Login);
@@ -98,6 +99,7 @@ class Root extends Component {
             <Route path="/data" component={DataView} />
             <Route path="/aboutus" component={AboutPage} />
             <Route path="/kin" component={KinList} />
+            <Route path="*" component={NotFound} />
           </div>
         </Router>
     </div>
