@@ -556,7 +556,7 @@ class Video extends React.Component {
             this.setState({
               roomInstance: false,
               inQueue: false
-            })
+            });
           }
         });
 
@@ -606,7 +606,7 @@ class Video extends React.Component {
 
     const RoomFoundComponent = (
       <div>
-        {!this.state.roomCount ? <Button type='primary' onClick={this.joinRoom}>Partner found! Click here to chat.</Button> : null}
+        {!this.state.roomCount ? <Button type='primary' loading={true} onClick={this.joinRoom}>Partner found! Click here to chat.</Button> : null}
         {this.state.roomCount ? <Button className="leave-room-button" type='primary' onClick={this.leaveRoom}>Leave room</Button> : null}
         {this.state.roomCount ? <Button className="kinnect-button" type='primary' onClick={this.connectUsers}>Kinnect *TM</Button> : null}
         {this.state.roomInstance === false ? <Redirect to="/video"/> : null}
@@ -621,7 +621,7 @@ class Video extends React.Component {
             leaveQueue: true,
             inQueue: false
           });
-          console.log('person to leave queue is', this.props.user.userObj)
+          console.log('person to leave queue is', this.props.user.userObj);
           var tempObj = this.props.user.userObj;
           tempObj.ID = 0;
           instance.goInstance.post('api/queueRemove', {
