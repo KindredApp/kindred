@@ -24,12 +24,24 @@ class QotdFilter extends React.Component {
     };
 
     this.onClick = this.onClick.bind(this);
+    this.convert = this.convert.bind(this);
     this.filterData = this.filterData.bind(this);
   }
 
   onClick ({ key }) {
     this.filterData(this.props.dataByAnswers, this.props.questionChoice, key);
-    this.props.actionQuestionOrFilter('filter');
+    this.props.actionQuestionOrFilter(this.convert(key));
+  }
+
+  convert(key) {
+    key = key.split('.');
+    let category = key[0];
+    let filter = key[1] - 1;
+    let res = this.state.fieldmap[category][filter];
+    if (category === 'Religiousity') {
+      category = 'Spirituality';
+    }
+    return `${category}: ${res}`;
   }
 
   filterData (data, question, selected) {

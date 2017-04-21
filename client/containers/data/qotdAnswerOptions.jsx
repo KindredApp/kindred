@@ -29,8 +29,7 @@ class QotdAnswerOptions extends React.Component {
     if (window.chart) {
       window.chart.destroy();
     }
-    console.log('QORF', nextprops.questionOrFilter)
-    if (nextprops.questionOrFilter === 'filter') {
+    if (nextprops.questionOrFilter !== 'question') {
       title = nextprops.questionOrFilter;
       var labels = Object.keys(nextprops.filterData);
       var data = Object.values(nextprops.filterData);
