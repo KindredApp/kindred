@@ -402,7 +402,7 @@ func queueRemoveHandler(p *pool.Pool) http.Handler {
 				panic(err)
 			}
 
-			log.Println("post to queue is:", p)
+			log.Println("post to queue from queue remove is:", p)
 
 			out, err := json.Marshal(p)
 			if err != nil {
@@ -476,7 +476,7 @@ func queueHandler(p *pool.Pool) http.Handler {
 				panic(err)
 			}
 
-			log.Println("post to queue is:", p)
+			log.Println("post to queue is from queue handler is:", p)
 
 			out, err := json.Marshal(p)
 			if err != nil {

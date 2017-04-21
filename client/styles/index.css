@@ -408,10 +408,11 @@ input.qotd-submit-button:hover {
   font-weight: bold;
 }
 
-/*queue-button {
-
-}*/
-
+.searching-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 /* ---- Survey ----- */
 
