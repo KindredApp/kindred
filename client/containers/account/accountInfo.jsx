@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {actionUser} from '../../actions/actionUser.js';
+import {actionSetUserProfile} from '../../actions/actionSetUserProfile.js';
 import {actionSurveyFromAccountPage} from '../../actions/actionSurveyFromAccountPage.js';
 import '../../styles/index.css';
 
@@ -11,10 +12,13 @@ class AccountInfo extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
-      redirectToSurvey: false
+      redirectToSurvey: false,
     };
     this.deleteAccount = this.deleteAccount.bind(this);
-    this.editAccount = this.editAccount.bind(this);
+    this.editAccount = this.editAccount.bind(this);  
+    // this.props.actionSetUserProfile(____);  
+    // console.log(this.props.userProfileReducer)
+
   }
 
   deleteAccount() {
@@ -30,6 +34,7 @@ class AccountInfo extends React.Component {
   }
 
   render() {
+    // console.log('userobj in account infor: ', this.props.user.userObj);
     return (
       <div className="landing-container">
         Delete Account
@@ -44,12 +49,13 @@ class AccountInfo extends React.Component {
 function mapStateToProps (state) {
   return {
     user: state.userReducer,
-    surveyFromAccountPage: state.surveyFromAccountPage
+    surveyFromAccountPage: state.surveyFromAccountPage,
+    userProfileReducer: state.userProfileReducer
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({actionSurveyFromAccountPage: actionSurveyFromAccountPage}, dispatch);
+  return bindActionCreators({actionSurveyFromAccountPage: actionSurveyFromAccountPage, actionSetUserProfile: actionSetUserProfile}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountInfo);
