@@ -17,7 +17,7 @@
 }
 
 .header-nav {
-  width: 150px;
+  width: 180px;
   display: flex;
   align-items: center;
 }
@@ -36,8 +36,11 @@
   align-items: center;
   flex-direction: column;
   background: #6288c5; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #1e3c72, #6288c5); 
+  background: -webkit-linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
+  background: linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
+  background-color: #1e3c72;
+  /*-webkit-filter: blur(1px);
+  filter: blur(1px);*/
 }
 
 .landing-qotd {
@@ -58,6 +61,101 @@
   text-align: center;
   margin-top: 30px;
 }
+
+/* ------ navLoggedIn ------- */
+
+.general-header {
+  display: flex;
+  justify-content: space-around;
+  height: 10%;
+  align-items: center;
+  background: white;
+}
+
+.general-header-nav {
+  width: 40%;
+  min-width: 350px;
+  display: flex;
+  align-items: center;
+}
+
+.general-header-links {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ------ Stats: Account  ------- */
+
+.account-container {
+  height: 100%;
+  width: 100%;
+}
+
+.review-field-name {
+  padding-right: 10px;
+}
+
+#deleteAccount {
+  background: white;
+  color: red;
+}
+
+#editAccount {
+  background: white;
+}
+
+/* ------ Stats: Map Data ------- */
+
+.dataPageContainer {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.selectedDataTopic {
+  height: 50px;
+  align-self: center;
+  margin: 16px 0px 0px 5px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+}
+
+#qotdAns {
+  /*display: flex;*/
+    /*display: flex;
+  flex-direction: row;  
+  justify-content: flex-start;*/
+  height: 25%;
+  width: 25%;
+}
+
+.states:hover {
+  fill: #CFD6FC !important;
+}
+
+#hoverinfo {
+  position: absolute;
+  font-size: 18px;
+  text-shadow: 2px 2px 2px grey;
+  color: black;
+}
+
+.hide {
+  visibility: hidden;
+}
+
+#mapAnswers {
+  /*display: flex;
+  flex-direction: row;  
+  justify-content: flex-start;*/
+  /*flex: 1; */
+  /*display: inline-block;*/
+}
+
+/* -------------------- */
 
 .persective {
   perspective: 15000px;
@@ -147,3 +245,451 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
 .signup-success {
   color: #6288c5;
 }
+
+/* ----- Video ----- */
+
+.video-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.video-page-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #6288c5; 
+  /*background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
+  background: linear-gradient(to right, #1e3c72, #6288c5); */
+}
+
+.video-header {
+  font-family: 'Roboto', sans-serif;
+  font-size: 35px;
+  color: white;
+}
+
+.logout-button {
+  align-self: flex-start;
+}
+
+.video-container {
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+  min-width: 525px;
+  min-height: 160px;
+  width: 40%;
+  height: 50%;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-around;
+  align-items: center;
+  border: 1px solid #eee;
+  background-color: white;
+  padding: 15px 0;
+}
+
+.video-container-two {
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+  min-width: 525px;
+  min-height: 160px;
+  width: 40%;
+  height: 70%;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-around;
+  align-items: center;
+  border: 1px solid #eee;
+  background-color: white;
+  padding: 15px 0;
+}
+
+div#remote-media {
+  height: 90%;
+  width: 100%;
+  background-color: #fff;
+  text-align: center;
+  margin: auto;
+}
+
+div#remote-media video {
+  border: 1px solid #272726;
+  margin: 3em 2em;
+  height: 90%;
+  max-width: 80% !important;
+  background-color: #272726;
+  background-repeat: no-repeat;
+}
+
+.video-component {
+  height: 10%;
+  /*flex-direction: column-reverse;
+  justify-content: flex-start;*/
+}
+
+.leave-room-button {
+  margin: 0 4px 0 0;
+}
+
+.kinnect-button {
+  margin: 0 0 0 4px;
+}
+
+.qotd-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 5px;
+}
+
+.question-of-the-day {
+  width: 100%;
+  height: 33%;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qotd-form {
+  width: 100%;
+  height: 66%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.qotd-options {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0px 5px 2px 0px rgba(0,0,0,0.1);
+  padding: 0 0 10px 0;
+}
+
+input.qotd-submit-button {
+  width: 100%;
+  height: 50%;
+  background-color: transparent;
+  border: 1px solid white;
+  font-family: 'Open Sans', sans-serif;
+  margin: 15px 0 0 0;
+}
+
+input.qotd-submit-button:hover {
+  transition: all 0.3s ease-in-out;
+  color: orangered;
+  font-weight: bold;
+}
+
+.searching-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---- Survey ----- */
+
+
+.survey-container {
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: #6288c5; 
+  /*background: -webkit-linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); 
+  background: linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); */
+}
+
+
+.steps-content {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  border-color: slategrey;
+  overflow: scroll;
+}
+
+.input-bar {
+  width: 80%;
+}
+
+input#zip-input {
+  width: 80%;
+}
+
+.survey-card {
+  height: 450px;
+  width: 700px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.survey-section {
+  min-width: 350px;
+  min-height: 450px;
+  border-radius: 5px;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border: 1px solid #eee;
+  background-color: white;
+}
+
+.input-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+button.survey-btn.ant-btn{
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, .75);
+  color: rgba(255, 255, 255, .75);
+  font-family: 'Open Sans', sans-serif;
+  width: 80px;
+}
+
+button.survey-btn.ant-btn:hover{
+  transition: all 0.3 ease-in-out;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 1);
+  color: rgba(255, 255, 255, 1);
+  font-family: 'Open Sans', sans-serif;
+}
+
+.steps-action {
+  background-color: transparent;
+  color: white;
+  height: 10%;
+}
+
+.steps-section {
+  padding: 0 0 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Lato', sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: white;
+}
+
+.survey-input {
+  padding: 20px 0;
+  /*padding: 5px;*/
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #eee;
+  transition: all 0.3 ease-out;
+}
+
+div.survey-input:hover {
+  transition: all 0.3s ease-in;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+
+input.ant-input.input-bar {
+  font-size: 11px;
+}
+
+input.input-bar.input-select,
+.ant-select-selection__placeholder {
+  font-size: 11px;
+}
+
+
+.survey-input-header {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.survey-input-entry {
+  width: 70%;
+  display: flex;
+  /*justify-content: center;*/
+  align-items: center;
+}
+
+.review-input-container {
+  width: 100%;
+  display: flex;
+  /*flex-direction: column;*/
+  justify-content: center;
+  align-items: center;
+}
+.review-input {
+  padding: 20px 0;
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #eee;
+  justify-content: space-around;
+}
+
+.review-input-header {
+  color:orangered;
+  font-style: bold;
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.review-input-result {
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*.review-input {
+  margin: 0 0 10px 0;
+}*/
+
+.welcome-message {
+  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  /*justify-content: center;*/
+}
+
+
+/* ---- chat room ----- */
+.chat-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-component{ 
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #6288c5; 
+  flex-direction: column;
+  /*background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
+  background: linear-gradient(to right, #1e3c72, #6288c5); */
+}
+
+.chat-header {
+  font-family: 'Roboto', sans-serif;
+  font-size: 35px;
+  color: white;
+}
+
+.chat-container {
+  min-width: 450px;
+  min-height: 300px;
+  max-width: 650px;
+  width: 70%;
+  height: 55%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.kin-list {
+  width: 30%;
+  height: 100%;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border: 1px solid #eee;
+  background: white;
+  overflow-y: scroll;
+}
+
+.kin-list-item {
+  padding: 20px 10px; ;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  transition: all 0.3 ease-out;
+}
+
+div.kin-list-item:hover {
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+
+.kin-current-chat {
+  padding: 5px;
+  width: 69%;
+  height: 100%;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border: 1px solid #eee;
+  background: white;
+}
+
+.chat-box-container {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+#chat-box-message-scroll {
+  height: 80%;
+  max-height: 80%;
+  overflow: hidden;
+  overflow-y: scroll;
+  padding: 0 0 0 10px;
+}
+
+.chat-box-item {
+  padding: 5px 0;
+}
+
+.chat-name {
+  font-weight: bold; 
+}
+
+.chat-name-click {
+  color: orangered;
+  font-weight: bold;
+}
+/*
+.chat-box-input {
+
+}*/
+
+/*.kin-list-item {
+
+}*/

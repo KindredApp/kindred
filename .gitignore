@@ -17,4 +17,11 @@ bundles/
 
 pubnubConfig.js
 .DS_Store
+client/firebaseConfig.js
 server/config.go
+server/server
+server/seedData
+server/certFile.pem
+server/keyFile.pem
+
+twilio-server/config.js
