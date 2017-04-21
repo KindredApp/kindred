@@ -87,26 +87,13 @@
 
 /* ------ Stats: Account  ------- */
 
-.account-top-container {
-  height: 100%;
-  width: 100%;
-  background: #6288c5; 
-  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
-  background: linear-gradient(to right, #1e3c72, #6288c5);
-}
-
 .account-container {
   height: 100%;
   width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  background: #6288c5; 
-  background: -webkit-linear-gradient(to right, #1e3c72, #6288c5); 
-  background: linear-gradient(to right, #1e3c72, #6288c5);
 }
 
-.account-content-container {
-  display: flex;
+.review-field-name {
+  padding-right: 10px;
 }
 
 #deleteAccount {

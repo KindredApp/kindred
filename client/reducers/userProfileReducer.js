@@ -17,7 +17,13 @@ const fieldMap = {
 export default function (state = null, action) {
   switch (action.type) {
   case 'USER_PROFILE_SET':
-    let parsedProfile = {};
+    let parsedProfile = {
+      Username: "",
+      // Name: "",
+      Age: "",
+      State: "",
+      Zip: ""
+    };
     if (Array.isArray(action.payload)) {
       action.payload.forEach((fieldTuple) => {
         let category = fieldTuple[0];
@@ -29,19 +35,16 @@ export default function (state = null, action) {
           parsedProfile[category] = val;
         }
       });
+    } else {
+      for (let category in action.payload) {
+        let toTransform = fieldMap[category];
+        if (toTransform) {
+          parsedProfile[category] = toTransform[action.payload[category] - 1];
+        } else if (category in parsedProfile) {
+          parsedProfile[category] = action.payload[category];
+        }
+      }
     }
-    // } else {
-      // "TODO"
-      // for (let key in action.payload) {
-      //   let field = fieldMap[field[0]];
-      //   if (field) {
-      //     parsedProfile[field] = field[field[1] - 1];
-      //   } else {
-      //     parsedProfile[field] = field[1];
-      //   }
-      // }
-    // }
-    
     return parsedProfile;
     break;
   }
