@@ -2,6 +2,7 @@ import React from 'react';
 import {bindActionCreators} from 'redux';
 import {actionUser} from '../../actions/actionUser.js';
 import {actionSurveyFromAccountPage} from '../../actions/actionSurveyFromAccountPage.js';
+import {actionSetUserProfile} from '../../actions/actionSetUserProfile.js';
 import {connect} from 'react-redux';
 import { Redirect, Link } from 'react-router-dom'; 
 import Cookies from 'js-cookie';
@@ -164,6 +165,10 @@ class Survey extends React.Component {
     this.checkToken();
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    console.log("next props are", nextProps);
+  }
+
   _formatResponse (string) {
     let map = {}, o = string.replace(/(["\\{}])/g, '').split(',');
     o.forEach((v) => {
@@ -270,6 +275,9 @@ class Survey extends React.Component {
       userData: accountInfo
      }, () => {
        console.log("user data in state is", this.state.userData);
+       if (this.state.current === 2) {
+         this.props.actionSetUserProfile(this.state.userData);
+       }
      });
   }
   prev() {
@@ -280,14 +288,14 @@ class Survey extends React.Component {
   render () {
     const accountOverview = (
       <div>
-      {this.state.userData.map((v) => {
+      {this.props.accountOverviewProfile ? this.props.accountOverviewProfile.map((v) => {
         return (
           <div>
             <div>{v[0]}</div>
             <div>{v[1]}</div>
           </div>
         )
-      })}
+      }) : null}
       </div>
     )
     const { current } = this.state;
@@ -340,12 +348,17 @@ function mapStateToProps (state) {
   return {
     user: state.userReducer,
     firebaseInstance: state.firebaseReducer,
-    surveyFromAccountPage: state.surveyFromAccountPage
+    surveyFromAccountPage: state.surveyFromAccountPage,
+    accountOverviewProfile: state.userProfileReducer
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionUser: actionUser, actionSurveyFromAccountPage: actionSurveyFromAccountPage}, dispatch);
+  return bindActionCreators({ 
+    actionUser: actionUser, 
+    actionSurveyFromAccountPage: actionSurveyFromAccountPage,
+    actionSetUserProfile: actionSetUserProfile
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Survey);
