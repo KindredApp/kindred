@@ -8,23 +8,28 @@ import {actionQotdData} from '../../actions/actionQotdData.js';
 import DataMap from './dataMap.jsx';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
 import QotdAnswerOptions from './qotdAnswerOptions.jsx';
+import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
+import {actionDataByAnswers} from '../../actions/actionDataByAnswers.js';
+import QotdFilter from './pastQotdsFilter.jsx';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
   constructor() {
     super();
     this.state = {
-      question: '',
+      setFirst: true
     };
     instance.goInstance.get('/api/qotd?q=data')
     .then((response) => {
       this.props.actionQotdData(response);
+      this.props.actionDataByAnswers(response);
     });
   }
 
   componentWillReceiveProps(nextprops) {
-    if (nextprops.stateData) {
-      this.setState({question: Object.keys(nextprops.stateData)[0]});
+    if (nextprops.stateData && !nextprops.questionChoice && this.state.setFirst) {
+      this.setState({setFirst: false})
+      nextprops.actionQuestionSelect(Object.keys(nextprops.stateData)[0]);
     }
   }
 
@@ -33,10 +38,12 @@ class DataView extends React.Component {
       <div className="landing-container">
         <NavLoggedIn/>
         <div className="dataPageContainer">
-          <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : this.state.question}</div>
+          <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : null}</div>
           <QotdList />
+          <br/>
+          <QotdFilter />
           <div id="mapAnswers">
-            <QotdAnswerOptions firstQotdAns={this.state.question}/>
+            <QotdAnswerOptions />
             <DataMap/>
           </div>
         </div>
@@ -47,13 +54,14 @@ class DataView extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    questionChoice: state.dataChoice.questionData,
-    stateData: state.stateDataReducer
+    questionChoice: state.dataChoice,
+    stateData: state.stateDataReducer,
+    dataByAnswers: state.dataByAnswersReducer
   };
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionQotdData: actionQotdData}, dispatch);
+  return bindActionCreators({ actionQotdData: actionQotdData, actionQuestionSelect: actionQotdDataSelect, actionDataByAnswers: actionDataByAnswers}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataView);

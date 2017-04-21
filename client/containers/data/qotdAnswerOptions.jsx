@@ -21,19 +21,19 @@ class QotdAnswerOptions extends React.Component {
       });
     });
   }
-
+  
   componentWillReceiveProps(nextprops) {
     var canvas = document.getElementById("pieChart");
     var ctx = canvas.getContext("2d");
     if (window.chart) {
       window.chart.destroy();
     }
-    if (nextprops.qotdAnswerList && nextprops.questionChoice) {
+    if (nextprops.questionOrFilter === 'filter') {
+      var labels = Object.keys(nextprops.filterData);
+      var data = Object.values(nextprops.filterData);
+    } else if (nextprops.qotdAnswerList && nextprops.questionChoice) {
       var labels = Object.keys(nextprops.qotdAnswerList[nextprops.questionChoice]);
       var data = Object.values(nextprops.qotdAnswerList[nextprops.questionChoice]);
-    } else if (nextprops.qotdAnswerList && nextprops.firstQotdAns) {
-      var labels = Object.keys(nextprops.qotdAnswerList[nextprops.firstQotdAns]);
-      var data = Object.values(nextprops.qotdAnswerList[nextprops.firstQotdAns]);
     }
       window.chart = new Chart(ctx, {
         type: 'doughnut',
@@ -87,8 +87,10 @@ class QotdAnswerOptions extends React.Component {
 function mapStateToProps (state) {
   return {
     qotdAnswerList: state.qotdAnswerOptionReducer,
-    questionChoice: state.dataChoice.questionData,
-    stateData: state.stateDataReducer
+    questionChoice: state.dataChoice,
+    stateData: state.stateDataReducer,
+    filterData: state.filterData,
+    questionOrFilter: state.questionOrFilter
   };
 }
 

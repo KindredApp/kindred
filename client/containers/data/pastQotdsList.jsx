@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import { Menu, Dropdown, Icon, message } from 'antd';
 import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 import {actionQotdList} from '../../actions/actionQotdList.js';
+import {actionQuestionOrFilter} from '../../actions/actionQuestionOrFilter.js';
 
 class QotdList extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class QotdList extends React.Component {
 
   onClick ({ key }) {
     this.props.actionQuestionSelect(Object.keys(this.props.stateData)[key]);
+    this.props.actionQuestionOrFilter('question');
   }
 
   render () {
@@ -48,7 +50,11 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionQuestionSelect: actionQotdDataSelect, actionQotdList: actionQotdList}, dispatch);
+  return bindActionCreators({ 
+    actionQuestionSelect: actionQotdDataSelect, 
+    actionQotdList: actionQotdList,
+    actionQuestionOrFilter: actionQuestionOrFilter
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(QotdList);
