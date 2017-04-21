@@ -257,7 +257,8 @@ func profileHandler(db *gorm.DB, p *pool.Pool) http.Handler {
 
 			db.Where(&UserAuth{Token: "\"" + rh + "\""}).First(&un)
 			us.ID = un.ID
-			db.Where("user_auth_id = ?", un.ID).First(&usp)
+			db.Model(&un).Related(&usp)
+
 			//create new user profile entry
 			if usp.UserAuthID == 0 {
 				f := defaultSurvey(us)
