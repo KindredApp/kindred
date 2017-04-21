@@ -1,6 +1,7 @@
 import React from 'react';
 import {bindActionCreators} from 'redux';
 import {actionUser} from '../../actions/actionUser.js';
+import {actionSurveyFromAccountPage} from '../../actions/actionSurveyFromAccountPage.js';
 import {connect} from 'react-redux';
 import { Redirect, Link } from 'react-router-dom'; 
 import Cookies from 'js-cookie';
@@ -163,10 +164,6 @@ class Survey extends React.Component {
     this.checkToken();
   }
 
-  componentWillReceiveProps(nextprops) {
-    console.log('coming from account page? ', nextprops.surveyFromAccountPage);
-  }
-
   _formatResponse (string) {
     let map = {}, o = string.replace(/(["\\{}])/g, '').split(',');
     o.forEach((v) => {
@@ -202,7 +199,13 @@ class Survey extends React.Component {
         instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
           console.log('response from checkvisits: ', response.data);
-          response.data === 'true' && !this.props.surveyFromAccountPage ? this.setState({ redirect: true }) : this.setState({ redirect: false});
+          if (response.data === 'true' && !this.props.surveyFromAccountPage) {
+            this.props.actionSurveyFromAccountPage(false);
+            this.setState({ redirect: true }) ;
+          } else {
+            this.props.actionSurveyFromAccountPage(false);
+            this.setState({ redirect: false});     
+          }
         }).catch((error) => { console.log('Check visits error', error); });
       }
     }
@@ -327,7 +330,7 @@ class Survey extends React.Component {
             }
           </div>
         </div>
-        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null }</div>
+        <div>{this.state.unauthorized === true ? <Redirect to="/login" /> : this.state.unauthorized === false ? this.state.redirect === true ? <Redirect to="/video"/> : null : null}</div>
       </div>
     );
   }
@@ -342,7 +345,7 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ actionUser: actionUser}, dispatch);
+  return bindActionCreators({ actionUser: actionUser, actionSurveyFromAccountPage: actionSurveyFromAccountPage}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Survey);
