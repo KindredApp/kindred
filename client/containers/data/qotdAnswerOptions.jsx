@@ -3,13 +3,17 @@ import instance from '../../config.js'
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {actionQotdAnswerOption} from '../../actions/actionQotdAnswerOption.js';
+import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
+import {actionQuestionOrFilter} from '../../actions/actionQuestionOrFilter.js';
 import Chart from 'chart.js';
 import '../../styles/index.css';
 
 class QotdAnswerOptions extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      showAllButton: false
+    };
     instance.goInstance.get('/api/qotd?q=data')
     .then((data) => {
       instance.goInstance.get('/api/qotd?q=dataoptions')
@@ -20,6 +24,7 @@ class QotdAnswerOptions extends React.Component {
         this.props.actionQotdAnswerOption(res);
       });
     });
+    this.showAll = this.showAll.bind(this);
   }
   
   componentWillReceiveProps(nextprops) {
@@ -30,10 +35,12 @@ class QotdAnswerOptions extends React.Component {
       window.chart.destroy();
     }
     if (nextprops.questionOrFilter !== 'question') {
+      this.setState({showAllButton: true})
       title = nextprops.questionOrFilter;
       var labels = Object.keys(nextprops.filterData);
       var data = Object.values(nextprops.filterData);
     } else if (nextprops.qotdAnswerList && nextprops.questionChoice) {
+      this.setState({showAllButton: false})
       var labels = Object.keys(nextprops.qotdAnswerList[nextprops.questionChoice]);
       var data = Object.values(nextprops.qotdAnswerList[nextprops.questionChoice]);
       title = 'All Answers';
@@ -82,9 +89,15 @@ class QotdAnswerOptions extends React.Component {
       });
   }
 
+  showAll() {
+    this.props.actionQuestionSelect(this.props.questionChoice);
+    this.props.actionQuestionOrFilter('question');
+  }
+
   render() {
     return (
       <div id="qotdAns" height="100" width="100">
+        {this.state.showAllButton ? <button onClick={this.showAll}>Show All</button> : null}
         <canvas height="100" width="100" id="pieChart"></canvas>
       </div>
     );
@@ -102,7 +115,11 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({actionQotdAnswerOption: actionQotdAnswerOption}, dispatch);
+  return bindActionCreators({
+    actionQotdAnswerOption: actionQotdAnswerOption, 
+    actionQuestionSelect: actionQotdDataSelect,
+    actionQuestionOrFilter: actionQuestionOrFilter
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(QotdAnswerOptions);
