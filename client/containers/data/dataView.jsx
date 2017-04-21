@@ -16,7 +16,9 @@ import '../../styles/index.css';
 class DataView extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      setFirst: true
+    };
     instance.goInstance.get('/api/qotd?q=data')
     .then((response) => {
       this.props.actionQotdData(response);
@@ -25,7 +27,8 @@ class DataView extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
-    if (nextprops.stateData && !nextprops.questionChoice) {
+    if (nextprops.stateData && !nextprops.questionChoice && this.state.setFirst) {
+      this.setState({setFirst: false})
       nextprops.actionQuestionSelect(Object.keys(nextprops.stateData)[0]);
     }
   }
@@ -51,7 +54,7 @@ class DataView extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    questionChoice: state.dataChoice.questionData,
+    questionChoice: state.dataChoice,
     stateData: state.stateDataReducer,
     dataByAnswers: state.dataByAnswersReducer
   };

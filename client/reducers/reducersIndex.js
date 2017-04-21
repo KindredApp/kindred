@@ -10,6 +10,7 @@ import dataChoice from './chosenDataReducer';
 import userProfileReducer from './userProfileReducer.js';
 import dataByAnswers from './dataByAnswersReducer.js';
 import filterDataReducer from './filterDataReducer.js';
+import questionOrFilter from './questionOrFilterReducer.js';
 
 const allReducers = combineReducers({
   userReducer: userReducer,
@@ -22,7 +23,8 @@ const allReducers = combineReducers({
   qotdAnswerOptionReducer: qotdAnswerOptionReducer,
   userProfileReducer: userProfileReducer,
   dataByAnswers: dataByAnswers,
-  filterData: filterDataReducer
+  filterData: filterDataReducer,
+  questionOrFilter: questionOrFilter
 });
 
 export default allReducers;
