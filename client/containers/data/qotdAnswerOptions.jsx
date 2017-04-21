@@ -25,21 +25,29 @@ class QotdAnswerOptions extends React.Component {
   componentWillReceiveProps(nextprops) {
     var canvas = document.getElementById("pieChart");
     var ctx = canvas.getContext("2d");
+    var title = "All Answers";
     if (window.chart) {
       window.chart.destroy();
     }
+    console.log('QORF', nextprops.questionOrFilter)
     if (nextprops.questionOrFilter === 'filter') {
+      title = nextprops.questionOrFilter;
       var labels = Object.keys(nextprops.filterData);
       var data = Object.values(nextprops.filterData);
     } else if (nextprops.qotdAnswerList && nextprops.questionChoice) {
       var labels = Object.keys(nextprops.qotdAnswerList[nextprops.questionChoice]);
       var data = Object.values(nextprops.qotdAnswerList[nextprops.questionChoice]);
+      title = 'All Answers';
     }
       window.chart = new Chart(ctx, {
         type: 'doughnut',
         options: {
           responsive: true,
-          maintainAspectRatio: true
+          maintainAspectRatio: true,
+          title: {
+            display: true,
+            text: title
+          }
         },
         data: {
           labels: labels,
