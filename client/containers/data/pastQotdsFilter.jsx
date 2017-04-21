@@ -5,6 +5,7 @@ import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 import {actionQotdList} from '../../actions/actionQotdList.js';
 import { Menu, Dropdown, Icon, message } from 'antd';
 const SubMenu = Menu.SubMenu;
+import {actionFilterData} from '../../actions/actionFilterData.js';
 
 class QotdFilter extends React.Component {
   constructor(props) {
@@ -44,6 +45,7 @@ class QotdFilter extends React.Component {
         }
       });
       console.log('Data transformed: ', res);
+      this.props.actionFilterData(res);
     }
   }
 
@@ -110,7 +112,7 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({actionFilterData: actionFilterData}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(QotdFilter);

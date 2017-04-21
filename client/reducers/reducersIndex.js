@@ -9,6 +9,7 @@ import qotdAnswerOptionReducer from './qotdAnswerOptionReducer';
 import dataChoice from './chosenDataReducer';
 import userProfileReducer from './userProfileReducer.js';
 import dataByAnswers from './dataByAnswersReducer.js';
+import filterDataReducer from './filterDataReducer.js';
 
 const allReducers = combineReducers({
   userReducer: userReducer,
@@ -20,7 +21,8 @@ const allReducers = combineReducers({
   surveyFromAccountPage: surveyFromAccountPage,
   qotdAnswerOptionReducer: qotdAnswerOptionReducer,
   userProfileReducer: userProfileReducer,
-  dataByAnswers: dataByAnswers
+  dataByAnswers: dataByAnswers,
+  filterData: filterDataReducer
 });
 
 export default allReducers;
