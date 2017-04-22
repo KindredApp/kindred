@@ -64,9 +64,9 @@ class KinList extends Component {
       currentSelectionClasses.add('chat-name-click');
       if (document.getElementById(this.state.previousChat)) {
         let oldSelectionClasses = document.getElementById(this.state.previousChat).classList;
+        oldSelectionClasses.remove('chat-name-click');
+        console.log('state of current message room is', this.state.currentMessageRoom);
       }
-      oldSelectionClasses.remove('chat-name-click');
-      console.log('state of current message room is', this.state.currentMessageRoom);
     });
   }
 
