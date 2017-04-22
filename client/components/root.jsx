@@ -94,7 +94,6 @@ class Root extends Component {
             <Route path="/survey" component={Survey} />
             <Route path="/account" component={Account} />
             <Route path="/data" component={DataView} />
-
             <Route path="/kin" component={KinList} />
           </div>
         </Router>
