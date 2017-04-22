@@ -294,7 +294,10 @@ class Survey extends React.Component {
           </div>
           <div className="survey-section">
             {this.state.answered === true ? <Redirect to="/video"/> : null}
-            <div className="steps-content">{this.state.current === 3 ? accountOverview : steps[this.state.current].content}</div>
+            <div className="steps-content">{this.state.current === 3 ? accountOverview : 
+              this.state.current === 2 ? optionalInformation : 
+              this.state.current === 1 ? requiredInformation : 
+              welcome}</div>
           </div>
           <div className="steps-action">
             {
