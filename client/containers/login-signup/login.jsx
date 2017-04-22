@@ -37,7 +37,6 @@ class Login extends React.Component {
         map[tuple[0]] = tuple[1];
       }
     }); 
-    console.log('map is', map);
     return map;
   }
 
@@ -127,7 +126,6 @@ class Login extends React.Component {
             delete profileData.Password;
             delete profileData.Token;
             newStore.userObj = profileData;
-            console.log('saving in redux upon login: ', newStore);
             this.props.actionUser(newStore);
           });
         }).catch((error) => {
@@ -135,7 +133,6 @@ class Login extends React.Component {
             this.setState({
               unauthorized: true
             });
-            console.log('error data is', error.response.data);
           }
         });
       }
