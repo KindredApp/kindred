@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select, Steps, Button, Input, InputNumber } from 'antd';
+import Survey from './survey.jsx';
 
 let userData = {
   Age: 25
@@ -47,15 +48,15 @@ const handleZipChange = (value) => {
 
 const Option = Select.Option;
 
-const Zip = (<Input onChange={e => handleZipChange(e.target.value)} style={{ width: 400 }} placeholder="What is your zip code?" />);
+const Zip = (<Input onChange={e => handleZipChange(e.target.value)} id="zip-input" className="input-bar" placeholder="What is your zip code?" />);
 
-const Age = (<InputNumber style={{ width: 400 }} onChange={e => handleAgeChange(e)} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
+const Age = (<InputNumber className="input-bar" onChange={e => handleAgeChange(e)} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
 
 const Gender = (
     <Select
       showSearch
-      style={{ width: 400}}
-      placeholder="Choose your gender"
+      className="input-bar input-select"
+      placeholder="What is your gender?"
       optionFilterProp="children"
       onChange={handleGenderChange}
       filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -69,8 +70,8 @@ const Gender = (
 const Ethnicity = (
     <Select
       showSearch
-      style={{ width: 400}}
-      placeholder="What is your Ethnicity?"
+      className="input-bar"
+      placeholder="What is your ethnicity?"
       optionFilterProp="children"
       onChange={handleEthnicityChange}
       filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -88,7 +89,7 @@ const Ethnicity = (
 const Income = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What is your annual income?"
     optionFilterProp="children"
     onChange={handleIncomeChange}
@@ -108,21 +109,21 @@ const Income = (
 const Education = (
   <Select
     showSearch
-    style={{ width: 400}}
-    placeholder="What is your highest level of education?"
+    className="input-bar"
+    placeholder="What is the highest level of education you completed?"
     optionFilterProp="children"
     onChange={handleEducationChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='1 Elementary'>Elementary</Option>
-    <Option value='2 Some secondary'>Some secondary (Middle or High school)</Option>
-    <Option value='3 Secondary'>Completed secondary</Option>
-    <Option value='4 Some college'>Some college</Option>
-    <Option value='5 Associate'>Associate degree (2 year college)</Option>
-    <Option value='6 Bachelor'>Bachelor's degree (4 year college)</Option>
-    <Option value='7 Master'>Master's degree</Option>
-    <Option value='8 Doctorate'>Doctorate or professional degree</Option>
-    <Option value='9 Home'>I was home schooled</Option>
+    <Option value='1 Elementary'>Elementary School</Option>
+    <Option value='2 Middle School'>Middle School</Option>
+    <Option value='3 High School'>High School</Option>
+    <Option value='4 College'>College (4 year degree)</Option>
+    <Option value='5 Associate'>Associate degree (2 year degree)</Option>
+    <Option value='6 Master'>Master's degree</Option>
+    <Option value='7 Doctorate'>Professional or doctorate degree</Option>
+    <Option value='8 Home School'>I was home schooled</Option>
+    <Option value='9 None'>None</Option>
     <Option value='10 Other'>Other</Option>
   </Select>
 );
@@ -130,8 +131,8 @@ const Education = (
 const Religiousity = (
   <Select
     showSearch
-    style={{ width: 400}}
-    placeholder="How spiritual are you as a person?"
+    className="input-bar"
+    placeholder="How spiritual are you?"
     optionFilterProp="children"
     onChange={handleReligiousityChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -152,7 +153,7 @@ const Religiousity = (
 const Religion = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What are your religious beliefs?"
     optionFilterProp="children"
     onChange={handleReligionChange}
@@ -165,7 +166,7 @@ const Religion = (
     <Option value='5 Hinduism'>Hindu</Option>
     <Option value='6 Islam'>Islamic</Option>
     <Option value='7 Jewish'>Jewish</Option>
-    <Option value='8 Other structured'>Other structured religion</Option>
+    <Option value='8 Other organized'>Other organized religion</Option>
     <Option value='9 Other'>Other</Option>
   </Select> 
 );
@@ -173,7 +174,7 @@ const Religion = (
 const State = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What state do you live in?"
     optionFilterProp="children"
     onChange={handleStateChange}
@@ -235,7 +236,7 @@ const State = (
 const Party = (
   <Select
     showSearch
-    style={{ width: 400}}
+    className="input-bar"
     placeholder="What political party do you align with?"
     optionFilterProp="children"
     onChange={handlePartyChange}
