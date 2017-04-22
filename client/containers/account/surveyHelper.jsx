@@ -113,14 +113,14 @@ const Education = (
     onChange={handleEducationChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='1 Elementary'>Elementary School</Option>
-    <Option value='2 Middle School'>Middle School</Option>
-    <Option value='3 High School'>High School</Option>
-    <Option value='4 College'>College (4 year degree)</Option>
-    <Option value='5 Associate'>Associate degree (2 year degree)</Option>
-    <Option value='6 Master'>Master's degree</Option>
-    <Option value='7 Doctorate'>Professional or doctorate degree</Option>
-    <Option value='8 Home School'>I was home schooled</Option>
+    <Option value='1 Elementary' style={{ 'white-space': 'normal' }}>Elementary School</Option>
+    <Option value='2 Middle School' style={{ 'white-space': 'normal' }}>Middle School</Option>
+    <Option value='3 High School' style={{ 'white-space': 'normal' }}>High School</Option>
+    <Option value='4 College' style={{ 'white-space': 'normal' }}>College (4 year degree)</Option>
+    <Option value='5 Associate' style={{ 'white-space': 'normal' }}>Associate degree (2 year degree)</Option>
+    <Option value='6 Master' style={{ 'white-space': 'normal' }}>Master's degree</Option>
+    <Option value='7 Doctorate' style={{ 'white-space': 'normal' }}>Professional or doctorate degree</Option>
+    <Option value='8 Home School' style={{ 'white-space': 'normal' }}>I was home schooled</Option>
     <Option value='9 None'>None</Option>
     <Option value='10 Other'>Other</Option>
   </Select>
