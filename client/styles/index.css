@@ -672,14 +672,14 @@ input.input-bar.input-select,
   width: 40%;
   display: flex;
   justify-content: center;
-  align-items: left;
+  align-items: center;
 }
 
 .review-input-result {
   width: 40%;
   display: flex;
   justify-content: center;
-  align-items: left;
+  align-items: center;
 }
 
 /*.review-input {
