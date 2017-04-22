@@ -66,7 +66,8 @@ class Video extends React.Component {
       unauthorized: null,
       redirect: null,
       participantCount: 0,
-      loading: false
+      loading: false,
+      inRoomLoading: false
     };
 
     this.getQOTD();
@@ -326,7 +327,7 @@ class Video extends React.Component {
         roomFound: null,
         activeRoom: '',
         roomCount: 0,
-        inQueue: false
+        inQueue: false,
       });
       this.leaveLoading();
     }
@@ -417,6 +418,7 @@ class Video extends React.Component {
         this.getRooms().then((r) => {
           if (this.state.activeRoom) {
             this.setState({
+
               roomFound: true
             });
           } else {
@@ -526,6 +528,7 @@ class Video extends React.Component {
         tracks: localTracks
       }).then((room) => {
         this.setState({
+          inRoomLoading: true,
           roomInstance: room,
           roomCount: room.participants.size
         });
@@ -606,7 +609,7 @@ class Video extends React.Component {
 
     const RoomFoundComponent = (
       <div>
-        {!this.state.roomCount ? <Button type='primary' loading={true} onClick={this.joinRoom}>Partner found! Click here to chat.</Button> : null}
+        {!this.state.roomCount ? <Button type='primary' loading={this.state.inRoomLoading} onClick={this.joinRoom}>Partner found! Click here to chat.</Button> : null}
         {this.state.roomCount ? <Button className="leave-room-button" type='primary' onClick={this.leaveRoom}>Leave room</Button> : null}
         {this.state.roomCount ? <Button className="kinnect-button" type='primary' onClick={this.connectUsers}>Kinnect *TM</Button> : null}
         {this.state.roomInstance === false ? <Redirect to="/video"/> : null}
