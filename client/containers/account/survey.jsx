@@ -173,7 +173,6 @@ class Survey extends React.Component {
     }
   }
 
-  // TODO: update user profile in redux too
   onClickDone(data) {
     let cookie = Cookies.getJSON();
     let token;
