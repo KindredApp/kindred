@@ -9,7 +9,7 @@ import Promise from 'bluebird';
 import {actionUser} from '../../actions/actionUser.js';
 import TwilioVideo, { createLocalTracks, createLocalVideoTrack } from 'twilio-video';
 import instance from '../../config.js';
-import {Button, message} from 'antd';
+import {Button, message, Icon, Popover} from 'antd';
 import * as firebase from 'firebase';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
 
@@ -595,6 +595,7 @@ class Video extends React.Component {
 
     const QOTDComponent = (
       <div className="qotd-container">
+      <div className="info">Carefully consider your answer. Then click 'submit' to  discuss your answer with kin.</div>
        <div className="question-of-the-day">{String.fromCharCode(0x2728) + this.state.qotdText + String.fromCharCode(0x2728)}</div>
        <form className="qotd-form">
          <div className="qotd-options">
@@ -661,12 +662,25 @@ class Video extends React.Component {
         {this.state.roomFound ? RoomFoundComponent : RoomNotFoundComponent}
       </div>
     );
+// #1cd019
+
+    const qotdInfo = (
+      <ul>
+        <li style={{color: "#0eab0c"}}>The purpose of this question is to give you something to talk about.</li>
+        <li style={{color: "#0eab0c", "padding-top": "3px"}}>Feel free to discuss other things too.</li>
+      </ul>
+    );
 
     return (
       <div className="video-page">
         <NavLoggedIn />
         <div className="video-page-container">
-          <div className="video-header">{this.state.component === 'qotd' ? 'qotd' : 'video'}</div>
+          <div className="video-header">
+            <div>{this.state.component === 'qotd' ? 'Question of the Day' : 'video'}</div>
+            <Popover content={qotdInfo}>
+              <Icon id="qtod" type="info-circle-o" />
+            </Popover>
+          </div>
           <div id="video-container" className="video-container">
             {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
             {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}
