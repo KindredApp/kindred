@@ -40,7 +40,6 @@ class Root extends Component {
   initializeFirebase () {
     firebase.initializeApp(firebaseConfig);
     let database = firebase.database();
-    console.log('firebase in root', database);
     this.props.actionFirebase(database);
   }
   

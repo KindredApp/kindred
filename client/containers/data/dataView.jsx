@@ -27,6 +27,9 @@ class DataView extends React.Component {
       this.props.actionQotdData(response);
       this.props.actionDataByAnswers(response);
     });
+
+    this.showAll = this.showAll.bind(this);
+    this.showFilterButton = this.showFilterButton.bind(this);
   }
 
   componentWillReceiveProps(nextprops) {
@@ -35,6 +38,19 @@ class DataView extends React.Component {
       nextprops.actionQuestionSelect(Object.keys(nextprops.stateData)[0]);
       nextprops.actionQotdSelectMap(Object.keys(nextprops.stateData)[0]);
       nextprops.actionQuestionOrFilter('question');
+    }
+  }
+
+  showAll() {
+    this.props.actionQuestionSelect(this.props.questionChoice);
+    this.props.actionQuestionOrFilter('question');
+  }
+
+  showFilterButton() {
+    if (this.props.questionOrFilter) {
+      return this.props.questionOrFilter !== 'question' ? <button className="qotdDataButton clearFilterButton" onClick={this.showAll}>Clear Filter</button> : null
+    } else {
+      return null;
     }
   }
 
@@ -47,12 +63,11 @@ class DataView extends React.Component {
           <QotdList />
           <br/>
           <QotdFilter />
-          <div id="qotdAns">
-            <QotdAnswerOptions />
-          </div>
+          {this.showFilterButton()}
+          <QotdAnswerOptions />
           <hr />
+          <div className="selectedDataTopic">{this.props.questionChoiceMap ? this.props.questionChoiceMap : null}</div>
           <div id="map">
-            <div className="selectedDataTopic">{this.props.questionChoiceMap ? this.props.questionChoiceMap : null}</div>
             <QotdListMap />          
             <DataMap/>
           </div>
@@ -67,7 +82,8 @@ function mapStateToProps (state) {
     questionChoice: state.dataChoice,
     stateData: state.stateDataReducer,
     dataByAnswers: state.dataByAnswersReducer,
-    questionChoiceMap: state.qotdSelectMap
+    questionChoiceMap: state.qotdSelectMap,
+    questionOrFilter: state.questionOrFilter
   };
 }
 
