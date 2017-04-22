@@ -662,7 +662,6 @@ class Video extends React.Component {
         {this.state.roomFound ? RoomFoundComponent : RoomNotFoundComponent}
       </div>
     );
-// #1cd019
 
     const qotdInfo = (
       <ul>
