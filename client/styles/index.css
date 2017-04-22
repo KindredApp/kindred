@@ -87,6 +87,50 @@
 
 /* ------ Stats: Account  ------- */
 
+.account-btn-section {
+  display: flex;
+  min-width: 350px;
+  width: 50%;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+button.account-btn {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, .75);
+  padding: 2px 0px 2px 0px;
+  border-radius: 3px;
+  color: rgba(255, 255, 255, .75);
+  font-family: 'Open Sans', sans-serif;
+  font-weight: bold;
+  width: 140px;
+  letter-spacing: 1.5px;
+}
+
+button.account-btn.delete {
+  background-color: rgba(255, 255, 255, .75);
+  color:#e13536;
+  font-style: bold;
+  margin-right: 4px;
+}
+
+button.account-btn.delete:hover {
+  border: 2px solid rgba(255, 255, 255, .75);
+  background-color: #EF5152;
+  color: white;
+  cursor: pointer;
+}
+
+button.account-btn.edit {
+  margin-left: 4px;
+}
+
+button.account-btn.edit:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, .75);
+  color: cornflowerblue;
+}
+
 .account-container {
   height: 100%;
   width: 100%;
@@ -554,7 +598,8 @@ input.input-bar.input-select,
 }
 
 .review-input-header {
-  color:orangered;
+  color: cornflowerblue; 
+  /*orangered;*/
   font-style: bold;
   width: 40%;
   display: flex;

@@ -1,5 +1,6 @@
 import React from 'react';
 import instance from '../../config.js';
+import { Select, Steps, Button} from 'antd';
 import {Redirect} from 'react-router-dom'; 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -26,20 +27,40 @@ class AccountInfo extends React.Component {
   }
 
   render() {
+    const accountOverview = (
+      <div>
+      {this.props.userProfile ? this.props.userProfile.map((v) => {
+        if (v[0] !== 'Username') {
+          return (
+            <div className="review-input-container">
+              <div className="review-input">
+                <div className="review-input-header">{v[0]}</div>
+                <div className="review-input-result">{v[1]}</div>
+              </div>
+            </div>
+          )
+        }
+      }) : null}
+      </div>
+    );
+
     return this.props.userProfile ? 
-        <div className="survey-section">
-          { this.props.surveyFromAccountPage ? <Redirect to="/survey" /> : null }
-          <button id="deleteAccount" onClick={this.deleteAccount}>Delete Account</button>
-          <button id="editAccount" onClick={this.editAccount}>Edit Profile</button>
-          {this.props.userProfile.map((field, i) => {
-            return (
-              <div className="review-field" key={field[0]}>
-                <span className="review-field-name">{field[0]}</span>
-                <span className="review-value">{field[1]}</span>
-              </div>);
-          })}
+      <div className="survey-container">
+        <div className="steps-section">Account Overview</div>
+        <div className="account-btn-section">
+          <button type="button" className="account-btn delete" onClick={this.deleteAccount}><span>Delete Account</span></button>
+          <button className="account-btn edit" type="button" onClick={this.editAccount}><span>Edit Profile</span></button>
+        </div>
+        <div className="survey-card">
+          <div className="survey-section">
+            <div className="steps-content">
+                { this.props.surveyFromAccountPage ? <Redirect to="/survey" /> : null }
+                {accountOverview}
+            </div>
+          </div>
+        </div>
       </div> :
-      null;
+       null;
   }
 }
 
@@ -56,3 +77,11 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountInfo);
+
+// {this.props.userProfile.map((field, i) => {
+//   return (
+//     <div className="review-field" key={field[0]}>
+//       <span className="review-field-name">{field[0]}</span>
+//       <span className="review-value">{field[1]}</span>
+//     </div>);
+// })}
