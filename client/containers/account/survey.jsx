@@ -76,10 +76,6 @@ const optionalInformation = (
       <div className="survey-input-entry">{Helper.Religion}</div>
     </div>
     <div className="survey-input">
-      <div className="survey-input-header">State</div>
-      <div className="survey-input-entry">{Helper.State}</div>
-    </div>
-    <div className="survey-input">
       <div className="survey-input-header">Party</div>
       <div className="survey-input-entry">{Helper.Party}</div>
     </div>

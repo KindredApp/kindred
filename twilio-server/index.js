@@ -62,12 +62,12 @@ app.get('/api/twilio', (req, res) => {
 
 
 //development server
-// app.listen(config.PORT, () => {
-//   console.log(`I'm listening at ${config.PORT}.`);
-// });
+app.listen(config.PORT, () => {
+  console.log(`I'm listening at ${config.PORT}.`);
+});
 
 //production server
-https.createServer(httpsOptions, app)
-  .listen(config.PORT, () => {
-    console.log(`App is listening at port ${config.PORT}.`);
-  });
+// https.createServer(httpsOptions, app)
+//   .listen(config.PORT, () => {
+//     console.log(`App is listening at port ${config.PORT}.`);
+//   });

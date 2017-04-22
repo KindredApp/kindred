@@ -54,10 +54,7 @@ const Age = (<InputNumber className="input-bar" onChange={e => handleAgeChange(e
 
 const Gender = (
     <Select
-      showSearch
-      className="input-bar input-select"
       placeholder="What is your gender?"
-      optionFilterProp="children"
       onChange={handleGenderChange}
       filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
     >
