@@ -157,6 +157,9 @@ button.account-btn.edit:hover {
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: flex-start;
+  background-color: ghostwhite;
+  border-radius: 5px;
+  min-width: 750px;
 }
 
 .selectedDataTopic {
@@ -164,16 +167,13 @@ button.account-btn.edit:hover {
   align-self: center;
   margin: 16px 0px 0px 5px;
   font-family: 'Lato', sans-serif;
-  font-size: 20px;
+  font-size: 24px;
 }
 
-#qotdAns {
-  /*display: flex;*/
-    /*display: flex;
-  flex-direction: row;  
-  justify-content: flex-start;*/
-  height: 60%;
-  width: 60%;
+#doughnut {
+  align-self: center;
+  height: 35%;
+  width: 35%;
 }
 
 .states:hover {
@@ -191,12 +191,34 @@ button.account-btn.edit:hover {
   visibility: hidden;
 }
 
-#mapAnswers {
-  /*display: flex;
-  flex-direction: row;  
-  justify-content: flex-start;*/
-  /*flex: 1; */
-  /*display: inline-block;*/
+.qotdList {
+  color: black;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.qotdDataButton, .qotdList {
+  background-color: #747BA0;
+  transition: all .2s ease-in;
+  color: white;
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 14px;
+  box-shadow: 2px 2px 2px #535873;
+  margin-top: 10px;
+  margin-bottom: 10px;  
+}
+
+.qotdDataButton:hover, .qotdList:hover {
+  background-color: #959ECE;
+  cursor: pointer;
+  color: white;
+}
+
+.clearFilterButton {
+  width: 100px;
+  height: 40px;
+  margin-left: 10px;
 }
 
 /* -------------------- */

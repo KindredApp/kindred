@@ -69,45 +69,45 @@ class QotdFilter extends React.Component {
 
   render () {
     const menu = (
-      <Menu onClick={this.onClick}>
-        <SubMenu title="Age">
+      <Menu style={{fontSize: '14px'}} onClick={this.onClick}>
+        <SubMenu style={{fontSize: '14px'}} title="Age">
           {this.state.fieldmap.Age.map((item, i) => {
-            return <Menu.Item key={`Age.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item style={{fontSize: '14px'}} key={`Age.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu title="Gender">
+        <SubMenu style={{fontSize: '14px'}} title="Gender">
           {this.state.fieldmap.Gender.map((item, i) => {
-            return <Menu.Item key={`Gender.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item style={{fontSize: '14px'}} key={`Gender.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu title="Income">
+        <SubMenu style={{fontSize: '14px'}} title="Income">
           {this.state.fieldmap.Income.map((item, i) => {
-            return <Menu.Item key={`Income.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item style={{fontSize: '14px'}} key={`Income.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu title="Education">
+        <SubMenu style={{fontSize: '14px'}} title="Education">
           {this.state.fieldmap.Education.map((item, i) => {
-              return <Menu.Item key={`Education.${i+1}`}>{item}</Menu.Item>
+              return <Menu.Item style={{fontSize: '14px'}} key={`Education.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu title="Spirituality">
+        <SubMenu style={{fontSize: '14px'}} title="Spirituality">
           {this.state.fieldmap.Religiousity.map((item, i) => {
-            return <Menu.Item key={`Religiousity.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item style={{fontSize: '14px'}} key={`Religiousity.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu title="Religion">
+        <SubMenu style={{fontSize: '14px'}} title="Religion">
           {this.state.fieldmap.Religion.map((item, i) => {
-            return <Menu.Item key={`Religion.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item style={{fontSize: '14px'}} key={`Religion.${i+1}`}>{item}</Menu.Item>
           })}  
         </SubMenu>
-        <SubMenu title="Ethnicity">
+        <SubMenu style={{fontSize: '14px'}} title="Ethnicity">
           {this.state.fieldmap.Ethnicity.map((item, i) => {
-            return <Menu.Item key={`Ethnicity.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item style={{fontSize: '14px'}} key={`Ethnicity.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu title="Political Party">
+        <SubMenu style={{fontSize: '14px'}} title="Political Party">
           {this.state.fieldmap.Party.map((item, i) => {
-            return <Menu.Item key={`Party.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item style={{fontSize: '14px'}} key={`Party.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
       </Menu>
@@ -116,7 +116,7 @@ class QotdFilter extends React.Component {
     return (
       <div>
         <Dropdown overlay={menu}>
-          <a className="ant-dropdown-link">
+          <a className="ant-dropdown-link qotdList">
             Choose a filter <Icon type="down" />
           </a>
         </Dropdown>
