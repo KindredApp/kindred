@@ -56,10 +56,10 @@ class AccountInfo extends React.Component {
       {this.props.userProfile ? this.props.userProfile.map((v) => {
         if (v[0] !== 'Username') {
           return (
-            <div className="review-input-container">
-              <div className="review-input">
-                <div className="review-input-header">{v[0]}</div>
-                <div className="review-input-result">{v[1]}</div>
+            <div key={Math.random()} className="review-input-container">
+              <div key={Math.random()} className="review-input">
+                <div key={Math.random()} className="review-input-header">{v[0]}</div>
+                <div key={Math.random()} className="review-input-result">{v[1]}</div>
               </div>
             </div>
           )
