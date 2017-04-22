@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import { Redirect, Link } from 'react-router-dom'; 
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { Select, Steps, Button} from 'antd';
+import { Select, Steps, Button, message} from 'antd';
 import Helper from './surveyHelper.jsx';
 const Option = Select.Option;
 const Step = Steps.Step;
@@ -178,6 +178,7 @@ class Survey extends React.Component {
   }
 
   onClickDone(data) {
+
     let cookie = Cookies.getJSON();
     let token;
     let username;
@@ -224,23 +225,27 @@ class Survey extends React.Component {
   
   next() {
     console.log(this.state.current);
-    const current = this.state.current + 1;
     let accountInfo = [];
 
-    for (let key in Helper.userData) {
-      accountInfo.push([[key], [Helper.userData[key]]]);
-    }
-
-    this.setState({ 
-      current: current,
-      userData: accountInfo
-    }, () => {
-      console.log('user data in state is', this.state.userData);
-      if (this.state.current === 3) {
-        console.log('using action creator');
-        this.props.actionSetUserProfile(this.state.userData);
+    if (this.state.current === 1 && (!Helper.userData.Zip || !Helper.userData.Gender || !Helper.userData.Age)) {
+      message.error('Oops, looks like you missed one of the required fields. Please fill them in then press next!', 5);
+    } else {
+      const current = this.state.current + 1;
+      for (let key in Helper.userData) {
+        accountInfo.push([[key], [Helper.userData[key]]]);
       }
-    });
+
+      this.setState({ 
+        current: current,
+        userData: accountInfo
+      }, () => {
+        console.log('user data in state is', this.state.userData);
+        if (this.state.current === 3) {
+          console.log('using action creator');
+          this.props.actionSetUserProfile(this.state.userData);
+        }
+      });
+    }
   }
   prev() {
     const current = this.state.current - 1;
