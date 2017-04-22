@@ -1,13 +1,16 @@
 import React from 'react';
-import { Select, Steps, Button, Input, InputNumber } from 'antd';
+import { Select, Steps, Button, Input, InputNumber, Radio } from 'antd';
 import Survey from './survey.jsx';
+
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 let userData = {
   Age: 25
 };
 
 const handleGenderChange = (value) => {
-  userData.Gender = parseInt(value);
+  userData.Gender = parseInt(value.target.value);
 };
 
 const handleAgeChange = (value) => {
@@ -53,18 +56,13 @@ const Zip = (<Input onChange={e => handleZipChange(e.target.value)} id="zip-inpu
 const Age = (<InputNumber className="input-bar" onChange={e => handleAgeChange(e)} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
 
 const Gender = (
-    <Select
-      showSearch
-      className="input-bar input-select"
-      placeholder="What is your gender?"
-      optionFilterProp="children"
+    <RadioGroup
       onChange={handleGenderChange}
-      filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
     >
-      <Option value='1 Male'>Male</Option>
-      <Option value='2 Female'>Female</Option>
-      <Option value='3 Other'>Other</Option>
-    </Select>
+      <RadioButton value='1 Male'>Male</RadioButton>
+      <RadioButton value='2 Female'>Female</RadioButton>
+      <RadioButton value='3 Other'>Other</RadioButton>
+    </RadioGroup>
   );
 
 const Ethnicity = (

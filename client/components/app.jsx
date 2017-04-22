@@ -2,7 +2,6 @@ import React from 'react';
 import { HashRouter as Router, Route, Link } from 'react-router-dom'; 
 import { Form } from 'antd';
 
-import AboutPage from './aboutpage.jsx';
 import '../styles/index.css';
 
 class App extends React.Component {
@@ -56,9 +55,6 @@ class App extends React.Component {
               </div>
               <div className="shift">
                 <Link to="/data">stats</Link>
-              </div>
-              <div className="shift">
-                <Link to="/aboutus">about us </Link>
               </div>
             </nav>
           </div>
