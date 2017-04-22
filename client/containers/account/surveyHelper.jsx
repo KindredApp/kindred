@@ -135,16 +135,16 @@ const Religiousity = (
     onChange={handleReligiousityChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='1 None'>I do not believe in any higher power</Option>
-    <Option value='2 Higher power'>I believe in a higher power but do not follow a specific religion</Option>
-    <Option value='3 Religious'>I follow a religion but do not actively practice it</Option>
-    <Option value='4 Major Events'>I follow a religion and participate in its major events</Option>
-    <Option value='5 Monthly'>I follow a religion and practice it at least once a month</Option>
-    <Option value='6 Weekly'>I follow a religion and practice it at least once a week</Option>
-    <Option value='7 Daily'>I follow a religion and practice it at least once a day</Option>
-    <Option value='8 Often'>I follow a religion and practice it many times a day</Option>
-    <Option value='9 Spiritual'>I consider myself spiritual, but it does not relate to religion</Option>
-    <Option value='10 Other'>Other</Option>
+    <Option value='1 None' style={{ 'white-space': 'normal' }}>I do not believe in any higher power</Option>
+    <Option value='2 Higher power' style={{ 'white-space': 'normal' }}>I believe in a higher power but do not follow a specific religion</Option>
+    <Option value='3 Religious' style={{ 'white-space': 'normal' }}>I follow a religion but do not actively practice it</Option>
+    <Option value='4 Major Events' style={{ 'white-space': 'normal' }}>I follow a religion and participate in its major events</Option>
+    <Option value='5 Monthly' style={{ 'white-space': 'normal' }}>I follow a religion and practice it at least once a month</Option>
+    <Option value='6 Weekly' style={{ 'white-space': 'normal' }}>I follow a religion and practice it at least once a week</Option>
+    <Option value='7 Daily' style={{ 'white-space': 'normal' }}>I follow a religion and practice it at least once a day</Option>
+    <Option value='8 Often' style={{ 'white-space': 'normal' }}>I follow a religion and practice it many times a day</Option>
+    <Option value='9 Spiritual' style={{ 'white-space': 'normal' }}>I consider myself spiritual, but it does not relate to religion</Option>
+    <Option value='10 Other' style={{ 'white-space': 'normal' }}>Other</Option>
   </Select>
 );
 
