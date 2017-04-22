@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {actionQotdAnswerOption} from '../../actions/actionQotdAnswerOption.js';
 import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 import {actionQuestionOrFilter} from '../../actions/actionQuestionOrFilter.js';
+import {actionQotdOptionsOnly} from '../../actions/actionQotdOptionsOnly.js';
 import Chart from 'chart.js';
 import '../../styles/index.css';
 
@@ -18,6 +19,7 @@ class QotdAnswerOptions extends React.Component {
     .then((data) => {
       instance.goInstance.get('/api/qotd?q=dataoptions')
       .then((dataoptions) => {
+        this.props.actionQotdOptionsOnly(dataoptions.data);
         let res = {};
         res.data = data.data;
         res.dataoptions = dataoptions.data
@@ -25,8 +27,17 @@ class QotdAnswerOptions extends React.Component {
       });
     });
     this.showAll = this.showAll.bind(this);
+    this.nullData = this.nullData.bind(this);
   }
   
+  nullData(data) {
+    let total = 0;
+    for (let item in data) {
+      total += data[item];
+    }
+    return total ? false : true;
+  }
+
   componentWillReceiveProps(nextprops) {
     var canvas = document.getElementById("pieChart");
     var ctx = canvas.getContext("2d");
@@ -37,8 +48,13 @@ class QotdAnswerOptions extends React.Component {
     if (nextprops.questionOrFilter !== 'question') {
       this.setState({showAllButton: true})
       title = nextprops.questionOrFilter;
-      var labels = Object.keys(nextprops.filterData);
-      var data = Object.values(nextprops.filterData);
+      if (this.nullData(nextprops.filterData)) {
+        var labels = ['No data'];
+        var data = [1];
+      } else {
+        var labels = Object.keys(nextprops.filterData);
+        var data = Object.values(nextprops.filterData);
+      }
     } else if (nextprops.qotdAnswerList && nextprops.questionChoice) {
       this.setState({showAllButton: false})
       var labels = Object.keys(nextprops.qotdAnswerList[nextprops.questionChoice]);
@@ -53,6 +69,12 @@ class QotdAnswerOptions extends React.Component {
           title: {
             display: true,
             text: title
+          },
+          animation: {
+            animateScale: true
+          },
+          legend: {
+            position: 'left'
           }
         },
         data: {
@@ -118,7 +140,8 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     actionQotdAnswerOption: actionQotdAnswerOption, 
     actionQuestionSelect: actionQotdDataSelect,
-    actionQuestionOrFilter: actionQuestionOrFilter
+    actionQuestionOrFilter: actionQuestionOrFilter,
+    actionQotdOptionsOnly: actionQotdOptionsOnly
   }, dispatch);
 }
 

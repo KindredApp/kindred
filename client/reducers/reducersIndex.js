@@ -11,6 +11,8 @@ import userProfileReducer from './userProfileReducer.js';
 import dataByAnswers from './dataByAnswersReducer.js';
 import filterDataReducer from './filterDataReducer.js';
 import questionOrFilter from './questionOrFilterReducer.js';
+import qotdOptionsOnly from './qotdOptionsOnly.js';
+import qotdSelectMap from './qotdSelectMapReducer.js';
 
 const allReducers = combineReducers({
   userReducer: userReducer,
@@ -24,7 +26,9 @@ const allReducers = combineReducers({
   userProfileReducer: userProfileReducer,
   dataByAnswers: dataByAnswers,
   filterData: filterDataReducer,
-  questionOrFilter: questionOrFilter
+  questionOrFilter: questionOrFilter,
+  qotdOptionsOnly: qotdOptionsOnly,
+  qotdSelectMap: qotdSelectMap
 });
 
 export default allReducers;

@@ -52,11 +52,17 @@ class QotdFilter extends React.Component {
     if (category === 'Age') {
       // TODO
     } else {
+      let allOpts = this.props.qotdOptionsOnly[question];
       data[question].forEach((ans) => {
         if (ans[category] == filter) {
           res[ans.AnswerText] ? res[ans.AnswerText]++ : res[ans.AnswerText] = 1;
         }
       });
+      for (let item in allOpts) {
+        if (!(item in res)) {
+          res[item] = 0;
+        }
+      }
       this.props.actionFilterData(res);
     }
   }
@@ -120,7 +126,7 @@ class QotdFilter extends React.Component {
 }
 
 function mapStateToProps (state) {
-  return {dataByAnswers: state.dataByAnswers, questionChoice: state.dataChoice};
+  return {dataByAnswers: state.dataByAnswers, questionChoice: state.dataChoice, qotdOptionsOnly: state.qotdOptionsOnly};
 }
 
 function mapDispatchToProps (dispatch) {
