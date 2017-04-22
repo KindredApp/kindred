@@ -10,7 +10,61 @@ import '../../styles/index.css';
 class DataMap extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      stateAbbr: {
+        'AL': 'Alabama',
+        'AK': 'Alaska',
+        'AZ': 'Arizona',
+        'AR': 'Arkansas',
+        'CA': 'California',
+        'CO': 'Colorado',
+        'CT': 'Connecticut',
+        'DE': 'Delaware',
+        'DC': 'District of Columbia',
+        'FL': 'Florida',
+        'GA': 'Georgia',
+        'HI': 'Hawaii',
+        'ID': 'Idaho',
+        'IL': 'Illinois',
+        'IN': 'Indiana',
+        'IA': 'Iowa',
+        'KS': 'Kansas',
+        'KY': 'Kentucky',
+        'LA': 'Louisiana',
+        'ME': 'Maine',
+        'MD': 'Maryland',
+        'MA': 'Massachusetts',
+        'MI': 'Michigan',
+        'MN': 'Minnesota',
+        'MS': 'Mississippi',
+        'MO': 'Missouri',
+        'MT': 'Montana',
+        'NE': 'Nebraska',
+        'NV': 'Nevada',
+        'NH': 'New Hampshire',
+        'NJ': 'New Jersey',
+        'NM': 'New Mexico',
+        'NY': 'New York',
+        'NC': 'North Carolina',
+        'ND': 'North Dakota',
+        'OH': 'Ohio',
+        'OK': 'Oklahoma',
+        'OR': 'Oregon',
+        'PA': 'Pennsylvania',
+        'RI': 'Rhode Island',
+        'SC': 'South Carolina',
+        'SD': 'South Dakota',
+        'TN': 'Tennessee',
+        'TX': 'Texas',
+        'UT': 'Utah',
+        'VT': 'Vermont',
+        'VA': 'Virginia',
+        'WA': 'Washington',
+        'WV': 'West Virginia',
+        'WI': 'Wisconsin',
+        'WY': 'Wyoming'
+      }
+    };
     setTimeout(this.sizeChange, 100);
   }
 
@@ -59,7 +113,8 @@ class DataMap extends React.Component {
       
       var svg = d3.select(datamapContainer).append('svg')
         .attr("width", "100%")
-          .append("g");
+          .append("g")
+          .classed('no-mouse', true);
       
       var projection = d3.geoAlbersUsa()
         .scale(900);
@@ -77,7 +132,7 @@ class DataMap extends React.Component {
         .attr('class', 'states')
         .attr('d', path)
         .on('mouseover', (d) => {
-          var name = d.properties.STATE_ABBR;
+          var name = this.state.stateAbbr[d.properties.STATE_ABBR];
           var data = {total: d.properties.data.total};
           let total = d.properties.data.total;   
           let text = `Total: ${d.properties.data.total}<br>`;     

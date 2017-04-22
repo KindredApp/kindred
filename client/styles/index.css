@@ -185,6 +185,9 @@ button.account-btn.edit:hover {
   font-size: 18px;
   text-shadow: 2px 2px 2px grey;
   color: black;
+  background-color: rgba(255,255,255, 0.4);
+  border-radius: 8px;
+  padding: 5px;
 }
 
 .hide {
@@ -219,6 +222,10 @@ button.account-btn.edit:hover {
   width: 100px;
   height: 40px;
   margin-left: 10px;
+}
+
+.no-mouse {
+  cursor: none;
 }
 
 /* -------------------- */
