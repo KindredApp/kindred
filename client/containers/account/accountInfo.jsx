@@ -33,7 +33,7 @@ class AccountInfo extends React.Component {
       duration: 8,
       btn,
       key,
-      onClose: () => console.log('notifcation closed without deleting account')
+      onClose: () => {}
     });
   }
 
@@ -41,7 +41,7 @@ class AccountInfo extends React.Component {
   deleteAccount() {
     instance.goInstance.delete(`/api/profile?user=${this.props.user.userObj.Username}`)
       .then((response) => {
-        message.success("Account deleted. If you logout, you will no longer be able to login without creating a new account.", 8, () => console.log('Bye!'));
+        message.success('Account deleted. If you logout, you will no longer be able to login without creating a new account.', 8);
       });
   }
 
@@ -62,7 +62,7 @@ class AccountInfo extends React.Component {
                 <div key={Math.random()} className="review-input-result">{v[1]}</div>
               </div>
             </div>
-          )
+          );
         }
       }) : null}
       </div>

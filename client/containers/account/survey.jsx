@@ -127,7 +127,6 @@ class Survey extends React.Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    console.log('next props are', nextProps);
   }
 
   _formatResponse (string) {
@@ -147,7 +146,6 @@ class Survey extends React.Component {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
-          console.log('response is', response.data);
           response.data === true ? this.setState({ unauthorized: false}, () => { this.checkVisits(); }) : this.setState({ unauthorized: true });
         }).catch((error) => { console.log('Check token error', error); });
       }
@@ -158,13 +156,11 @@ class Survey extends React.Component {
   }
 
   checkVisits() {
-    console.log('props available in checkVisits ', this.props);
     let cookie = Cookies.getJSON();
     for (let key in cookie) {
       if (key !== 'pnctest') {
         instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
-          console.log('response from checkvisits: ', response.data);
           if (response.data === 'true' && !this.props.surveyFromAccountPage) {
             this.props.actionSurveyFromAccountPage(false);
             this.setState({ redirect: true });
@@ -193,9 +189,7 @@ class Survey extends React.Component {
     }
 
     this.props.firebaseInstance.ref('users/' + username).once('value').then((snapshot) => {
-      console.log('in snapshot', snapshot);
       if (snapshot.val() === null) {
-        console.log('null triggered');
         this.props.firebaseInstance.ref('users/' + username).set(true);
       }
     });
@@ -224,7 +218,6 @@ class Survey extends React.Component {
   }
   
   next() {
-    console.log(this.state.current);
     let accountInfo = [];
 
     if (this.state.current === 1 && (!Helper.userData.Zip || !Helper.userData.Gender || !Helper.userData.Age)) {
@@ -239,9 +232,7 @@ class Survey extends React.Component {
         current: current,
         userData: accountInfo
       }, () => {
-        console.log('user data in state is', this.state.userData);
         if (this.state.current === 3) {
-          console.log('using action creator');
           this.props.actionSetUserProfile(this.state.userData);
         }
       });
@@ -272,7 +263,7 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div className="survey-container">
-\        <div className="steps-section">
+\             <div className="steps-section">
           {steps[this.state.current].title}
         </div>
         <div className="survey-card">
@@ -308,7 +299,7 @@ class Survey extends React.Component {
             {
               this.state.current === steps.length - 1
               &&
-              <Button className="survey-btn" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>submit</Button>
+              <Button className="survey-btn" onClick={() => { this.onClickDone(Helper.userData); }}>submit</Button>
             }
           </div>
         </div>
