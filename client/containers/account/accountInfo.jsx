@@ -68,7 +68,8 @@ class AccountInfo extends React.Component {
       </div>
     );
 
-    return this.props.userProfile ? 
+    return (
+    // this.props.userProfile ? 
       <div className="survey-container">
         <div className="steps-section">Account Overview</div>
         <div className="account-btn-section">
@@ -83,8 +84,9 @@ class AccountInfo extends React.Component {
             </div>
           </div>
         </div>
-      </div> :
-       null;
+      </div>);
+      //  :
+      //  null;
   }
 }
 
@@ -101,11 +103,3 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountInfo);
-
-// {this.props.userProfile.map((field, i) => {
-//   return (
-//     <div className="review-field" key={field[0]}>
-//       <span className="review-field-name">{field[0]}</span>
-//       <span className="review-value">{field[1]}</span>
-//     </div>);
-// })}

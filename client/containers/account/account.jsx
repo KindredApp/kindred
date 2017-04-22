@@ -20,6 +20,12 @@ class Account extends React.Component {
       this.props.actionSetUserProfile(this.props.user.userObj);
     }
   }
+  
+  componentWillReceiveProps(nextprops) {
+    if (nextprops.user) {
+      nextprops.actionSetUserProfile(nextprops.user.userObj);
+    }
+  }
 
   componentDidMount() {
     let cookies = Cookies.getJSON();
