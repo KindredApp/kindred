@@ -26,7 +26,7 @@ const welcome = (
       </div>
       <br/>
       <div>
-        We will not share your information with anyone but you and our pairing algorithm, except in the aggregate on the stats page.  Peruse the stats page to learn things like how many people answered certain questions of the day and what they said.
+        We will not share your information with anyone but you and our pairing algorithm, except in the aggregate on the <Link to="/data">stats</Link> page.  Peruse the stats page to learn things like how many people answered certain questions of the day and what they said.
       </div>
       <br/>
       <div>
@@ -272,7 +272,7 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div className="survey-container">
-        <div className="steps-section">
+\        <div className="steps-section">
           {steps[this.state.current].title}
         </div>
         <div className="survey-card">
