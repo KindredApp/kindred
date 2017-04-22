@@ -22,11 +22,14 @@ const welcome = (
       </div>
       <br/>
       <div>
-        The information ahead helps us pair you with others from different demographics. While only the required information is, well, required, the optional information will help us with the pairing process. 
+        The information ahead helps us pair you with others from different demographics. 
+        While only the required information is, well, required, the optional information will help us with the pairing process. 
       </div>
       <br/>
       <div>
-        We will not share your information with anyone but you and our pairing algorithm, except in the aggregate on the <Link to="/data">stats</Link> page.  Peruse the stats page to learn things like how many people answered certain questions of the day and what they said.
+        We will not share your information with anyone but you and our pairing algorithm, 
+        except in the aggregate on the <Link to="/data">stats</Link> page.  Peruse the stats page to learn things 
+        like how many people answered certain questions of the day and what they said.
       </div>
       <br/>
       <div>
@@ -98,11 +101,6 @@ const steps = [{
 }, {
   title: 'Account Overview'
 }];
-
-// , {
-//   title: 'Account Overview',
-//   content: overview,
-// }
 
 class Survey extends React.Component {
   constructor (props) {
@@ -194,7 +192,6 @@ class Survey extends React.Component {
       }
     });
 
-
     instance.goInstance({
       method: 'post',
       url: '/api/profile',
@@ -221,7 +218,7 @@ class Survey extends React.Component {
     let accountInfo = [];
 
     if (this.state.current === 1 && (!Helper.userData.Zip || !Helper.userData.Gender || !Helper.userData.Age)) {
-      message.error('Oops, looks like you missed one of the required fields. Please fill them in then press next!', 5);
+      message.error('Oops, looks like you missed one of the required fields. Please fill them in and then press next!', 5);
     } else {
       const current = this.state.current + 1;
       for (let key in Helper.userData) {
@@ -238,6 +235,7 @@ class Survey extends React.Component {
       });
     }
   }
+  
   prev() {
     const current = this.state.current - 1;
     this.setState({ current });
@@ -263,7 +261,7 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div className="survey-container">
-\             <div className="steps-section">
+\                <div className="steps-section">
           {steps[this.state.current].title}
         </div>
         <div className="survey-card">
