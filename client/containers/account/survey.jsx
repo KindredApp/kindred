@@ -18,15 +18,19 @@ const welcome = (
   <div className="welcome-message">
     <div>
       <div>
-        We're excited to pair you off with people from around the world, but before we begin we'll need your help! 
+        We're excited to pair you off with people from all around the country, but before we begin we need your help! 
       </div>
       <br/>
       <div>
-        The information ahead helps us accurately pair you with others from different demographics. While only the required information is, well required, the optional information will help us with the pairing process. 
+        The information ahead helps us pair you with others from different demographics. While only the required information is, well, required, the optional information will help us with the pairing process. 
       </div>
       <br/>
       <div>
-        When you are ready to begin, click 'next'. Thanks for joining us and we hope you enjoy your stay!
+        We will not share your information with anyone but you and our pairing algorithm, except in the aggregate on the stats page.  Peruse the stats page to learn things like how many people answered certain questions of the day and what they said.
+      </div>
+      <br/>
+      <div>
+        When you are ready to begin, click 'next.' Thanks for joining us and we hope you enjoy your stay!
       </div>
     </div>
   </div>
@@ -83,7 +87,7 @@ const optionalInformation = (
 );
      
 const steps = [{
-  title: 'Account Creation',
+  title: 'User Profile',
   content: welcome,
 }, {
   title: 'Required Information',
