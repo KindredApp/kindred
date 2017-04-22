@@ -12,6 +12,8 @@ import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 import {actionDataByAnswers} from '../../actions/actionDataByAnswers.js';
 import QotdFilter from './pastQotdsFilter.jsx';
 import {actionQuestionOrFilter} from '../../actions/actionQuestionOrFilter.js';
+import {actionQotdSelectMap} from '../../actions/actionQotdSelectMap.js';
+import QotdListMap from './pastQotdsListMap.jsx';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
@@ -31,6 +33,7 @@ class DataView extends React.Component {
     if (nextprops.stateData && !nextprops.questionChoice && this.state.setFirst) {
       this.setState({setFirst: false})
       nextprops.actionQuestionSelect(Object.keys(nextprops.stateData)[0]);
+      nextprops.actionQotdSelectMap(Object.keys(nextprops.stateData)[0]);
       nextprops.actionQuestionOrFilter('question');
     }
   }
@@ -44,8 +47,13 @@ class DataView extends React.Component {
           <QotdList />
           <br/>
           <QotdFilter />
-          <div id="mapAnswers">
+          <div id="qotdAns">
             <QotdAnswerOptions />
+          </div>
+          <hr />
+          <div id="map">
+            <div className="selectedDataTopic">{this.props.questionChoiceMap ? this.props.questionChoiceMap : null}</div>
+            <QotdListMap />          
             <DataMap/>
           </div>
         </div>
@@ -58,7 +66,8 @@ function mapStateToProps (state) {
   return {
     questionChoice: state.dataChoice,
     stateData: state.stateDataReducer,
-    dataByAnswers: state.dataByAnswersReducer
+    dataByAnswers: state.dataByAnswersReducer,
+    questionChoiceMap: state.qotdSelectMap
   };
 }
 
@@ -67,7 +76,8 @@ function mapDispatchToProps (dispatch) {
     actionQotdData: actionQotdData, 
     actionQuestionSelect: actionQotdDataSelect, 
     actionDataByAnswers: actionDataByAnswers,
-    actionQuestionOrFilter: actionQuestionOrFilter
+    actionQuestionOrFilter: actionQuestionOrFilter,
+    actionQotdSelectMap: actionQotdSelectMap
   }, dispatch);
 }
 

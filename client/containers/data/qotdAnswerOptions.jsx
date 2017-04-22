@@ -69,6 +69,12 @@ class QotdAnswerOptions extends React.Component {
           title: {
             display: true,
             text: title
+          },
+          animation: {
+            animateScale: true
+          },
+          legend: {
+            position: 'left'
           }
         },
         data: {
