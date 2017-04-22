@@ -667,7 +667,7 @@ class Video extends React.Component {
     const qotdInfo = (
       <ul>
         <li style={{color: "#0eab0c"}}>The purpose of this question is to give you something to talk about.</li>
-        <li style={{color: "#0eab0c", "padding-top": "3px"}}>Feel free to discuss other things too.</li>
+        <li style={{color: "#0eab0c", "paddingTop": "3px"}}>Feel free to discuss other things too.</li>
       </ul>
     );
 
@@ -676,10 +676,14 @@ class Video extends React.Component {
         <NavLoggedIn />
         <div className="video-page-container">
           <div className="video-header">
-            <div>{this.state.component === 'qotd' ? 'Question of the Day' : 'video'}</div>
-            <Popover content={qotdInfo}>
-              <Icon id="qtod" type="info-circle-o" />
-            </Popover>
+            {this.state.component === 'qotd' ? 
+              <div style={{display: "flex"}}>
+                <div>question of the day</div>
+                <Popover content={qotdInfo}>
+                  <Icon id="qtod" type="info-circle-o" />
+                </Popover>
+              </div> :
+            <div>video</div>}
           </div>
           <div id="video-container" className="video-container">
             {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
