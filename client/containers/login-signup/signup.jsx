@@ -46,7 +46,6 @@ class SignUp extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log('values', values);
       if (!err) {
         instance.goInstance.post('/api/signup', values).then((response, err) => {
           message.success('You have successfully signed up! Please login below to finish creating your account.', 4);

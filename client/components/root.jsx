@@ -8,7 +8,6 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 
 import App from './app.jsx';
-import AboutPage from './aboutpage.jsx';
 import SignUp from '../containers/login-signup/signup.jsx';
 import Login from '../containers/login-signup/login.jsx';
 import Video from '../containers/video/video.jsx';
@@ -41,7 +40,6 @@ class Root extends Component {
   initializeFirebase () {
     firebase.initializeApp(firebaseConfig);
     let database = firebase.database();
-    console.log('firebase in root', database);
     this.props.actionFirebase(database);
   }
   
@@ -96,7 +94,6 @@ class Root extends Component {
             <Route path="/survey" component={Survey} />
             <Route path="/account" component={Account} />
             <Route path="/data" component={DataView} />
-            <Route path="/aboutus" component={AboutPage} />
             <Route path="/kin" component={KinList} />
           </div>
         </Router>

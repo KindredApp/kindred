@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import { Redirect, Link } from 'react-router-dom'; 
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { Select, Steps, Button} from 'antd';
+import { Select, Steps, Button, message} from 'antd';
 import Helper from './surveyHelper.jsx';
 const Option = Select.Option;
 const Step = Steps.Step;
@@ -22,11 +22,14 @@ const welcome = (
       </div>
       <br/>
       <div>
-        The information ahead helps us pair you with others from different demographics. While only the required information is, well, required, the optional information will help us with the pairing process. 
+        The information ahead helps us pair you with others from different demographics. 
+        While only the required information is, well, required, the optional information will help us with the pairing process. 
       </div>
       <br/>
       <div>
-        We will not share your information with anyone but you and our pairing algorithm, except in the aggregate on the stats page.  Peruse the stats page to learn things like how many people answered certain questions of the day and what they said.
+        We will not share your information with anyone but you and our pairing algorithm, 
+        except in the aggregate on the <Link to="/data">stats</Link> page.  Peruse the stats page to learn things 
+        like how many people answered certain questions of the day and what they said.
       </div>
       <br/>
       <div>
@@ -99,11 +102,6 @@ const steps = [{
   title: 'Account Overview'
 }];
 
-// , {
-//   title: 'Account Overview',
-//   content: overview,
-// }
-
 class Survey extends React.Component {
   constructor (props) {
     super (props);
@@ -127,7 +125,6 @@ class Survey extends React.Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    console.log('next props are', nextProps);
   }
 
   _formatResponse (string) {
@@ -147,7 +144,6 @@ class Survey extends React.Component {
           Username: cookie[key].Username,
           Token: cookie[key].Token
         }).then((response) => {
-          console.log('response is', response.data);
           response.data === true ? this.setState({ unauthorized: false}, () => { this.checkVisits(); }) : this.setState({ unauthorized: true });
         }).catch((error) => { console.log('Check token error', error); });
       }
@@ -158,13 +154,11 @@ class Survey extends React.Component {
   }
 
   checkVisits() {
-    console.log('props available in checkVisits ', this.props);
     let cookie = Cookies.getJSON();
     for (let key in cookie) {
       if (key !== 'pnctest') {
         instance.goInstance.get(`/api/visitCheck?q=${cookie[key].Username}`)
         .then((response) => {
-          console.log('response from checkvisits: ', response.data);
           if (response.data === 'true' && !this.props.surveyFromAccountPage) {
             this.props.actionSurveyFromAccountPage(false);
             this.setState({ redirect: true });
@@ -178,6 +172,7 @@ class Survey extends React.Component {
   }
 
   onClickDone(data) {
+
     let cookie = Cookies.getJSON();
     let token;
     let username;
@@ -192,13 +187,10 @@ class Survey extends React.Component {
     }
 
     this.props.firebaseInstance.ref('users/' + username).once('value').then((snapshot) => {
-      console.log('in snapshot', snapshot);
       if (snapshot.val() === null) {
-        console.log('null triggered');
         this.props.firebaseInstance.ref('users/' + username).set(true);
       }
     });
-
 
     instance.goInstance({
       method: 'post',
@@ -223,25 +215,27 @@ class Survey extends React.Component {
   }
   
   next() {
-    console.log(this.state.current);
-    const current = this.state.current + 1;
     let accountInfo = [];
 
-    for (let key in Helper.userData) {
-      accountInfo.push([[key], [Helper.userData[key]]]);
-    }
-
-    this.setState({ 
-      current: current,
-      userData: accountInfo
-    }, () => {
-      console.log('user data in state is', this.state.userData);
-      if (this.state.current === 3) {
-        console.log('using action creator');
-        this.props.actionSetUserProfile(this.state.userData);
+    if (this.state.current === 1 && (!Helper.userData.Zip || !Helper.userData.Gender || !Helper.userData.Age)) {
+      message.error('Oops, looks like you missed one of the required fields. Please fill them in and then press next!', 5);
+    } else {
+      const current = this.state.current + 1;
+      for (let key in Helper.userData) {
+        accountInfo.push([[key], [Helper.userData[key]]]);
       }
-    });
+
+      this.setState({ 
+        current: current,
+        userData: accountInfo
+      }, () => {
+        if (this.state.current === 3) {
+          this.props.actionSetUserProfile(this.state.userData);
+        }
+      });
+    }
   }
+  
   prev() {
     const current = this.state.current - 1;
     this.setState({ current });
@@ -267,7 +261,7 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div className="survey-container">
-        <div className="steps-section">
+\                <div className="steps-section">
           {steps[this.state.current].title}
         </div>
         <div className="survey-card">
@@ -289,7 +283,10 @@ class Survey extends React.Component {
           </div>
           <div className="survey-section">
             {this.state.answered === true ? <Redirect to="/video"/> : null}
-            <div className="steps-content">{this.state.current === 3 ? accountOverview : steps[this.state.current].content}</div>
+            <div className="steps-content">{this.state.current === 3 ? accountOverview : 
+              this.state.current === 2 ? optionalInformation : 
+              this.state.current === 1 ? requiredInformation : 
+              welcome}</div>
           </div>
           <div className="steps-action">
             {
@@ -300,7 +297,7 @@ class Survey extends React.Component {
             {
               this.state.current === steps.length - 1
               &&
-              <Button className="survey-btn" onClick={() => { console.log(Helper.userData); this.onClickDone(Helper.userData); }}>submit</Button>
+              <Button className="survey-btn" onClick={() => { this.onClickDone(Helper.userData); }}>submit</Button>
             }
           </div>
         </div>

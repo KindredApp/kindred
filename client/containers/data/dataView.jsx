@@ -14,6 +14,7 @@ import QotdFilter from './pastQotdsFilter.jsx';
 import {actionQuestionOrFilter} from '../../actions/actionQuestionOrFilter.js';
 import {actionQotdSelectMap} from '../../actions/actionQotdSelectMap.js';
 import QotdListMap from './pastQotdsListMap.jsx';
+import {Popover} from 'antd';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
@@ -27,6 +28,9 @@ class DataView extends React.Component {
       this.props.actionQotdData(response);
       this.props.actionDataByAnswers(response);
     });
+
+    this.showAll = this.showAll.bind(this);
+    this.showFilterButton = this.showFilterButton.bind(this);
   }
 
   componentWillReceiveProps(nextprops) {
@@ -38,24 +42,59 @@ class DataView extends React.Component {
     }
   }
 
+  showAll() {
+    this.props.actionQuestionSelect(this.props.questionChoice);
+    this.props.actionQuestionOrFilter('question');
+  }
+
+  showFilterButton() {
+    if (this.props.questionOrFilter) {
+      return this.props.questionOrFilter !== 'question' ? <button className="qotdDataButton clearFilterButton" onClick={this.showAll}>Clear Filter</button> : null
+    } else {
+      return null;
+    }
+  }
+
+
   render() {
+    const pieContent = (
+      <div style={{ width: '300px'}}>
+        <p style={{ 'whiteSpace': 'normal', 'fontSize': '14px' }}>
+        Choose a Question of the Day to see how everyone responded. Choose a filter to see a breakdown by demographic. Hover over the chart to see statistics.
+        </p>
+      </div>
+    );
+
+    const mapContent = (
+      <div style={{ width: '300px'}}>
+        <p style={{ 'whiteSpace': 'normal', 'fontSize': '14px' }}>
+        Choose a Question of the Day to see how everyone responded by state. Hover over the map to see the statistics.
+        </p>
+      </div>
+    );
+
     return (
       <div className="landing-container">
         <NavLoggedIn/>
         <div className="dataPageContainer">
           <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : null}</div>
-          <QotdList />
-          <br/>
-          <QotdFilter />
-          <div id="qotdAns">
-            <QotdAnswerOptions />
-          </div>
+              <Popover placement="bottomRight" content={pieContent}>
+                <button className="qotdDataButton dataInfoButton">Info</button>
+              </Popover>
+              <QotdList />
+              <br/>
+              <QotdFilter />
+              {this.showFilterButton()}
+           <QotdAnswerOptions />
+
           <hr />
-          <div id="map">
+          
             <div className="selectedDataTopic">{this.props.questionChoiceMap ? this.props.questionChoiceMap : null}</div>
+            <Popover placement="bottomRight" content={mapContent}>
+              <button className="qotdDataButton dataInfoButton">Info</button>
+            </Popover>
             <QotdListMap />          
-            <DataMap/>
-          </div>
+          <DataMap/>
         </div>
       </div>
     );
@@ -67,7 +106,8 @@ function mapStateToProps (state) {
     questionChoice: state.dataChoice,
     stateData: state.stateDataReducer,
     dataByAnswers: state.dataByAnswersReducer,
-    questionChoiceMap: state.qotdSelectMap
+    questionChoiceMap: state.qotdSelectMap,
+    questionOrFilter: state.questionOrFilter
   };
 }
 

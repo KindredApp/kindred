@@ -70,11 +70,11 @@ class QotdFilter extends React.Component {
   render () {
     const menu = (
       <Menu onClick={this.onClick}>
-        <SubMenu title="Age">
+        {/*<SubMenu title="Age">
           {this.state.fieldmap.Age.map((item, i) => {
             return <Menu.Item key={`Age.${i+1}`}>{item}</Menu.Item>
           })}
-        </SubMenu>
+        </SubMenu>*/}
         <SubMenu title="Gender">
           {this.state.fieldmap.Gender.map((item, i) => {
             return <Menu.Item key={`Gender.${i+1}`}>{item}</Menu.Item>
@@ -116,7 +116,7 @@ class QotdFilter extends React.Component {
     return (
       <div>
         <Dropdown overlay={menu}>
-          <a className="ant-dropdown-link">
+          <a className="ant-dropdown-link qotdList">
             Choose a filter <Icon type="down" />
           </a>
         </Dropdown>

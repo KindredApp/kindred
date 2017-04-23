@@ -21,7 +21,7 @@ class QotdList extends React.Component {
     const menu = (
       <Menu onClick={this.onClick}>
         { this.props.stateData ? Object.keys(this.props.stateData).map((question, i) => {
-          return <Menu.Item key={i}>{question}</Menu.Item>;
+          return <Menu.Item style={{fontSize: '14px'}} key={i}>{question}</Menu.Item>;
         }) : null}
       </Menu>
     );
@@ -29,8 +29,8 @@ class QotdList extends React.Component {
     return (
       <div>
         <Dropdown overlay={menu}>
-          <a className="ant-dropdown-link">
-        Choose a question to see stats <Icon type="down" />
+          <a className="ant-dropdown-link qotdList">
+        Choose a question <Icon type="down" />
           </a>
         </Dropdown>
       </div>

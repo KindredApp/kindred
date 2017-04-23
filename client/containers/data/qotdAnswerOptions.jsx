@@ -26,7 +26,6 @@ class QotdAnswerOptions extends React.Component {
         this.props.actionQotdAnswerOption(res);
       });
     });
-    this.showAll = this.showAll.bind(this);
     this.nullData = this.nullData.bind(this);
   }
   
@@ -41,7 +40,7 @@ class QotdAnswerOptions extends React.Component {
   componentWillReceiveProps(nextprops) {
     var canvas = document.getElementById("pieChart");
     var ctx = canvas.getContext("2d");
-    var title = "All Answers";
+    var title = "Everyone's Answers";
     if (window.chart) {
       window.chart.destroy();
     }
@@ -59,7 +58,7 @@ class QotdAnswerOptions extends React.Component {
       this.setState({showAllButton: false})
       var labels = Object.keys(nextprops.qotdAnswerList[nextprops.questionChoice]);
       var data = Object.values(nextprops.qotdAnswerList[nextprops.questionChoice]);
-      title = 'All Answers';
+      title = 'Everyone\'s Answers';
     }
       window.chart = new Chart(ctx, {
         type: 'doughnut',
@@ -68,13 +67,14 @@ class QotdAnswerOptions extends React.Component {
           maintainAspectRatio: true,
           title: {
             display: true,
-            text: title
+            text: title,
+            fontSize: 16
           },
           animation: {
             animateScale: true
           },
           legend: {
-            position: 'left'
+            position: 'top'
           }
         },
         data: {
@@ -92,7 +92,6 @@ class QotdAnswerOptions extends React.Component {
               '#C9D1FC',
               '#848CB7',
               '#959ECE'
-
             ],
             hoverBackgroundColor: [
               '#A5AFE5',          
@@ -111,15 +110,9 @@ class QotdAnswerOptions extends React.Component {
       });
   }
 
-  showAll() {
-    this.props.actionQuestionSelect(this.props.questionChoice);
-    this.props.actionQuestionOrFilter('question');
-  }
-
   render() {
     return (
-      <div id="qotdAns" height="100" width="100">
-        {this.state.showAllButton ? <button onClick={this.showAll}>Show All</button> : null}
+      <div id="doughnut" height="100" width="100">
         <canvas height="100" width="100" id="pieChart"></canvas>
       </div>
     );

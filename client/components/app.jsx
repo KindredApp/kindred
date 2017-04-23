@@ -2,7 +2,6 @@ import React from 'react';
 import { HashRouter as Router, Route, Link } from 'react-router-dom'; 
 import { Form } from 'antd';
 
-import AboutPage from './aboutpage.jsx';
 import '../styles/index.css';
 
 class App extends React.Component {
@@ -57,9 +56,6 @@ class App extends React.Component {
               <div className="shift">
                 <Link to="/data">stats</Link>
               </div>
-              <div className="shift">
-                <Link to="/aboutus">about us </Link>
-              </div>
             </nav>
           </div>
         </div>
@@ -68,7 +64,7 @@ class App extends React.Component {
             <div className="landing-qotd">Question of the day: <span className="element"></span></div>
           </div>
           <div className="landing-description">
-            <p>Kindred Chat connects you with others from <em>different</em> demographics to discuss the question of the day. Sometimes serious, sometimes light-hearted, always a fresh perspective. Give it a go!</p>
+            <p>Kindred Chat connects you with others from different demographics to discuss the question of the day. Sometimes serious, sometimes light-hearted, always a fresh perspective. Give it a go!</p>
           </div>
         </div>
         <div className="landing-footer"></div>

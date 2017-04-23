@@ -9,7 +9,7 @@ import Promise from 'bluebird';
 import {actionUser} from '../../actions/actionUser.js';
 import TwilioVideo, { createLocalTracks, createLocalVideoTrack } from 'twilio-video';
 import instance from '../../config.js';
-import {Button, message} from 'antd';
+import {Button, message, Icon, Popover} from 'antd';
 import * as firebase from 'firebase';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
 
@@ -97,7 +97,6 @@ class Video extends React.Component {
 
   componentDidMount() {
     let cookies = Cookies.getJSON();
-    console.log('FIREBASE INSTANCE', this.props.firebaseInstance);
     for (var key in cookies) {
       if (key !== 'pnctest') {
         this.setState({
@@ -128,20 +127,15 @@ class Video extends React.Component {
       tempObj.ID = 0;
       instance.goInstance.post('api/queueRemove', {
         userProfile: tempObj
-      }).then((res) => {
-        console.log('removed from queue');
       });
       if (this.state.roomInstance) {
         this.state.roomInstance.disconnect();
-        instance.goInstance.post('api/roomRemove', this.state.roomData).then((r) => {
-          console.log('room removed from rooms queue');
-        });
+        instance.goInstance.post('api/roomRemove', this.state.roomData);
         this.setState({
           roomInstance: false
         });
       }
       e.preventDefault();
-      console.log('hey from window listener');
       return e.returnValue = 'are u sure you wanna close';
     });
   }
@@ -151,14 +145,11 @@ class Video extends React.Component {
     tempObj.ID = 0;
     instance.goInstance.post('api/queueRemove', {
       userProfile: tempObj
-    }).then((response) => {
-      console.log('removed from queue');
     });
   }
 
 
   componentWillReceiveProps(nextProps) {
-    console.log('receiving next props', nextProps);
     this.setState({
       user: nextProps.user.userObj
     });
@@ -166,12 +157,7 @@ class Video extends React.Component {
 
   connectUsers () {
     let db = this.props.firebaseInstance;
-    console.log(this.state.activeRoom);
-    console.log(this.state.pairedIdentity);
-    // db.ref('users/' + this.state.identity).set()
     db.ref('users/' + this.state.identity + '/' + this.state.activeRoom).set( this.state.pairedIdentity );
-    //set active room then add paired person to it
-    // db.ref('users/' + this.state.identity + '/' + this.state.activeRoom).set(this.state.pairedPerson);
     message.success(`You have kinnected *TM with: ${this.state.pairedIdentity}`, 2);
   }
   
@@ -209,7 +195,6 @@ class Video extends React.Component {
   }
 
   tokenHolder() {
-    //THIS IS UGLY FIX IT
     if (this.props.user) {
       return this.props.user.token[0].slice(-20);
     }
@@ -221,11 +206,8 @@ class Video extends React.Component {
     arr = arr.slice(-1);
     o.forEach((v) => {
       var obj = {};
-      console.log('v is: ', v);
       v.split(',').forEach((pair) => {
-        console.log('pair is:', pair);
         var tuple = pair.split(':');
-        console.log('tuple one', tuple[1]);
         obj[tuple[0]] = tuple[1];
       });
       arr.push(obj);
@@ -248,12 +230,10 @@ class Video extends React.Component {
   }
 
   enterLoading () {
-    console.log('enter loading triggered');
     this.setState({ loading: true });
   }
 
   leaveLoading () {
-    console.log('enter loading triggered');
     this.setState({ loading: false });
     message.success('You were successfully removed from the queue!', 2);
   }
@@ -261,7 +241,6 @@ class Video extends React.Component {
   getQOTD() {
     instance.goInstance.get('/api/qotd?q=qotd')
     .then((response) => {
-      console.log('qotd response is', response);
       this.setState({
         qotdID: response.data.ID,
         qotdText: response.data.Text,
@@ -277,21 +256,12 @@ class Video extends React.Component {
     videoContainerClasses.remove('video-container');
     videoContainerClasses.add('video-container-two');
     e.preventDefault();
-    // axios.post('/api/qotd', JSON.stringify
-    //   ({
-    //     UserAuthID: 1, // FIX THIS, HARDCODED WHILE PROPS MISSING
-    //     QotdID: this.state.qotdID,
-    //     Text: this.state.qotdText
-    //   })
-    // ).then(() => {
     this.setState({
       component: 'loading'
     });
-    // });
   }
 
   attachTracks(tracks, container) {
-    console.log('attaching tracks via attachTracks:', tracks);
     tracks.forEach((track) => {
       container.appendChild(track.attach());
     });
@@ -318,9 +288,7 @@ class Video extends React.Component {
   leaveRoom() {
     if (this.state.roomInstance) {
       this.state.roomInstance.disconnect();
-      instance.goInstance.post('api/roomRemove', this.state.roomData).then((r) => {
-        console.log('room removed from rooms queue');
-      });
+      instance.goInstance.post('api/roomRemove', this.state.roomData);
       this.setState({
         roomInstance: false,
         component: 'qotd',
@@ -334,7 +302,6 @@ class Video extends React.Component {
   }
 
   postToQueue() {
-    console.log('this props userobj is: ', this.props.user.userObj);
     if (this.props.user.userObj) {
       instance.goInstance.post('/api/queue', {
         userProfile: this.props.user.userObj
@@ -345,10 +312,8 @@ class Video extends React.Component {
   getVideoQueue() {
     return instance.goInstance.get('/api/queue').then((response) => {
       if (response.data === 'empty') {
-        console.log('no one in queue');
         return response.data;
       } else {
-        console.log('new queue retrieve is', response.data);
         var currentQueueItem = this._formatQueueResponse(response.data);
         delete currentQueueItem.userProfile;
         this.setState({
@@ -366,18 +331,15 @@ class Video extends React.Component {
           result: false
         };
       }
-      console.log('person in queue: ', queueItem);
       let diffCount = 0;
       for (let key in queueItem) {
         if (key === 'userProfile' || key === 'Username') {
           continue;
         }
         if (queueItem[key] !== this.props.user.userObj[key]) {
-          console.log('differenceFound', key);
           diffCount++;
         }
         if (diffCount > 3) {
-          console.log('were different', diffCount);
           return {
             result: true,
             pairedPerson: queueItem.Username
@@ -410,7 +372,6 @@ class Video extends React.Component {
     }
     // var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
     instance.nodeInstance.get(req).then((response) => {
-      console.log(response.data);
       this.setState({
         identity: response.data.identity,
         twilioToken: response.data.token
@@ -424,19 +385,15 @@ class Video extends React.Component {
           } else {
             this.getVideoQueue()
             .then((response) => {
-              console.log('result of algorithm is: ', response.result);
+
               if (response.result) {
                 instance.goInstance.post('api/queueRemove', {
                   userProfile: this.props.user.userObj
-                }).then((response) => {
-                  console.log('removed from queue');
                 });
                 this.setState({
                   pairedIdentity: response.pairedPerson
                 });
                 this.createRoom(this.state.identity, response.pairedPerson).then((response) => {
-                  console.log('Room has been posted: ', response);
-                  console.log('you have been paired with', response.pairedPerson);
                   this.setState({
                     activeRoom: response.RoomNumber
                   }, () => {
@@ -462,9 +419,7 @@ class Video extends React.Component {
                   });
                 }
                 //add yourself to queue only if inQueue state is false // set state to true
-                console.log('status of inqueue is', this.state.inQueue);
                 if (!this.state.inQueue) {
-                  console.log('this.props.user.userObj is', this.props.user.userObj);
                   this.props.user.userObj.Username = this.state.identity;
                   this.props.user.userObj.Age = parseInt(this.props.user.userObj.Age);
                   instance.goInstance.post('api/queue', {
@@ -493,7 +448,6 @@ class Video extends React.Component {
         roomRemove: response.data
       });
       let arr = this._formatResponse(response.data);
-      console.log('returned array: ', arr);
       return arr;
     }).then((response) => {
       response.forEach((room) => {
@@ -509,7 +463,6 @@ class Video extends React.Component {
               activeRoom: parseInt(room.RoomNumber), 
             });
           }
-          console.log('room found inside getRooms', room);
         }
       });
       return true;
@@ -521,8 +474,6 @@ class Video extends React.Component {
       audio: true,
       video: { width: 640 }
     }).then((localTracks) => {
-      console.log('token is', this.state.twilioToken);
-      console.log('room name is', this.state.activeRoom);
       return TwilioVideo.connect(this.state.twilioToken, {
         name: this.state.activeRoom,
         tracks: localTracks
@@ -543,7 +494,6 @@ class Video extends React.Component {
         }
 
         room.participants.forEach((participant) => {
-          console.log('in for each, participant', participant);
           let videoContainer = document.getElementById('remote-media');
           this.attachParticipantTracks(participant, videoContainer);
         });
@@ -565,8 +515,6 @@ class Video extends React.Component {
 
         room.on('participantConnected', (participant) => {
           let videoContainer = document.getElementById('remote-media');
-          console.log('participant has connected', participant.identity);
-          console.log('console logging participant.tracks', participant.tracks);
 
           participant.on('trackAdded', track => {
             if (participant.identity === this.state.identity) {
@@ -595,6 +543,7 @@ class Video extends React.Component {
 
     const QOTDComponent = (
       <div className="qotd-container">
+      <div className="info">Choose your answer. Then click 'submit' to  discuss your answer with kin.</div>
        <div className="question-of-the-day">{String.fromCharCode(0x2728) + this.state.qotdText + String.fromCharCode(0x2728)}</div>
        <form className="qotd-form">
          <div className="qotd-options">
@@ -619,18 +568,14 @@ class Video extends React.Component {
     const leaveQueueButton = (
       <div className="searching-button-container">
         <Button type='primary' onClick={() => {
-          console.log('clicked leave');
           this.setState({
             leaveQueue: true,
             inQueue: false
           });
-          console.log('person to leave queue is', this.props.user.userObj);
           var tempObj = this.props.user.userObj;
           tempObj.ID = 0;
           instance.goInstance.post('api/queueRemove', {
             userProfile: tempObj
-          }).then((response) => {
-            console.log('removed from queue');
           });
           this.leaveLoading();
         }}>Searching - click to cancel</Button>
@@ -662,11 +607,27 @@ class Video extends React.Component {
       </div>
     );
 
+    const qotdInfo = (
+      <ul>
+        <li style={{color: '#0eab0c'}}>The purpose of this question is to give you something to talk about.</li>
+        <li style={{color: '#0eab0c', 'paddingTop': '3px'}}>Feel free to discuss other things too.</li>
+      </ul>
+    );
+
     return (
       <div className="video-page">
         <NavLoggedIn />
         <div className="video-page-container">
-          <div className="video-header">{this.state.component === 'qotd' ? 'qotd' : 'video'}</div>
+          <div className="video-header">
+            {this.state.component === 'qotd' ? 
+              <div style={{display: 'flex'}}>
+                <div>question of the day</div>
+                <Popover content={qotdInfo}>
+                  <Icon id="qtod" type="info-circle-o" />
+                </Popover>
+              </div> :
+            <div>video</div>}
+          </div>
           <div id="video-container" className="video-container">
             {!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia ? <div>Web RTC not available</div> : null}
             {this.state.component === 'qotd' ? QOTDComponent : this.state.component === 'loading' ? VideoComponent : VideoComponent}

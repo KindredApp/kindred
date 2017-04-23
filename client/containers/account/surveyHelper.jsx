@@ -1,13 +1,16 @@
 import React from 'react';
-import { Select, Steps, Button, Input, InputNumber } from 'antd';
+import { Select, Steps, Button, Input, InputNumber, Radio } from 'antd';
 import Survey from './survey.jsx';
+
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 let userData = {
   Age: 25
 };
 
 const handleGenderChange = (value) => {
-  userData.Gender = parseInt(value);
+  userData.Gender = parseInt(value.target.value);
 };
 
 const handleAgeChange = (value) => {
@@ -53,18 +56,13 @@ const Zip = (<Input onChange={e => handleZipChange(e.target.value)} id="zip-inpu
 const Age = (<InputNumber className="input-bar" onChange={e => handleAgeChange(e)} placeholder= "How old are you?" min={1} max={123} defaultValue={25} />);
 
 const Gender = (
-    <Select
-      showSearch
-      className="input-bar input-select"
-      placeholder="What is your gender?"
-      optionFilterProp="children"
+    <RadioGroup
       onChange={handleGenderChange}
-      filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
     >
-      <Option value='1 Male'>Male</Option>
-      <Option value='2 Female'>Female</Option>
-      <Option value='3 Other'>Other</Option>
-    </Select>
+      <RadioButton value='1 Male'>Male</RadioButton>
+      <RadioButton value='2 Female'>Female</RadioButton>
+      <RadioButton value='3 Other'>Other</RadioButton>
+    </RadioGroup>
   );
 
 const Ethnicity = (
@@ -115,14 +113,14 @@ const Education = (
     onChange={handleEducationChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='1 Elementary'>Elementary School</Option>
-    <Option value='2 Middle School'>Middle School</Option>
-    <Option value='3 High School'>High School</Option>
-    <Option value='4 College'>College (4 year degree)</Option>
-    <Option value='5 Associate'>Associate degree (2 year degree)</Option>
-    <Option value='6 Master'>Master's degree</Option>
-    <Option value='7 Doctorate'>Professional or doctorate degree</Option>
-    <Option value='8 Home School'>I was home schooled</Option>
+    <Option value='1 Elementary' style={{ 'whiteSpace': 'normal' }}>Elementary School</Option>
+    <Option value='2 Middle School' style={{ 'whiteSpace': 'normal' }}>Middle School</Option>
+    <Option value='3 High School' style={{ 'whiteSpace': 'normal' }}>High School</Option>
+    <Option value='4 College' style={{ 'whiteSpace': 'normal' }}>College (4 year degree)</Option>
+    <Option value='5 Associate' style={{ 'whiteSpace': 'normal' }}>Associate degree (2 year degree)</Option>
+    <Option value='6 Master' style={{ 'whiteSpace': 'normal' }}>Master's degree</Option>
+    <Option value='7 Doctorate' style={{ 'whiteSpace': 'normal' }}>Professional or doctorate degree</Option>
+    <Option value='8 Home School' style={{ 'whiteSpace': 'normal' }}>I was home schooled</Option>
     <Option value='9 None'>None</Option>
     <Option value='10 Other'>Other</Option>
   </Select>
@@ -137,16 +135,16 @@ const Religiousity = (
     onChange={handleReligiousityChange}
     filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
   >
-    <Option value='1 None'>I do not believe in any higher power</Option>
-    <Option value='2 Higher power'>I believe in a higher power but do not follow a specific religion</Option>
-    <Option value='3 Religious'>I follow a religion but do not actively practice it</Option>
-    <Option value='4 Major Events'>I follow a religion and participate in its major events</Option>
-    <Option value='5 Monthly'>I follow a religion and practice it at least once a month</Option>
-    <Option value='6 Weekly'>I follow a religion and practice it at least once a week</Option>
-    <Option value='7 Daily'>I follow a religion and practice it at least once a day</Option>
-    <Option value='8 Often'>I follow a religion and practice it many times a day</Option>
-    <Option value='9 Spiritual'>I consider myself spiritual, but it does not relate to religion</Option>
-    <Option value='10 Other'>Other</Option>
+    <Option value='1 None' style={{ 'whiteSpace': 'normal' }}>I do not believe in any higher power</Option>
+    <Option value='2 Higher power' style={{ 'whiteSpace': 'normal' }}>I believe in a higher power but do not follow a specific religion</Option>
+    <Option value='3 Religious' style={{ 'whiteSpace': 'normal' }}>I follow a religion but do not actively practice it</Option>
+    <Option value='4 Major Events' style={{ 'whiteSpace': 'normal' }}>I follow a religion and participate in its major events</Option>
+    <Option value='5 Monthly' style={{ 'whiteSpace': 'normal' }}>I follow a religion and practice it at least once a month</Option>
+    <Option value='6 Weekly' style={{ 'whiteSpace': 'normal' }}>I follow a religion and practice it at least once a week</Option>
+    <Option value='7 Daily' style={{ 'whiteSpace': 'normal' }}>I follow a religion and practice it at least once a day</Option>
+    <Option value='8 Often' style={{ 'whiteSpace': 'normal' }}>I follow a religion and practice it many times a day</Option>
+    <Option value='9 Spiritual' style={{ 'whiteSpace': 'normal' }}>I consider myself spiritual, but it does not relate to religion</Option>
+    <Option value='10 Other' style={{ 'whiteSpace': 'normal' }}>Other</Option>
   </Select>
 );
 

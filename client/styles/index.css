@@ -17,9 +17,8 @@
 }
 
 .header-nav {
-  width: 180px;
-  display: flex;
-  align-items: center;
+  width: 25%;
+  min-width: 180px;;
 }
 
 .header-links {
@@ -157,23 +156,23 @@ button.account-btn.edit:hover {
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: flex-start;
+  background-color: ghostwhite;
+  border-radius: 5px;
+  min-width: 750px;
 }
 
 .selectedDataTopic {
   height: 50px;
   align-self: center;
-  margin: 16px 0px 0px 5px;
+  margin: 16px 0 20px 0;
   font-family: 'Lato', sans-serif;
-  font-size: 20px;
+  font-size: 24px;
 }
 
-#qotdAns {
-  /*display: flex;*/
-    /*display: flex;
-  flex-direction: row;  
-  justify-content: flex-start;*/
-  height: 60%;
-  width: 60%;
+#doughnut {
+  height: 35%;
+  width: 35%;
+  align-self: center;
 }
 
 .states:hover {
@@ -185,18 +184,62 @@ button.account-btn.edit:hover {
   font-size: 18px;
   text-shadow: 2px 2px 2px grey;
   color: black;
+  background-color: rgba(255,255,255, 0.4);
+  border-radius: 8px;
+  padding: 5px;
+  max-width: 200px;
+  overflow-wrap: normal;
 }
 
 .hide {
   visibility: hidden;
 }
 
-#mapAnswers {
-  /*display: flex;
-  flex-direction: row;  
-  justify-content: flex-start;*/
-  /*flex: 1; */
-  /*display: inline-block;*/
+.qotdList {
+  color: black;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.qotdDataButton, .qotdList {
+  background-color: #747BA0;
+  transition: all .2s ease-in;
+  color: white;
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 14px;
+  box-shadow: 2px 2px 2px #535873;
+  margin-top: 10px;
+  margin-bottom: 12px;  
+}
+
+.qotdDataButton:hover, .qotdList:hover {
+  background-color: #959ECE;
+  cursor: pointer;
+  color: white;
+}
+
+.clearFilterButton {
+  width: 100px;
+  height: 40px;
+  margin-left: 10px;
+}
+
+.no-mouse {
+  cursor: none;
+}
+
+hr {
+  border: 0;
+  height: 3px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(83, 88, 115, 0.75), rgba(0, 0, 0, 0));
+  margin: 30px 0;
+}
+
+.dataInfoButton {
+  width: 60px;
+  height: 40px;
+  margin-left: 10px;
 }
 
 /* -------------------- */
@@ -298,6 +341,7 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
   display: flex;
   flex-direction: column;
 }
+
 .video-page-container {
   width: 100%;
   height: 100%;
@@ -314,6 +358,20 @@ button.ant-btn.ant-btn-primary.ant-btn-lg.signup-form-button {
   font-family: 'Roboto', sans-serif;
   font-size: 35px;
   color: white;
+  display: flex;
+}
+
+#qtod {
+  margin: 0px 0px 0px 15px;
+  font-size: 30px;
+  line-height: 1.8;
+}
+
+.info {
+  color: #0eab0c;
+  padding: 0px 15px 0px 15px;
+  font-size: 1.1em;
+  font-family: 'Lato', sans-serif;
 }
 
 .logout-button {
@@ -461,15 +519,55 @@ input.qotd-submit-button:hover {
   background: linear-gradient(to top right, #1e3c72, #325BC5, #5177CA, #6288C8); */
 }
 
+.steps-section {
+  padding: 0 0 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Lato', sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: white;
+}
+
+.survey-card {
+  min-width: 500px;
+  width: 70%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 10%;
+}
+
+.survey-section {
+  min-width: 70%;
+  max-height: 70%;
+  border-radius: 5px;
+  width: 50%;
+  margin: 0 5%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border: 1px solid #eee;
+  background-color: white;
+}
 
 .steps-content {
   width: 100%;
-  height: 100%;
+  /*height: 60%;*/
+  max-height: 450px;
   border-radius: 5px;
   border-color: slategrey;
   overflow: scroll;
+  transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  -moz-transition: all 0.4s ease-in-out;
+  -o-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
 }
 
+ 
 .input-bar {
   width: 80%;
 }
@@ -478,34 +576,37 @@ input#zip-input {
   width: 80%;
 }
 
-.survey-card {
-  height: 450px;
-  width: 700px;
+.welcome-message {
+  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+  width: 100%;
+  padding: 20px;
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.survey-section {
-  min-width: 350px;
-  min-height: 450px;
-  border-radius: 5px;
-  height: 100%;
-  width: 50%;
-  display: flex;
-  align-items: center;
   flex-direction: column;
-  border: 1px solid #eee;
-  background-color: white;
+  justify-content: center;
 }
 
 .input-container {
   width: 100%;
   display: flex;
+  overflow: scroll;
   justify-content: center;
   flex-direction: column;
   align-items: center;
+}
+
+.review-input {
+  padding: 20px 0;
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #eee;
+  justify-content: space-around;
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 button.survey-btn.ant-btn{
@@ -530,23 +631,13 @@ button.survey-btn.ant-btn:hover{
   height: 10%;
 }
 
-.steps-section {
-  padding: 0 0 20px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Lato', sans-serif;
-  font-weight: bold;
-  font-size: 20px;
-  color: white;
-}
-
 .survey-input {
   padding: 20px 0;
   /*padding: 5px;*/
   width: 100%;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   border-bottom: 1px solid #eee;
   transition: all 0.3 ease-out;
 }
@@ -588,17 +679,9 @@ input.input-bar.input-select,
   justify-content: center;
   align-items: center;
 }
-.review-input {
-  padding: 20px 0;
-  width: 80%;
-  display: flex;
-  flex-direction: row;
-  border-bottom: 1px solid #eee;
-  justify-content: space-around;
-}
 
 .review-input-header {
-  color: cornflowerblue; 
+  color: #F3A183; 
   /*orangered;*/
   font-style: bold;
   width: 40%;
@@ -618,16 +701,6 @@ input.input-bar.input-select,
   margin: 0 0 10px 0;
 }*/
 
-.welcome-message {
-  font-size: 14px;
-  font-family: 'Lato', sans-serif;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  /*justify-content: center;*/
-}
 
 
 /* ---- chat room ----- */
@@ -675,6 +748,19 @@ input.input-bar.input-select,
   border: 1px solid #eee;
   background: white;
   overflow-y: scroll;
+}
+
+.noKinMsg {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: orangered;
+}
+
+.noKinMsg div {
+  padding: 20px 10px 0px 10px;
 }
 
 .kin-list-item {
