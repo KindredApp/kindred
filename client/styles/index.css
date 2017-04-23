@@ -164,15 +164,15 @@ button.account-btn.edit:hover {
 .selectedDataTopic {
   height: 50px;
   align-self: center;
-  margin: 16px 0px 0px 5px;
+  margin: 16px 0 20px 0;
   font-family: 'Lato', sans-serif;
   font-size: 24px;
 }
 
 #doughnut {
-  align-self: center;
   height: 35%;
   width: 35%;
+  align-self: center;
 }
 
 .states:hover {
@@ -187,6 +187,8 @@ button.account-btn.edit:hover {
   background-color: rgba(255,255,255, 0.4);
   border-radius: 8px;
   padding: 5px;
+  max-width: 200px;
+  overflow-wrap: normal;
 }
 
 .hide {
@@ -208,7 +210,7 @@ button.account-btn.edit:hover {
   font-size: 14px;
   box-shadow: 2px 2px 2px #535873;
   margin-top: 10px;
-  margin-bottom: 10px;  
+  margin-bottom: 12px;  
 }
 
 .qotdDataButton:hover, .qotdList:hover {
@@ -225,6 +227,19 @@ button.account-btn.edit:hover {
 
 .no-mouse {
   cursor: none;
+}
+
+hr {
+  border: 0;
+  height: 3px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(83, 88, 115, 0.75), rgba(0, 0, 0, 0));
+  margin: 30px 0;
+}
+
+.dataInfoButton {
+  width: 60px;
+  height: 40px;
+  margin-left: 10px;
 }
 
 /* -------------------- */

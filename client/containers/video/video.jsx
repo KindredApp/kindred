@@ -543,7 +543,7 @@ class Video extends React.Component {
 
     const QOTDComponent = (
       <div className="qotd-container">
-      <div className="info">Carefully consider your answer. Then click 'submit' to  discuss your answer with kin.</div>
+      <div className="info">Choose your answer. Then click 'submit' to  discuss your answer with kin.</div>
        <div className="question-of-the-day">{String.fromCharCode(0x2728) + this.state.qotdText + String.fromCharCode(0x2728)}</div>
        <form className="qotd-form">
          <div className="qotd-options">
