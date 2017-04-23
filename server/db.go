@@ -95,4 +95,6 @@ type Chat struct {
 	UserAuth   UserAuth
 	UserAuthID uint `gorm:"not null"`
 	PairId     uint `gorm:"not null"`
+	Qotd       Qotd
+	QotdID     uint `gorm:"not null"`
 }

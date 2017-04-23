@@ -40,9 +40,27 @@ type Cookie struct {
 	Token    string
 }
 
+type UserQueue struct {
+	Profile UserSurvey `json:"userProfile"`
+}
+
 type VisitCheck struct {
 	Username string `json:"Username"`
 	FirstTime string `json:"FirstTime"`
+}
+
+type Room struct {
+	RoomNumber int
+	ParticipantOne string
+	ParticipantTwo string
+}
+
+type QueueRemove struct {
+	RawUser string
+}
+
+type RoomRemove struct {
+	RawRoom string
 }
 
 // type ReqObj struct {
