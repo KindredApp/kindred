@@ -85,7 +85,7 @@ class KinList extends Component {
           <div className="chat-header">chat</div>
           <div className="chat-container">
             <div className="kin-list">
-              {this.state.kinList ? 
+              {this.state.kinList && this.state.kinList.length ? 
               this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => { this.setCurrentRoom(kin); }}>{kin[1]}</div>) : noKinMsg}
             </div>
             <div className="kin-current-chat">
