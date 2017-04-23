@@ -69,45 +69,45 @@ class QotdFilter extends React.Component {
 
   render () {
     const menu = (
-      <Menu style={{fontSize: '14px'}} onClick={this.onClick}>
-        <SubMenu style={{fontSize: '14px'}} title="Age">
+      <Menu onClick={this.onClick}>
+        {/*<SubMenu title="Age">
           {this.state.fieldmap.Age.map((item, i) => {
-            return <Menu.Item style={{fontSize: '14px'}} key={`Age.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item key={`Age.${i+1}`}>{item}</Menu.Item>
           })}
-        </SubMenu>
-        <SubMenu style={{fontSize: '14px'}} title="Gender">
+        </SubMenu>*/}
+        <SubMenu title="Gender">
           {this.state.fieldmap.Gender.map((item, i) => {
-            return <Menu.Item style={{fontSize: '14px'}} key={`Gender.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item key={`Gender.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu style={{fontSize: '14px'}} title="Income">
+        <SubMenu title="Income">
           {this.state.fieldmap.Income.map((item, i) => {
-            return <Menu.Item style={{fontSize: '14px'}} key={`Income.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item key={`Income.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu style={{fontSize: '14px'}} title="Education">
+        <SubMenu title="Education">
           {this.state.fieldmap.Education.map((item, i) => {
-              return <Menu.Item style={{fontSize: '14px'}} key={`Education.${i+1}`}>{item}</Menu.Item>
+              return <Menu.Item key={`Education.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu style={{fontSize: '14px'}} title="Spirituality">
+        <SubMenu title="Spirituality">
           {this.state.fieldmap.Religiousity.map((item, i) => {
-            return <Menu.Item style={{fontSize: '14px'}} key={`Religiousity.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item key={`Religiousity.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu style={{fontSize: '14px'}} title="Religion">
+        <SubMenu title="Religion">
           {this.state.fieldmap.Religion.map((item, i) => {
-            return <Menu.Item style={{fontSize: '14px'}} key={`Religion.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item key={`Religion.${i+1}`}>{item}</Menu.Item>
           })}  
         </SubMenu>
-        <SubMenu style={{fontSize: '14px'}} title="Ethnicity">
+        <SubMenu title="Ethnicity">
           {this.state.fieldmap.Ethnicity.map((item, i) => {
-            return <Menu.Item style={{fontSize: '14px'}} key={`Ethnicity.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item key={`Ethnicity.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
-        <SubMenu style={{fontSize: '14px'}} title="Political Party">
+        <SubMenu title="Political Party">
           {this.state.fieldmap.Party.map((item, i) => {
-            return <Menu.Item style={{fontSize: '14px'}} key={`Party.${i+1}`}>{item}</Menu.Item>
+            return <Menu.Item key={`Party.${i+1}`}>{item}</Menu.Item>
           })}
         </SubMenu>
       </Menu>

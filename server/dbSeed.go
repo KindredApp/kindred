@@ -236,7 +236,7 @@ var answerOptions = [105]QotdAnswerOption{
 	},
 	QotdAnswerOption{
 		QotdID: 8,
-		Text:   "Most adult citizens, excepting individual groups like serial convicts or suspected terrorists",
+		Text:   "Most adult citizens, except individual groups like serial convicts or suspected terrorists",
 	},
 	QotdAnswerOption{
 		QotdID: 8,
