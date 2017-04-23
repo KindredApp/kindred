@@ -735,6 +735,19 @@ input.input-bar.input-select,
   overflow-y: scroll;
 }
 
+.noKinMsg {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: orangered;
+}
+
+.noKinMsg div {
+  padding: 20px 10px 0px 10px;
+}
+
 .kin-list-item {
   padding: 20px 10px; ;
   width: 100%;

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import * as firebase from 'firebase';
+import { Link } from 'react-router-dom'; 
 import {connect} from 'react-redux';
 import {actionUser} from '../../actions/actionUser.js';
 import {bindActionCreators} from 'redux';
@@ -69,8 +70,16 @@ class KinList extends Component {
       }
     });
   }
-
+ 
   render () {
+    const noKinMsg = (
+      <div className="noKinMsg">
+        <div>You have no kin to chat with yet.</div>
+        <div>Make sure you have filled out the required information in the <Link to="/account">account</Link> page, then head to <Link to="/video">video </Link> to start 'kin-necting!'
+      </div>
+      </div>
+    );
+
     return (
       <div className="chat-page">
         <NavLoggedIn />
@@ -79,10 +88,14 @@ class KinList extends Component {
           <div className="chat-container">
             <div className="kin-list">
               {this.state.kinList ? 
-              this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => { this.setCurrentRoom(kin); }}>{kin[1]}</div>) : 
-              null}
+              this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => { this.setCurrentRoom(kin); }}>{kin[1]}</div>) : noKinMsg}
             </div>
-            <div className="kin-current-chat">{this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}</div>
+            <div className="kin-current-chat">
+            { this.state.currentMessageRoom ? 
+                <KinMessage room={this.state.currentMessageRoom}/> : 
+                null
+            }
+            </div>
           </div>
         </div>
       </div>
@@ -102,3 +115,5 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, null)(KinList);
+
+// {this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}
