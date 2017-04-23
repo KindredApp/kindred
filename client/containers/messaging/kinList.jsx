@@ -88,14 +88,12 @@ class KinList extends Component {
           <div className="chat-container">
             <div className="kin-list">
               {this.state.kinList ? 
-              this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => { this.setCurrentRoom(kin); }}>{kin[1]}</div>) : null}
+              this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => { this.setCurrentRoom(kin); }}>{kin[1]}</div>) : noKinMsg}
             </div>
             <div className="kin-current-chat">
-            {this.state.kinList ? 
-                this.state.currentMessageRoom ?
-                  <KinMessage room={this.state.currentMessageRoom}/> : 
-                  null :
-                noKinMsg
+            { this.state.currentMessageRoom ? 
+                <KinMessage room={this.state.currentMessageRoom}/> : 
+                null
             }
             </div>
           </div>
