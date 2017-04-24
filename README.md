@@ -10,7 +10,6 @@
 
 ## Table of Contents
 
-1. [Usage](#Usage)
 1. [Requirements](#requirements)
 1. [Development](#development)
     1. [Installing Dependencies](#installing-dependencies)
@@ -18,17 +17,14 @@
 1. [Team](#team)
 1. [Contributing](#contributing)
 
-## Usage
-
-> Some usage instructions
-
 ## Requirements
 
 - Node
+- NPM
 - Redis
 - PostgreSQL
 - Go
-- Firebase
+- Glide
 
 ## Development
 
@@ -48,4 +44,4 @@ View the project roadmap [here](https://github.com/KindredApp/kindred/issues?utf
 
 ## Contributing
 
-See [CONTRIBUTING.md] for contribution guidelines.
+See our [contribution guide](https://github.com/KindredApp/kindred/blob/master/CONTRIBUTING.md) for contribution guidelines.
