@@ -43,9 +43,9 @@ glide install
 
 ### Roadmap
 
-View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
+View the project roadmap [here](https://github.com/KindredApp/kindred/issues?utf8=%E2%9C%93&q=)
 
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+See [CONTRIBUTING.md] for contribution guidelines.
