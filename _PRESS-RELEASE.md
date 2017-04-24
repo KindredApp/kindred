@@ -17,28 +17,13 @@ Once the project moves into development, the press release can be used as a touc
  -->
  
 ## Heading ##
-  > Name the product in a way the reader (i.e. your target customers) will understand.
+  > Kindred Chat
 
 ## Sub-Heading ##
-  > Describe who the market for the product is and what benefit they get. One sentence only underneath the title.
+  > Connect with different people and chat about current events!
 
 ## Summary ##
-  > Give a summary of the product and the benefit. Assume the reader will not read anything else so make this paragraph good.
-
-## Problem ##
-  > Describe the problem your product solves.
-
-## Solution ##
-  > Describe how your product elegantly solves the problem.
-
-## Quote from You ##
-  > A quote from a spokesperson in your company.
+  > Kindred is a video chat platform that pairs people of varied backgrounds to bridge differences. Each user has a profile with key demographic information used in a proprietary algorithm that pairs different people.  Users are allowed a limited number of pairs per day to ensure meaningful connections.  Discussions are guided by a question of the day to facilitate conversation.  Conversations can be continued via a secure and anonymous messaging system if both parties agree.  
 
 ## How to Get Started ##
-  > Describe how easy it is to get started.
-
-## Customer Quote ##
-  > Provide a quote from a hypothetical customer that describes how they experienced the benefit.
-
-## Closing and Call to Action ##
-  > Wrap it up and give pointers where the reader should go next.
+  > Sign up with Kindred today!
