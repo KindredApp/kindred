@@ -1,15 +1,29 @@
 import axios from 'axios';
 
+var baseUrlGo;
+var baseUrlNode;
+
+switch (environment) {
+case "dev":
+  baseUrlGo = 'http://localhost:8080';
+  baseUrlNode = 'http://localhost:3000';
+  break;
+case "production":
+  baseUrlGo = 'https://www.kindredchat.io:443';
+  baseUrlNode = 'https://www.kindredchat.io:3000';
+  break;
+default:
+  baseUrlGo = 'http://localhost:8080';
+  baseUrlNode = 'http://localhost:3000';
+  break;
+}
+
 var instance = {
   goInstance: axios.create({
-    //use commented for production build
-    // baseURL: 'https://www.kindredchat.io:443'
-    baseURL: 'http://localhost:8080'
+    baseURL: baseUrlGo
   }),
   nodeInstance: axios.create({
-    //use commented for production build
-    // baseURL: 'https://www.kindredchat.io:3000'
-    baseURL: 'http://localhost:3000'
+    baseURL: baseUrlNode
   })
 };
 

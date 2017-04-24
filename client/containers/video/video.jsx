@@ -362,15 +362,27 @@ class Video extends React.Component {
   }
 
   joinHandler() {
-    //uncomment for production build
-    // var req = `/api/twilio?q=${this.state.cookie.Username}`;
+    var req;
+
+    switch (environment) {
+    case "dev":
+      req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
+      break;
+    case "production":
+      req = `/api/twilio?q=${this.state.cookie.Username}`;
+      break;
+    default:
+      req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
+      break;
+    }
+    
     if (this.state.leaveQueue) {
       this.setState({
         leaveQueue: false
       });
       return;
     }
-    var req = `http://localhost:3000/api/twilio?q=${this.state.cookie.Username}`;
+
     instance.nodeInstance.get(req).then((response) => {
       this.setState({
         identity: response.data.identity,

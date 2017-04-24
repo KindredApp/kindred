@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const config = {
   devtool: 'source-map',
@@ -23,8 +24,13 @@ const config = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
       }
-    ]
-  }
+    ],
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      environment: JSON.stringify(process.env.ENV)
+    })
+  ]
 };
 
 module.exports = config;
