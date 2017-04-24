@@ -36,7 +36,6 @@ class KinList extends Component {
  
   getKin () {
     if (this.props.user) {
-      console.log('getKin triggered');
       let db = this.props.firebaseInstance;
       let userKin = db.ref('users/' + this.props.user.userObj.Username);
       userKin.once('value').then((snapshot) => {
@@ -66,7 +65,6 @@ class KinList extends Component {
       if (document.getElementById(this.state.previousChat)) {
         let oldSelectionClasses = document.getElementById(this.state.previousChat).classList;
         oldSelectionClasses.remove('chat-name-click');
-        console.log('state of current message room is', this.state.currentMessageRoom);
       }
     });
   }
@@ -87,14 +85,11 @@ class KinList extends Component {
           <div className="chat-header">chat</div>
           <div className="chat-container">
             <div className="kin-list">
-              {this.state.kinList ? 
+              {this.state.kinList && this.state.kinList.length ? 
               this.state.kinList.map(kin => <div id={kin[0]} className="kin-list-item" key={kin} onClick={() => { this.setCurrentRoom(kin); }}>{kin[1]}</div>) : noKinMsg}
             </div>
             <div className="kin-current-chat">
-            { this.state.currentMessageRoom ? 
-                <KinMessage room={this.state.currentMessageRoom}/> : 
-                null
-            }
+            {this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}
             </div>
           </div>
         </div>
@@ -115,5 +110,3 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, null)(KinList);
-
-// {this.state.currentMessageRoom ? <KinMessage room={this.state.currentMessageRoom}/> : null}

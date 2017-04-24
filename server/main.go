@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-
 	"github.com/gorilla/websocket"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/mediocregopher/radix.v2/pool"
+	"log"
+	"net/http"
+	"os"
 )
 
 //eventually get rid of these global variables
@@ -76,10 +76,15 @@ func main() {
 	go worker(db, p, &qotdCounter)
 
 	//Initialize
-	//if on localhost, use ListenAndServe, if on deployment server, use ListenAndServeTLS.
-	// http.ListenAndServe(":8080", nil)
-	err = http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
-	if err != nil {
-		log.Fatal(err)
+	switch environment := os.Getenv("ENV"); environment {
+	case "dev":
+		http.ListenAndServe(":8080", nil)
+	case "production":
+		err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/www.kindredchat.io/fullchain.pem", "/etc/letsencrypt/live/www.kindredchat.io/privkey.pem", nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	default:
+		http.ListenAndServe(":8080", nil)
 	}
 }
