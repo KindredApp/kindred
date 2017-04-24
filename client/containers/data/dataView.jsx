@@ -29,10 +29,6 @@ class DataView extends React.Component {
       unauthorized: null
     };
 
-    if (this.props.user) {
-      this.props.actionSetUserProfile(this.props.user.userObj);
-    }
-
     instance.goInstance.get('/api/qotd?q=data')
     .then((response) => {
       this.props.actionQotdData(response);
