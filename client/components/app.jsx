@@ -1,14 +1,22 @@
 import React from 'react';
-import { HashRouter as Router, Route, Link } from 'react-router-dom'; 
+import { HashRouter as Router, Route } from 'react-router-dom'; 
 import { Form } from 'antd';
+import Cookies from 'js-cookie';
+import checkToken from '../containers/login-signup/authHelpers.js';
+import NavLoggedOut from './navLoggedOut.jsx';
+import NavLoggedIn from './navLoggedIn.jsx';
 
 import '../styles/index.css';
 
 class App extends React.Component {
   constructor (props) {
     super (props);
+    this.state = {
+      unauthorized: null
+    };
 
-    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mousemove', this.onMouseMove);   
+    this.checkToken = checkToken.bind(this);
   }
 
   componentWillUnmount () {
@@ -38,27 +46,25 @@ class App extends React.Component {
     element.style.background = original;
   }
 
+  componentDidMount() {
+    let cookies = Cookies.getJSON();
+    for (var key in cookies) {
+      if (key !== 'pnctest') {
+        this.setState({
+          cookie: {
+            Username: cookies[key].Username,
+            Token: cookies[key].Token
+          }
+        });
+      }
+    } 
+    this.checkToken();
+  }
+  
   render() {
     return (
       <div className="landing-container">
-        <div className="landing-header">
-          <div>
-            <img className="header-logo" src={'../public/assets/kindred-icon.png'} width="100px"/>
-          </div>
-          <div className="header-nav">
-            <nav className="header-links perspective">
-              <div className="shift">
-                <Link to="/login">login </Link>
-              </div>
-              <div className="shift">
-                <Link to="/signup">sign up </Link>
-              </div>
-              <div className="shift">
-                <Link to="/data">stats</Link>
-              </div>
-            </nav>
-          </div>
-        </div>
+       {this.state.unauthorized ? <NavLoggedOut/> : <NavLoggedIn/>}
         <div className="landing-body">
           <div id="blurb">
             <div className="landing-qotd">Question of the day: <span className="element"></span></div>
