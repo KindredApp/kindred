@@ -15,12 +15,6 @@ const jsonParser = bodyParser.json();
 const client = require('twilio')(config.accountSid, config.authToken);
 const keyGenerate = Promise.promisify(client.keys.create);
 
-//uncomment below for production build
-// const httpsOptions = {
-//   cert: fs.readFileSync(config.sslCert),
-//   key: fs.readFileSync(config.sslKey)
-// }
-
 app.use(cors());
 app.use(jsonParser);
 
@@ -56,19 +50,32 @@ app.get('/api/twilio', (req, res) => {
 
   res.send({
     identity: identity,
-    token: token.toJwt()
+    token: token.toJwt(),
+  // });
   });
 });
 
+console.log('Am I in dev or production? ', process.env.ENV);
 
-//development server
-app.listen(config.PORT, () => {
-  console.log(`I'm listening at ${config.PORT}.`);
-});
-
-//production server
-// https.createServer(httpsOptions, app)
-//   .listen(config.PORT, () => {
-//     console.log(`App is listening at port ${config.PORT}.`);
-//   });
-
+switch (process.env.ENV) {
+case "dev":
+  app.listen(config.PORT, () => {
+    console.log(`I'm listening at ${config.PORT}.`);
+  });
+  break;
+case "production":
+  const httpsOptions = {
+    cert: fs.readFileSync(config.sslCert),
+    key: fs.readFileSync(config.sslKey)
+  }
+  https.createServer(httpsOptions, app)
+  .listen(config.PORT, () => {
+    console.log(`App is listening at port ${config.PORT}.`);
+  });
+  break;
+default:
+  app.listen(config.PORT, () => {
+    console.log(`I'm listening at ${config.PORT}.`);
+  });
+  break;
+}
