@@ -261,7 +261,7 @@ class Survey extends React.Component {
     const { current } = this.state;
     return (
       <div className="survey-container">
-\                <div className="steps-section">
+                <div className="steps-section">
           {steps[this.state.current].title}
         </div>
         <div className="survey-card">
