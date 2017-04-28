@@ -556,7 +556,7 @@ class Video extends React.Component {
     const QOTDComponent = (
       <div className="qotd-container">
       <div className="info">Choose your answer. Then click 'submit' to  discuss your answer with kin.</div>
-       <div className="question-of-the-day">{String.fromCharCode(0x2728) + this.state.qotdText + String.fromCharCode(0x2728)}</div>
+       <div className="question-of-the-day">{this.state.qotdText}</div>
        <form className="qotd-form">
          <div className="qotd-options">
           {this.state.qotdOptions.map((option, idx) => {
@@ -621,8 +621,8 @@ class Video extends React.Component {
 
     const qotdInfo = (
       <ul>
-        <li style={{color: '#0eab0c'}}>The purpose of this question is to give you something to talk about.</li>
-        <li style={{color: '#0eab0c', 'paddingTop': '3px'}}>Feel free to discuss other things too.</li>
+        <li style={{color: '#000'}}>The purpose of this question is to give you something to talk about.</li>
+        <li style={{color: '#000', 'paddingTop': '3px'}}>Feel free to discuss other things too.</li>
       </ul>
     );
 
