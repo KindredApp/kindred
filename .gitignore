@@ -7,7 +7,7 @@ dist/
 
 bundles
 
-dump.rdb
+**dump.rdb**
 
 .vscode/
 glide.lock
