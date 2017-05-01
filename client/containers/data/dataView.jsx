@@ -1,12 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import instance from '../../config.js'
+import {Link} from 'react-router-dom'; 
+import instance from '../../config.js';
+import Cookies from 'js-cookie';
+import checkToken from '../login-signup/authHelpers.js';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import QotdList from './pastQotdsList.jsx';
 import {actionQotdData} from '../../actions/actionQotdData.js';
 import DataMap from './dataMap.jsx';
 import NavLoggedIn from '../../components/navLoggedIn.jsx';
+import NavLoggedOut from '../../components/navLoggedOut.jsx';
 import QotdAnswerOptions from './qotdAnswerOptions.jsx';
 import {actionQotdDataSelect} from '../../actions/actionQotdDataSelect.js';
 import {actionDataByAnswers} from '../../actions/actionDataByAnswers.js';
@@ -18,19 +22,38 @@ import {Popover} from 'antd';
 import '../../styles/index.css';
 
 class DataView extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      setFirst: true
+      setFirst: true,
+      unauthorized: null
     };
+
     instance.goInstance.get('/api/qotd?q=data')
     .then((response) => {
       this.props.actionQotdData(response);
       this.props.actionDataByAnswers(response);
     });
 
+    this.checkToken = checkToken.bind(this);
     this.showAll = this.showAll.bind(this);
     this.showFilterButton = this.showFilterButton.bind(this);
+  }
+
+
+  componentDidMount() {
+    let cookies = Cookies.getJSON();
+    for (var key in cookies) {
+      if (key !== 'pnctest') {
+        this.setState({
+          cookie: {
+            Username: cookies[key].Username,
+            Token: cookies[key].Token
+          }
+        });
+      }
+    } 
+    this.checkToken();
   }
 
   componentWillReceiveProps(nextprops) {
@@ -75,7 +98,7 @@ class DataView extends React.Component {
 
     return (
       <div className="landing-container">
-        <NavLoggedIn/>
+      {this.state.unauthorized ? <NavLoggedOut/> : <NavLoggedIn/>}
         <div className="dataPageContainer">
           <div className="selectedDataTopic">{this.props.questionChoice ? this.props.questionChoice : null}</div>
               <Popover placement="bottomRight" content={pieContent}>
@@ -87,7 +110,7 @@ class DataView extends React.Component {
               {this.showFilterButton()}
            <QotdAnswerOptions />
 
-          <hr />
+            <hr />
           
             <div className="selectedDataTopic">{this.props.questionChoiceMap ? this.props.questionChoiceMap : null}</div>
             <Popover placement="bottomRight" content={mapContent}>
